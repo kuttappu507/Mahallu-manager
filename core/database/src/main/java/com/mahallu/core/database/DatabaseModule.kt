@@ -1,7 +1,6 @@
 package com.mahallu.core.database
 
 import android.content.Context
-import androidx.room.Room
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,60 +15,66 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase {
-        return Room.databaseBuilder(
-            context,
-            AppDatabase::class.java,
-            AppDatabase.DATABASE_NAME
-        )
-            .fallbackToDestructiveMigration()
-            .build()
+        return AppDatabase.getDatabase(context)
     }
 
     @Provides
     @Singleton
-    fun provideUserDao(database: AppDatabase) = database.userDao()
+    fun provideFamilyDao(database: AppDatabase): FamilyDao {
+        return database.familyDao()
+    }
 
     @Provides
     @Singleton
-    fun provideFamilyDao(database: AppDatabase) = database.familyDao()
+    fun provideMemberDao(database: AppDatabase): MemberDao {
+        return database.memberDao()
+    }
 
     @Provides
     @Singleton
-    fun provideMemberDao(database: AppDatabase) = database.memberDao()
+    fun provideUserDao(database: AppDatabase): UserDao {
+        return database.userDao()
+    }
 
     @Provides
     @Singleton
-    fun provideSubscriptionDao(database: AppDatabase) = database.subscriptionDao()
+    fun provideSubscriptionDao(database: AppDatabase): SubscriptionDao {
+        return database.subscriptionDao()
+    }
 
     @Provides
     @Singleton
-    fun provideDonationDao(database: AppDatabase) = database.donationDao()
+    fun provideDonationDao(database: AppDatabase): DonationDao {
+        return database.donationDao()
+    }
 
     @Provides
     @Singleton
-    fun provideIncomeDao(database: AppDatabase) = database.incomeDao()
+    fun provideFinanceDao(database: AppDatabase): FinanceDao {
+        return database.financeDao()
+    }
 
     @Provides
     @Singleton
-    fun provideExpenseDao(database: AppDatabase) = database.expenseDao()
+    fun provideMarriageDao(database: AppDatabase): MarriageDao {
+        return database.marriageDao()
+    }
 
     @Provides
     @Singleton
-    fun provideMarriageDao(database: AppDatabase) = database.marriageDao()
+    fun provideDeathDao(database: AppDatabase): DeathDao {
+        return database.deathDao()
+    }
 
     @Provides
     @Singleton
-    fun provideDeathDao(database: AppDatabase) = database.deathDao()
+    fun provideWelfareDao(database: AppDatabase): WelfareDao {
+        return database.welfareDao()
+    }
 
     @Provides
     @Singleton
-    fun provideWelfareDao(database: AppDatabase) = database.welfareDao()
-
-    @Provides
-    @Singleton
-    fun provideSettingsDao(database: AppDatabase) = database.settingsDao()
-
-    @Provides
-    @Singleton
-    fun provideBackupDao(database: AppDatabase) = database.backupDao()
+    fun provideSettingsDao(database: AppDatabase): SettingsDao {
+        return database.settingsDao()
+    }
 }

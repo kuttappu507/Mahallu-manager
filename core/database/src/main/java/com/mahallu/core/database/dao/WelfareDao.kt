@@ -2,36 +2,36 @@ package com.mahallu.core.database.dao
 
 import androidx.room.*
 import com.mahallu.core.database.entity.WelfareRequest
-import com.mahallu.core.database.entity.WelfareCategory
-import com.mahallu.core.database.entity.ApprovalStatus
+import com.mahallu.core.database.entity.WelfareStatus
+import com.mahallu.core.database.entity.WelfareType
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface WelfareDao {
-    @Query("SELECT * FROM welfare_requests ORDER BY createdAt DESC")
+    @Query("SELECT * FROM welfare ORDER BY requestedDate DESC")
     fun getAllWelfareRequests(): Flow<List<WelfareRequest>>
-    
-    @Query("SELECT * FROM welfare_requests WHERE id = :id")
+
+    @Query("SELECT * FROM welfare WHERE status = :status ORDER BY requestedDate DESC")
+    fun getWelfareRequestsByStatus(status: WelfareStatus): Flow<List<WelfareRequest>>
+
+    @Query("SELECT * FROM welfare WHERE type = :type ORDER BY requestedDate DESC")
+    fun getWelfareRequestsByType(type: WelfareType): Flow<List<WelfareRequest>>
+
+    @Query("SELECT * FROM welfare WHERE id = :id")
     suspend fun getWelfareRequestById(id: Long): WelfareRequest?
-    
-    @Query("SELECT * FROM welfare_requests WHERE category = :category ORDER BY createdAt DESC")
-    fun getWelfareRequestsByCategory(category: WelfareCategory): Flow<List<WelfareRequest>>
-    
-    @Query("SELECT * FROM welfare_requests WHERE approvalStatus = :status ORDER BY createdAt DESC")
-    fun getWelfareRequestsByStatus(status: ApprovalStatus): Flow<List<WelfareRequest>>
-    
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(request: WelfareRequest): Long
-    
+    suspend fun insertWelfareRequest(request: WelfareRequest): Long
+
     @Update
-    suspend fun update(request: WelfareRequest)
-    
+    suspend fun updateWelfareRequest(request: WelfareRequest)
+
     @Delete
-    suspend fun delete(request: WelfareRequest)
-    
-    @Query("UPDATE welfare_requests SET approvalStatus = :status, approvedBy = :approvedBy, disbursedDate = :disbursedDate WHERE id = :id")
-    suspend fun approveRequest(id: Long, status: ApprovalStatus, approvedBy: Long?, disbursedDate: Long?)
-    
-    @Query("SELECT SUM(amount) FROM welfare_requests WHERE approvalStatus = :status")
-    fun getTotalDisbursed(status: ApprovalStatus): Flow<Double?>
+    suspend fun deleteWelfareRequest(request: WelfareRequest)
+
+    @Query("UPDATE welfare SET status = :status, approvedDate = :approvedDate, approvedBy = :approvedBy WHERE id = :id")
+    suspend fun approveWelfareRequest(id: Long, status: WelfareStatus, approvedDate: java.util.Date, approvedBy: Long)
+
+    @Query("SELECT SUM(amount) FROM welfare WHERE status = 'DISBURSED' AND strftime('%Y', requestedDate) = :year")
+    suspend fun getTotalWelfareDisbursedByYear(year: Int): Double?
 }

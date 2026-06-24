@@ -9,28 +9,28 @@ import kotlinx.coroutines.flow.Flow
 interface UserDao {
     @Query("SELECT * FROM users WHERE username = :username")
     suspend fun getUserByUsername(username: String): User?
-    
+
     @Query("SELECT * FROM users WHERE id = :id")
     suspend fun getUserById(id: Long): User?
-    
-    @Query("SELECT * FROM users WHERE id = :id")
-    fun getUserByIdFlow(id: Long): Flow<User?>
-    
-    @Query("SELECT * FROM users WHERE isActive = 1")
-    fun getAllActiveUsers(): Flow<List<User>>
-    
+
+    @Query("SELECT * FROM users ORDER BY name ASC")
+    fun getAllUsers(): Flow<List<User>>
+
+    @Query("SELECT * FROM users WHERE role = :role ORDER BY name ASC")
+    fun getUsersByRole(role: UserRole): Flow<List<User>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(user: User): Long
-    
+    suspend fun insertUser(user: User): Long
+
     @Update
-    suspend fun update(user: User)
-    
+    suspend fun updateUser(user: User)
+
     @Delete
-    suspend fun delete(user: User)
-    
-    @Query("UPDATE users SET lastLoginAt = :timestamp WHERE id = :userId")
-    suspend fun updateLastLogin(userId: Long, timestamp: Long)
-    
-    @Query("SELECT COUNT(*) FROM users WHERE role = :role")
-    suspend fun countByRole(role: UserRole): Int
+    suspend fun deleteUser(user: User)
+
+    @Query("UPDATE users SET lastLoginAt = :lastLoginAt WHERE id = :id")
+    suspend fun updateLastLogin(id: Long, lastLoginAt: java.util.Date)
+
+    @Query("SELECT COUNT(*) FROM users WHERE isActive = 1")
+    suspend fun getActiveUsersCount(): Int
 }

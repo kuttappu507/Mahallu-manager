@@ -1,62 +1,46 @@
 package com.mahallu.core.database.dao
 
 import androidx.room.*
-import com.mahallu.core.database.entity.Income
-import com.mahallu.core.database.entity.Expense
-import com.mahallu.core.database.entity.IncomeCategory
-import com.mahallu.core.database.entity.ExpenseCategory
+import com.mahallu.core.database.entity.Finance
+import com.mahallu.core.database.entity.TransactionType
+import com.mahallu.core.database.entity.FinanceCategory
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface IncomeDao {
-    @Query("SELECT * FROM incomes ORDER BY date DESC")
-    fun getAllIncomes(): Flow<List<Income>>
-    
-    @Query("SELECT * FROM incomes WHERE id = :id")
-    suspend fun getIncomeById(id: Long): Income?
-    
-    @Query("SELECT * FROM incomes WHERE category = :category ORDER BY date DESC")
-    fun getIncomesByCategory(category: IncomeCategory): Flow<List<Income>>
-    
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(income: Income): Long
-    
-    @Update
-    suspend fun update(income: Income)
-    
-    @Delete
-    suspend fun delete(income: Income)
-    
-    @Query("SELECT SUM(amount) FROM incomes WHERE year(date/1000) = :year AND month(date/1000) = :month")
-    fun getTotalByMonth(year: Int, month: Int): Flow<Double?>
-    
-    @Query("SELECT SUM(amount) FROM incomes WHERE year(date/1000) = :year")
-    fun getTotalByYear(year: Int): Flow<Double?>
-}
+interface FinanceDao {
+    @Query("SELECT * FROM finance ORDER BY date DESC")
+    fun getAllTransactions(): Flow<List<Finance>>
 
-@Dao
-interface ExpenseDao {
-    @Query("SELECT * FROM expenses ORDER BY date DESC")
-    fun getAllExpenses(): Flow<List<Expense>>
-    
-    @Query("SELECT * FROM expenses WHERE id = :id")
-    suspend fun getExpenseById(id: Long): Expense?
-    
-    @Query("SELECT * FROM expenses WHERE category = :category ORDER BY date DESC")
-    fun getExpensesByCategory(category: ExpenseCategory): Flow<List<Expense>>
-    
+    @Query("SELECT * FROM finance WHERE type = :type ORDER BY date DESC")
+    fun getTransactionsByType(type: TransactionType): Flow<List<Finance>>
+
+    @Query("SELECT * FROM finance WHERE category = :category ORDER BY date DESC")
+    fun getTransactionsByCategory(category: FinanceCategory): Flow<List<Finance>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(expense: Expense): Long
-    
+    suspend fun insertTransaction(finance: Finance): Long
+
     @Update
-    suspend fun update(expense: Expense)
-    
+    suspend fun updateTransaction(finance: Finance)
+
     @Delete
-    suspend fun delete(expense: Expense)
-    
-    @Query("SELECT SUM(amount) FROM expenses WHERE year(date/1000) = :year AND month(date/1000) = :month")
-    fun getTotalByMonth(year: Int, month: Int): Flow<Double?>
-    
-    @Query("SELECT SUM(amount) FROM expenses WHERE year(date/1000) = :year")
-    fun getTotalByYear(year: Int): Flow<Double?>
+    suspend fun deleteTransaction(finance: Finance)
+
+    @Query("SELECT SUM(amount) FROM finance WHERE type = 'INCOME' AND strftime('%Y', date) = :year")
+    suspend fun getTotalIncomeByYear(year: Int): Double?
+
+    @Query("SELECT SUM(amount) FROM finance WHERE type = 'EXPENSE' AND strftime('%Y', date) = :year")
+    suspend fun getTotalExpenseByYear(year: Int): Double?
+
+    @Query("SELECT SUM(amount) FROM finance WHERE type = 'INCOME' AND strftime('%m', date) = :month AND strftime('%Y', date) = :year")
+    suspend fun getTotalIncomeByMonth(month: String, year: Int): Double?
+
+    @Query("SELECT SUM(amount) FROM finance WHERE type = 'EXPENSE' AND strftime('%m', date) = :month AND strftime('%Y', date) = :year")
+    suspend fun getTotalExpenseByMonth(month: String, year: Int): Double?
+
+    @Query("SELECT SUM(amount) FROM finance WHERE type = 'INCOME'")
+    suspend fun getTotalIncome(): Double?
+
+    @Query("SELECT SUM(amount) FROM finance WHERE type = 'EXPENSE'")
+    suspend fun getTotalExpense(): Double?
 }

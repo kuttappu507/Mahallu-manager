@@ -1,37 +1,78 @@
 package com.mahallu.core.ui
 
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
-// Primary Colors (Indigo)
+// Indigo + Coral Color Scheme (Option B)
 val Primary = Color(0xFF4F46E5)
 val PrimaryDark = Color(0xFF4338CA)
-val PrimaryLight = Color(0xFF818CF8)
-
-// Accent Colors (Coral)
 val AccentCoral = Color(0xFFFF6B6B)
 val LightCoral = Color(0xFFFFE5E5)
-
-// Background Colors
 val Background = Color(0xFFFFFFFF)
 val Surface = Color(0xFFF8FAFC)
-val SurfaceVariant = Color(0xFFF1F5F9)
-
-// Text Colors
 val TextPrimary = Color(0xFF1F2937)
 val TextSecondary = Color(0xFF6B7280)
-val TextTertiary = Color(0xFF9CA3AF)
-
-// Border Colors
 val Border = Color(0xFFE5E7EB)
-val Divider = Color(0xFFE5E7EB)
-
-// Status Colors
 val Success = Color(0xFF10B981)
 val Warning = Color(0xFFF59E0B)
 val Error = Color(0xFFEF4444)
-val Info = Color(0xFF3B82F6)
 
-// Additional Colors
-val White = Color(0xFFFFFFFF)
-val Black = Color(0xFF000000)
-val Transparent = Color(0x00000000)
+private val LightColorScheme = lightColorScheme(
+    primary = Primary,
+    onPrimary = Color.White,
+    primaryContainer = Primary.copy(alpha = 0.1f),
+    onPrimaryContainer = Primary,
+    secondary = AccentCoral,
+    onSecondary = Color.White,
+    secondaryContainer = LightCoral,
+    onSecondaryContainer = AccentCoral,
+    tertiary = PrimaryDark,
+    onTertiary = Color.White,
+    background = Background,
+    onBackground = TextPrimary,
+    surface = Surface,
+    onSurface = TextPrimary,
+    surfaceVariant = Surface,
+    onSurfaceVariant = TextSecondary,
+    error = Error,
+    onError = Color.White,
+    outline = Border
+)
+
+private val DarkColorScheme = darkColorScheme(
+    primary = Primary,
+    onPrimary = Color.White,
+    primaryContainer = Primary.copy(alpha = 0.2f),
+    onPrimaryContainer = Primary,
+    secondary = AccentCoral,
+    onSecondary = Color.White,
+    secondaryContainer = AccentCoral.copy(alpha = 0.2f),
+    onSecondaryContainer = LightCoral,
+    tertiary = Primary.copy(alpha = 0.8f),
+    onTertiary = Color.White,
+    background = Color(0xFF111827),
+    onBackground = Color(0xFFF9FAFB),
+    surface = Color(0xFF1F2937),
+    onSurface = Color(0xFFF9FAFB),
+    surfaceVariant = Color(0xFF374151),
+    onSurfaceVariant = Color(0xFF9CA3AF),
+    error = Error,
+    onError = Color.White,
+    outline = Color(0xFF4B5563)
+)
+
+@Composable
+fun MahalluTheme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    content: @Composable () -> Unit
+) {
+    val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
+
+    MaterialTheme(
+        colorScheme = colorScheme,
+        typography = Typography,
+        content = content
+    )
+}

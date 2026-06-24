@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import java.util.Date
 
 @Entity(
     tableName = "members",
@@ -15,15 +16,15 @@ import androidx.room.PrimaryKey
             onDelete = ForeignKey.CASCADE
         )
     ],
-    indices = [Index("familyId")]
+    indices = [Index(value = ["familyId"])]
 )
 data class Member(
-    @PrimaryKey val id: Long = 0,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val familyId: Long,
     val name: String,
     val arabicName: String?,
     val gender: Gender,
-    val dateOfBirth: Long?,
+    val dateOfBirth: Date?,
     val occupation: String?,
     val education: String?,
     val bloodGroup: String?,
@@ -33,12 +34,13 @@ data class Member(
     val nationality: String?,
     val address: String?,
     val emergencyContact: String?,
-    val photoPath: String?,
-    val qrCodePath: String?,
-    val isActive: Boolean = true,
-    val createdAt: Long = System.currentTimeMillis(),
-    val updatedAt: Long = System.currentTimeMillis()
+    val photoUri: String?,
+    val isPrimary: Boolean = false,
+    val status: MemberStatus = MemberStatus.ACTIVE,
+    val createdAt: Date = Date(),
+    val updatedAt: Date = Date()
 )
 
 enum class Gender { MALE, FEMALE }
 enum class MaritalStatus { SINGLE, MARRIED, DIVORCED, WIDOWED }
+enum class MemberStatus { ACTIVE, INACTIVE, DECEASED }

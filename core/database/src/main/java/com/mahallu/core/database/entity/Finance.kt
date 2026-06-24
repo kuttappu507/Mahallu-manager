@@ -2,30 +2,25 @@ package com.mahallu.core.database.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.util.Date
 
-@Entity(tableName = "incomes")
-data class Income(
-    @PrimaryKey val id: Long = 0,
+@Entity(tableName = "finance")
+data class Finance(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val type: TransactionType,
+    val category: FinanceCategory,
     val amount: Double,
-    val category: IncomeCategory,
-    val date: Long = System.currentTimeMillis(),
-    val description: String?,
+    val date: Date,
+    val description: String,
+    val referenceId: Long?,
+    val referenceType: ReferenceType?,
+    val paymentMethod: PaymentMethod,
     val receiptNumber: String?,
-    val paymentMethod: PaymentMethod,
-    val createdAt: Long = System.currentTimeMillis()
+    val createdAt: Date = Date()
 )
 
-@Entity(tableName = "expenses")
-data class Expense(
-    @PrimaryKey val id: Long = 0,
-    val amount: Double,
-    val category: ExpenseCategory,
-    val date: Long = System.currentTimeMillis(),
-    val description: String?,
-    val recipientName: String?,
-    val paymentMethod: PaymentMethod,
-    val createdAt: Long = System.currentTimeMillis()
-)
-
-enum class IncomeCategory { SUBSCRIPTION, DONATION, RENT, OTHER }
-enum class ExpenseCategory { SALARY, ELECTRICITY, WATER, MAINTENANCE, WELFARE, OTHER }
+enum class TransactionType { INCOME, EXPENSE }
+enum class FinanceCategory {
+    SUBSCRIPTION, DONATION, RENT, OTHER_INCOME, SALARY, ELECTRICITY, WATER, MAINTENANCE, WELFARE, OTHER_EXPENSE
+}
+enum class ReferenceType { SUBSCRIPTION, DONATION, FAMILY, MEMBER }

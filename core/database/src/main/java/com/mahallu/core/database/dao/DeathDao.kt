@@ -8,22 +8,25 @@ import kotlinx.coroutines.flow.Flow
 interface DeathDao {
     @Query("SELECT * FROM deaths ORDER BY dateOfDeath DESC")
     fun getAllDeaths(): Flow<List<Death>>
-    
+
     @Query("SELECT * FROM deaths WHERE id = :id")
     suspend fun getDeathById(id: Long): Death?
-    
-    @Query("SELECT * FROM deaths WHERE name LIKE '%' || :query || '%' OR fatherName LIKE '%' || :query || '%'")
+
+    @Query("SELECT * FROM deaths WHERE memberId = :memberId ORDER BY dateOfDeath DESC")
+    fun getDeathsByMember(memberId: Long): Flow<List<Death>>
+
+    @Query("SELECT * FROM deaths WHERE name LIKE :query OR fatherName LIKE :query")
     fun searchDeaths(query: String): Flow<List<Death>>
-    
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(death: Death): Long
-    
+    suspend fun insertDeath(death: Death): Long
+
     @Update
-    suspend fun update(death: Death)
-    
+    suspend fun updateDeath(death: Death)
+
     @Delete
-    suspend fun delete(death: Death)
-    
-    @Query("SELECT COUNT(*) FROM deaths WHERE year(dateOfDeath/1000) = :year")
-    fun getDeathCountByYear(year: Int): Flow<Int>
+    suspend fun deleteDeath(death: Death)
+
+    @Query("SELECT COUNT(*) FROM deaths")
+    suspend fun getTotalDeathsCount(): Int
 }

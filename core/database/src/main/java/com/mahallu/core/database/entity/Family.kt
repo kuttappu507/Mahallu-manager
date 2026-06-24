@@ -2,10 +2,11 @@ package com.mahallu.core.database.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.util.Date
 
 @Entity(tableName = "families")
 data class Family(
-    @PrimaryKey val id: Long = 0,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val familyNumber: String,
     val houseName: String?,
     val houseNumber: String?,
@@ -16,12 +17,11 @@ data class Family(
     val primaryMobile: String,
     val secondaryMobile: String?,
     val status: FamilyStatus = FamilyStatus.ACTIVE,
-    val photoPath: String?,
-    val createdAt: Long = System.currentTimeMillis(),
-    val updatedAt: Long = System.currentTimeMillis(),
-    val isArchived: Boolean = false
+    val photoUri: String?,
+    val createdAt: Date = Date(),
+    val updatedAt: Date = Date()
 )
 
 enum class FamilyStatus {
-    ACTIVE, INACTIVE, SUSPENDED
+    ACTIVE, ARCHIVED, INACTIVE
 }

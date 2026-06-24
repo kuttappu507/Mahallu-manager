@@ -1,93 +1,95 @@
 package com.mahallu.core.security
 
-import android.content.Context
-import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKey
-import java.security.MessageDigest
-import javax.inject.Inject
-import javax.inject.Singleton
+import android.security.keystore.KeyGenParameterSpec
+import android.security.keystore.KeyProperties
+import java.io.File
+import java.security.KeyStore
+import java.util.zip.ZipEntry
+import java.util.zip.ZipInputStream
+import java.util.zip.ZipOutputStream
+import javax.crypto.Cipher
+import javax.crypto.KeyGenerator
+import javax.crypto.SecretKey
+import javax.crypto.spec.GCMParameterSpec
 
-@Singleton
-class SecurityManager @Inject constructor(
-    private val context: Context
-) {
-    private val masterKey by lazy {
-        MasterKey.Builder(context)
-            .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-            .build()
+object SecurityManager {
+    private const val ANDROID_KEYSTORE = "AndroidKeyStore"
+    private const val KEY_ALIAS = "mahallu_master_key"
+    private const val TRANSFORMATION = "AES/GCM/NoPadding"
+    private const val GCM_TAG_LENGTH = 128
+    private const val GCM_IV_LENGTH = 12
+
+    private val keyStore: KeyStore by lazy {
+        KeyStore.getInstance(ANDROID_KEYSTORE).apply { load(null) }
     }
 
-    private val encryptedPrefs by lazy {
-        EncryptedSharedPreferences.create(
-            context,
-            "secure_prefs",
-            masterKey,
-            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+    init {
+        if (!keyStore.containsAlias(KEY_ALIAS)) {
+            generateKey()
+        }
+    }
+
+    private fun generateKey() {
+        val keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEYSTORE)
+        val params = KeyGenParameterSpec.Builder(
+            KEY_ALIAS,
+            KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
         )
+            .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+            .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+            .setKeySize(256)
+            .build()
+        keyGenerator.init(params)
+        keyGenerator.generateKey()
+    }
+
+    private fun getSecretKey(): SecretKey {
+        return (keyStore.getEntry(KEY_ALIAS, null) as KeyStore.SecretKeyEntry).secretKey
+    }
+
+    fun encryptFile(inputFile: File, outputFile: File) {
+        val cipher = Cipher.getInstance(TRANSFORMATION)
+        cipher.init(Cipher.ENCRYPT_MODE, getSecretKey())
+        val iv = cipher.iv
+
+        ZipOutputStream(outputFile.outputStream()).use { zipOut ->
+            zipOut.putNextEntry(ZipEntry("data.enc"))
+            zipOut.write(iv)
+            
+            inputFile.inputStream().use { input ->
+                val encrypted = cipher.doFinal(input.readBytes())
+                zipOut.write(encrypted)
+            }
+            zipOut.closeEntry()
+        }
+    }
+
+    fun decryptFile(inputFile: File, outputFile: File) {
+        ZipInputStream(inputFile.inputStream()).use { zipIn ->
+            zipIn.nextEntry
+            val iv = ByteArray(GCM_IV_LENGTH)
+            zipIn.read(iv)
+            
+            val encryptedData = zipIn.readBytes()
+            
+            val cipher = Cipher.getInstance(TRANSFORMATION)
+            val spec = GCMParameterSpec(GCM_TAG_LENGTH, iv)
+            cipher.init(Cipher.DECRYPT_MODE, getSecretKey(), spec)
+            
+            val decrypted = cipher.doFinal(encryptedData)
+            outputFile.writeBytes(decrypted)
+            zipIn.closeEntry()
+        }
     }
 
     fun hashPassword(password: String): String {
-        val md = MessageDigest.getInstance("SHA-256")
-        val digest = md.digest(password.toByteArray())
-        return digest.joinToString("") { "%02x".format(it) }
+        // Simple SHA-256 hashing for demo - use bcrypt in production
+        val digest = java.security.MessageDigest.getInstance("SHA-256")
+        val hash = digest.digest(password.toByteArray())
+        return hash.joinToString("") { "%02x".format(it) }
     }
 
     fun verifyPassword(password: String, hashedPassword: String): Boolean {
         return hashPassword(password) == hashedPassword
-    }
-
-    fun saveSession(userId: Long, username: String) {
-        encryptedPrefs.edit().apply {
-            putLong("session_user_id", userId)
-            putString("session_username", username)
-            putBoolean("is_logged_in", true)
-            apply()
-        }
-    }
-
-    fun getSessionUserId(): Long? {
-        return if (encryptedPrefs.getBoolean("is_logged_in", false)) {
-            encryptedPrefs.getLong("session_user_id", -1).takeIf { it != -1L }
-        } else null
-    }
-
-    fun getSessionUsername(): String? {
-        return encryptedPrefs.getString("session_username", null)
-    }
-
-    fun isLoggedIn(): Boolean {
-        return encryptedPrefs.getBoolean("is_logged_in", false)
-    }
-
-    fun clearSession() {
-        encryptedPrefs.edit().apply {
-            clear()
-            apply()
-        }
-    }
-
-    fun saveString(key: String, value: String) {
-        encryptedPrefs.edit().putString(key, value).apply()
-    }
-
-    fun getString(key: String, defaultValue: String? = null): String? {
-        return encryptedPrefs.getString(key, defaultValue)
-    }
-
-    fun saveLong(key: String, value: Long) {
-        encryptedPrefs.edit().putLong(key, value).apply()
-    }
-
-    fun getLong(key: String, defaultValue: Long = 0L): Long {
-        return encryptedPrefs.getLong(key, defaultValue)
-    }
-
-    fun saveBoolean(key: String, value: Boolean) {
-        encryptedPrefs.edit().putBoolean(key, value).apply()
-    }
-
-    fun getBoolean(key: String, defaultValue: Boolean = false): Boolean {
-        return encryptedPrefs.getBoolean(key, defaultValue)
     }
 }
