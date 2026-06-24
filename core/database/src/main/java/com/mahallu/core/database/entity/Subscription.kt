@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import java.util.Date
 
 @Entity(
     tableName = "subscriptions",
@@ -11,21 +12,21 @@ import androidx.room.PrimaryKey
         ForeignKey(entity = Family::class, parentColumns = ["id"], childColumns = ["familyId"]),
         ForeignKey(entity = Member::class, parentColumns = ["id"], childColumns = ["memberId"])
     ],
-    indices = [Index("familyId"), Index("memberId")]
+    indices = [Index(value = ["familyId"]), Index(value = ["memberId"])]
 )
 data class Subscription(
-    @PrimaryKey val id: Long = 0,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val familyId: Long?,
     val memberId: Long?,
     val type: SubscriptionType,
     val amount: Double,
-    val date: Long = System.currentTimeMillis(),
+    val date: Date,
     val receiptNumber: String,
     val paymentMethod: PaymentMethod,
     val remarks: String?,
-    val month: Int,
+    val month: Int?,
     val year: Int,
-    val createdAt: Long = System.currentTimeMillis()
+    val createdAt: Date = Date()
 )
 
 enum class SubscriptionType { MONTHLY, YEARLY, SPECIAL }

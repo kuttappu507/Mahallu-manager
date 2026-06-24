@@ -2,18 +2,21 @@ package com.mahallu.core.database.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.util.Date
 
 @Entity(tableName = "donations")
 data class Donation(
-    @PrimaryKey val id: Long = 0,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val donorName: String,
     val amount: Double,
     val purpose: DonationPurpose,
-    val date: Long = System.currentTimeMillis(),
-    val remarks: String?,
+    val date: Date,
     val receiptNumber: String,
     val paymentMethod: PaymentMethod,
-    val createdAt: Long = System.currentTimeMillis()
+    val remarks: String?,
+    val familyId: Long?,
+    val memberId: Long?,
+    val createdAt: Date = Date()
 )
 
 enum class DonationPurpose {

@@ -2,83 +2,96 @@ package com.mahallu.core.database
 
 import androidx.room.TypeConverter
 import com.mahallu.core.database.entity.*
+import java.util.Date
 
 class Converters {
     @TypeConverter
-    fun fromUserRole(value: UserRole): String = value.name
-    
+    fun fromTimestamp(value: Long?): Date? = value?.let { Date(it) }
+
     @TypeConverter
-    fun toUserRole(value: String): UserRole = UserRole.valueOf(value)
-    
+    fun dateToTimestamp(date: Date?): Long? = date?.time
+
     @TypeConverter
-    fun fromFamilyStatus(value: FamilyStatus): String = value.name
-    
+    fun fromFamilyStatus(status: FamilyStatus): String = status.name
+
     @TypeConverter
-    fun toFamilyStatus(value: String): FamilyStatus = FamilyStatus.valueOf(value)
-    
+    fun toFamilyStatus(value: String): FamilyStatus = enumValueOf(value)
+
     @TypeConverter
-    fun fromGender(value: Gender): String = value.name
-    
+    fun fromGender(gender: Gender): String = gender.name
+
     @TypeConverter
-    fun toGender(value: String): Gender = Gender.valueOf(value)
-    
+    fun toGender(value: String): Gender = enumValueOf(value)
+
     @TypeConverter
-    fun fromMaritalStatus(value: MaritalStatus): String = value.name
-    
+    fun fromMaritalStatus(status: MaritalStatus): String = status.name
+
     @TypeConverter
-    fun toMaritalStatus(value: String): MaritalStatus = MaritalStatus.valueOf(value)
-    
+    fun toMaritalStatus(value: String): MaritalStatus = enumValueOf(value)
+
     @TypeConverter
-    fun fromSubscriptionType(value: SubscriptionType): String = value.name
-    
+    fun fromMemberStatus(status: MemberStatus): String = status.name
+
     @TypeConverter
-    fun toSubscriptionType(value: String): SubscriptionType = SubscriptionType.valueOf(value)
-    
+    fun toMemberStatus(value: String): MemberStatus = enumValueOf(value)
+
     @TypeConverter
-    fun fromPaymentMethod(value: PaymentMethod): String = value.name
-    
+    fun fromUserRole(role: UserRole): String = role.name
+
     @TypeConverter
-    fun toPaymentMethod(value: String): PaymentMethod = PaymentMethod.valueOf(value)
-    
+    fun toUserRole(value: String): UserRole = enumValueOf(value)
+
     @TypeConverter
-    fun fromDonationPurpose(value: DonationPurpose): String = value.name
-    
+    fun fromSubscriptionType(type: SubscriptionType): String = type.name
+
     @TypeConverter
-    fun toDonationPurpose(value: String): DonationPurpose = DonationPurpose.valueOf(value)
-    
+    fun toSubscriptionType(value: String): SubscriptionType = enumValueOf(value)
+
     @TypeConverter
-    fun fromIncomeCategory(value: IncomeCategory): String = value.name
-    
+    fun fromPaymentMethod(method: PaymentMethod): String = method.name
+
     @TypeConverter
-    fun toIncomeCategory(value: String): IncomeCategory = IncomeCategory.valueOf(value)
-    
+    fun toPaymentMethod(value: String): PaymentMethod = enumValueOf(value)
+
     @TypeConverter
-    fun fromExpenseCategory(value: ExpenseCategory): String = value.name
-    
+    fun fromDonationPurpose(purpose: DonationPurpose): String = purpose.name
+
     @TypeConverter
-    fun toExpenseCategory(value: String): ExpenseCategory = ExpenseCategory.valueOf(value)
-    
+    fun toDonationPurpose(value: String): DonationPurpose = enumValueOf(value)
+
     @TypeConverter
-    fun fromWelfareCategory(value: WelfareCategory): String = value.name
-    
+    fun fromTransactionType(type: TransactionType): String = type.name
+
     @TypeConverter
-    fun toWelfareCategory(value: String): WelfareCategory = WelfareCategory.valueOf(value)
-    
+    fun toTransactionType(value: String): TransactionType = enumValueOf(value)
+
     @TypeConverter
-    fun fromApprovalStatus(value: ApprovalStatus): String = value.name
-    
+    fun fromFinanceCategory(category: FinanceCategory): String = category.name
+
     @TypeConverter
-    fun toApprovalStatus(value: String): ApprovalStatus = ApprovalStatus.valueOf(value)
-    
+    fun toFinanceCategory(value: String): FinanceCategory = enumValueOf(value)
+
     @TypeConverter
-    fun fromBackupType(value: BackupType): String = value.name
-    
+    fun fromReferenceType(type: ReferenceType): String = type.name
+
     @TypeConverter
-    fun toBackupType(value: String): BackupType = BackupType.valueOf(value)
-    
+    fun toReferenceType(value: String): ReferenceType = enumValueOf(value)
+
     @TypeConverter
-    fun fromBackupStatus(value: BackupStatus): String = value.name
-    
+    fun fromWelfareType(type: WelfareType): String = type.name
+
     @TypeConverter
-    fun toBackupStatus(value: String): BackupStatus = BackupStatus.valueOf(value)
+    fun toWelfareType(value: String): WelfareType = enumValueOf(value)
+
+    @TypeConverter
+    fun fromWelfareStatus(status: WelfareStatus): String = status.name
+
+    @TypeConverter
+    fun toWelfareStatus(value: String): WelfareStatus = enumValueOf(value)
+
+    @TypeConverter
+    fun fromBackupFrequency(frequency: BackupFrequency): String = frequency.name
+
+    @TypeConverter
+    fun toBackupFrequency(value: String): BackupFrequency = enumValueOf(value)
 }

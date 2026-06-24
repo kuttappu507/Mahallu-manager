@@ -2,19 +2,21 @@ package com.mahallu.core.database.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.util.Date
 
 @Entity(tableName = "users")
 data class User(
-    @PrimaryKey val id: Long = 0,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val username: String,
     val passwordHash: String,
     val role: UserRole,
-    val fullName: String,
+    val name: String,
     val email: String?,
-    val phone: String?,
+    val mobile: String?,
     val isActive: Boolean = true,
-    val createdAt: Long = System.currentTimeMillis(),
-    val lastLoginAt: Long? = null
+    val lastLoginAt: Date? = null,
+    val createdAt: Date = Date(),
+    val updatedAt: Date = Date()
 )
 
 enum class UserRole {

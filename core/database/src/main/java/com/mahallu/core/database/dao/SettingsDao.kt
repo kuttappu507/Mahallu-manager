@@ -2,41 +2,25 @@ package com.mahallu.core.database.dao
 
 import androidx.room.*
 import com.mahallu.core.database.entity.Settings
-import com.mahallu.core.database.entity.BackupLog
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface SettingsDao {
-    @Query("SELECT * FROM settings WHERE id = 0")
+    @Query("SELECT * FROM settings WHERE id = 1")
     fun getSettings(): Flow<Settings?>
-    
-    @Query("SELECT * FROM settings WHERE id = 0")
-    suspend fun getSettingsOnce(): Settings?
-    
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(settings: Settings): Long
-    
-    @Update
-    suspend fun update(settings: Settings)
-}
 
-@Dao
-interface BackupDao {
-    @Query("SELECT * FROM backup_logs ORDER BY createdAt DESC LIMIT 30")
-    fun getBackupLogs(): Flow<List<BackupLog>>
-    
-    @Query("SELECT * FROM backup_logs WHERE id = :id")
-    suspend fun getBackupLogById(id: Long): BackupLog?
-    
+    @Query("SELECT * FROM settings WHERE id = 1")
+    suspend fun getSettingsSync(): Settings?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(log: BackupLog): Long
-    
+    suspend fun insertSettings(settings: Settings)
+
     @Update
-    suspend fun update(log: BackupLog)
-    
-    @Delete
-    suspend fun delete(log: BackupLog)
-    
-    @Query("DELETE FROM backup_logs WHERE status = 'COMPLETED' ORDER BY createdAt ASC LIMIT (SELECT COUNT(*) - 30 FROM backup_logs WHERE status = 'COMPLETED')")
-    suspend fun pruneOldBackups()
+    suspend fun updateSettings(settings: Settings)
+
+    @Query("UPDATE settings SET mahalluName = :name, address = :address, phone = :phone, email = :email, logoUri = :logoUri, sealUri = :sealUri, updatedAt = :updatedAt WHERE id = 1")
+    suspend fun updateMahalluInfo(name: String, address: String?, phone: String?, email: String?, logoUri: String?, sealUri: String?, updatedAt: Long = System.currentTimeMillis())
+
+    @Query("UPDATE settings SET lastBackupDate = :lastBackupDate WHERE id = 1")
+    suspend fun updateLastBackupDate(lastBackupDate: Long)
 }
