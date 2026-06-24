@@ -1,54 +1,48 @@
 ```
-# Kotlin/Android build artifacts
+# Kotlin/Java build artifacts
 *.class
-*.dex
 *.jar
+*.war
+*.ear
 *.aar
-
-# Build directories
-build/
-.gradle/
-.target/
-
-# IDE specific
-.idea/
-*.iml
-*.ipr
-*.iws
-
-# Local configuration
-local.properties
-.project
-.settings/
 
 # Gradle
 .gradle/
-!gradle.properties
+build/
+!gradle-wrapper.jar
 
-# Android
-*.apk
-*.ap_
-bin/
-gen/
-out/
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Eclipse
+.project
+.classpath
+.settings/
+
+# Maven
+target/
 
 # Temporary files
 *.tmp
 *.temp
+*.bak
+
+# Logs
 *.log
 
-# Environment
+# Environment variables
 .env
 .env.local
 *.env.*
 
-# Coverage
+# Coverage reports
 coverage/
-*.gcov
-*.lcov
-*.profdata
+*.coverage
+htmlcov/
 
-# OS generated files
-.DS_Store
-Thumbs.db
+# Local configuration
+local.properties
 ```
