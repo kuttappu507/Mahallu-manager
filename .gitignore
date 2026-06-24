@@ -1,58 +1,42 @@
 ```
-# Android build artifacts
-*.apk
-*.aar
-*.dex
-*.so
-
-# Android build directories
-build/
-.gradle/
-captures/
-.externalNativeBuild/
-.cxx/
-
 # Gradle
 .gradle/
-!gradle/wrapper/gradle-wrapper.properties
+build/
+!gradle-wrapper.jar
 
-# Local configuration file (sdk path, etc)
-local.properties
+# Kotlin
+*.kotlin_metadata
+*.class
+*.jar
+*.war
+*.ear
 
-# Log Files
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+
+# Environment
+.env
+.env.local
+.env.*
+
+# Logs
 *.log
 
-# Android Studio Navigation editor temp files
-.navigation/
+# Temp files
+*.tmp
+*.temp
+*~
 
-# Android Studio captures folder
-captures/
-
-# IntelliJ IDEA artifacts
-*.iml
-*.iws
-.idea/
-
-# Generated files
-gen/
-out/
-
-# Debug symbols
-.map[linenumber]
-
-# Keystore files
-*.keystore
-*.jks
-
-# Proguard generated files
-proguard/
-
-# APK Analyzer generated files
-apkanalyzer-report/
-
-# Android coverage reports
+# Coverage
+.coverage
+htmlcov/
 coverage/
 
-# Firebase performance plugin
-*.fir
+# System
+.DS_Store
+Thumbs.db
 ```
