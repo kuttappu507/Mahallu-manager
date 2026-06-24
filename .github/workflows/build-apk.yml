@@ -22,6 +22,14 @@ jobs:
         distribution: 'temurin'
         cache: gradle
 
+    - name: Download gradle wrapper jar
+      run: |
+        cd gradle/wrapper
+        curl -L "https://services.gradle.org/distributions/gradle-8.2-bin.zip" -o gradle.zip
+        unzip -j gradle.zip "gradle-8.2/lib/gradle-wrapper.jar" -d .
+        rm gradle.zip
+        ls -la
+
     - name: Make gradlew executable
       run: chmod +x ./gradlew
 
