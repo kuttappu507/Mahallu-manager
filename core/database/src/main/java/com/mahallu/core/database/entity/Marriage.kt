@@ -19,5 +19,6 @@ data class Marriage(
     val brideFamilyId: Long?,
     val groomFamilyId: Long?,
     val remarks: String?,
+    val certificateGenerated: Boolean = false,
     val createdAt: Date = Date()
 )

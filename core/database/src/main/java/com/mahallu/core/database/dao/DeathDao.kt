@@ -12,11 +12,14 @@ interface DeathDao {
     @Query("SELECT * FROM deaths WHERE id = :id")
     suspend fun getDeathById(id: Long): Death?
 
+    @Query("SELECT * FROM deaths WHERE familyId = :familyId ORDER BY dateOfDeath DESC")
+    fun getDeathsByFamily(familyId: Long): Flow<List<Death>>
+
     @Query("SELECT * FROM deaths WHERE memberId = :memberId ORDER BY dateOfDeath DESC")
     fun getDeathsByMember(memberId: Long): Flow<List<Death>>
 
-    @Query("SELECT * FROM deaths WHERE name LIKE :query OR fatherName LIKE :query")
-    fun searchDeaths(query: String): Flow<List<Death>>
+    @Query("SELECT * FROM deaths WHERE certificateGenerated = 0 ORDER BY dateOfDeath DESC")
+    fun getDeathsWithoutCertificate(): Flow<List<Death>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertDeath(death: Death): Long
@@ -27,6 +30,9 @@ interface DeathDao {
     @Delete
     suspend fun deleteDeath(death: Death)
 
+    @Query("UPDATE deaths SET certificateGenerated = 1 WHERE id = :id")
+    suspend fun markCertificateGenerated(id: Long)
+
     @Query("SELECT COUNT(*) FROM deaths")
-    suspend fun getTotalDeathsCount(): Int
+    suspend fun countDeaths(): Int
 }

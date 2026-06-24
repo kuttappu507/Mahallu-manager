@@ -1,14 +1,13 @@
 package com.mahallu.core.database
 
-import android.content.Context
 import androidx.room.Database
-import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.mahallu.core.database.dao.*
 import com.mahallu.core.database.entity.*
 
 @Database(
+    version = 1,
     entities = [
         Family::class,
         Member::class,
@@ -21,7 +20,6 @@ import com.mahallu.core.database.entity.*
         WelfareRequest::class,
         Settings::class
     ],
-    version = 1,
     exportSchema = true
 )
 @TypeConverters(Converters::class)
@@ -38,20 +36,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun settingsDao(): SettingsDao
 
     companion object {
-        @Volatile private var INSTANCE: AppDatabase? = null
-
-        fun getDatabase(context: Context): AppDatabase {
-            return INSTANCE ?: synchronized(this) {
-                val instance = Room.databaseBuilder(
-                    context.applicationContext,
-                    AppDatabase::class.java,
-                    "mahallu_database"
-                )
-                .fallbackToDestructiveMigration()
-                .build()
-                INSTANCE = instance
-                instance
-            }
-        }
+        const val DATABASE_NAME = "mahallu_database"
     }
 }

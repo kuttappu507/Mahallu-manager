@@ -16,7 +16,7 @@ import java.util.Date
             onDelete = ForeignKey.CASCADE
         )
     ],
-    indices = [Index(value = ["familyId"])]
+    indices = [Index("familyId")]
 )
 data class Member(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
@@ -35,12 +35,13 @@ data class Member(
     val address: String?,
     val emergencyContact: String?,
     val photoUri: String?,
-    val isPrimary: Boolean = false,
     val status: MemberStatus = MemberStatus.ACTIVE,
     val createdAt: Date = Date(),
     val updatedAt: Date = Date()
 )
 
-enum class Gender { MALE, FEMALE }
+enum class Gender { MALE, FEMALE, OTHER }
+
 enum class MaritalStatus { SINGLE, MARRIED, DIVORCED, WIDOWED }
+
 enum class MemberStatus { ACTIVE, INACTIVE, DECEASED }

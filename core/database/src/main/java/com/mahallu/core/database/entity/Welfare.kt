@@ -9,27 +9,31 @@ import java.util.Date
 @Entity(
     tableName = "welfare",
     foreignKeys = [
-        ForeignKey(entity = Family::class, parentColumns = ["id"], childColumns = ["familyId"]),
-        ForeignKey(entity = Member::class, parentColumns = ["id"], childColumns = ["memberId"])
+        ForeignKey(entity = Family::class, parentColumns = ["id"], childColumns = ["familyId"], onDelete = ForeignKey.CASCADE),
+        ForeignKey(entity = Member::class, parentColumns = ["id"], childColumns = ["memberId"], onDelete = ForeignKey.SET_NULL)
     ],
-    indices = [Index(value = ["familyId"]), Index(value = ["memberId"])]
+    indices = [Index("familyId"), Index("memberId")]
 )
 data class WelfareRequest(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    val familyId: Long?,
     val memberId: Long?,
+    val familyId: Long,
     val applicantName: String,
-    val type: WelfareType,
+    val category: WelfareCategory,
     val amount: Double,
     val reason: String,
     val status: WelfareStatus = WelfareStatus.PENDING,
-    val requestedDate: Date = Date(),
-    val approvedDate: Date?,
-    val disbursedDate: Date?,
     val approvedBy: Long?,
+    val approvedAt: Date?,
+    val disbursedAt: Date?,
     val remarks: String?,
     val createdAt: Date = Date()
 )
 
-enum class WelfareType { MEDICAL_AID, EDUCATION_AID, MARRIAGE_ASSISTANCE, FINANCIAL_ASSISTANCE, OTHER }
-enum class WelfareStatus { PENDING, APPROVED, REJECTED, DISBURSED }
+enum class WelfareCategory {
+    MEDICAL_AID, EDUCATION_AID, MARRIAGE_ASSISTANCE, FINANCIAL_ASSISTANCE, OTHER
+}
+
+enum class WelfareStatus {
+    PENDING, APPROVED, REJECTED, DISBURSED, CANCELLED
+}

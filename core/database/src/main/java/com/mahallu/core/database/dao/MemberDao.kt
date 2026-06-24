@@ -1,5 +1,6 @@
 package com.mahallu.core.database.dao
 
+import androidx.paging.PagingSource
 import androidx.room.*
 import com.mahallu.core.database.entity.Gender
 import com.mahallu.core.database.entity.Member
@@ -8,10 +9,10 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MemberDao {
-    @Query("SELECT * FROM members ORDER BY name ASC")
-    fun getAllMembers(): Flow<List<Member>>
+    @Query("SELECT * FROM members WHERE status = :status ORDER BY name")
+    fun getAllMembers(status: MemberStatus = MemberStatus.ACTIVE): Flow<List<Member>>
 
-    @Query("SELECT * FROM members WHERE familyId = :familyId ORDER BY name ASC")
+    @Query("SELECT * FROM members WHERE familyId = :familyId ORDER BY name")
     fun getMembersByFamily(familyId: Long): Flow<List<Member>>
 
     @Query("SELECT * FROM members WHERE id = :id")
@@ -20,11 +21,8 @@ interface MemberDao {
     @Query("SELECT * FROM members WHERE name LIKE :query OR mobile LIKE :query OR email LIKE :query")
     fun searchMembers(query: String): Flow<List<Member>>
 
-    @Query("SELECT * FROM members WHERE gender = :gender ORDER BY name ASC")
-    fun getMembersByGender(gender: Gender): Flow<List<Member>>
-
-    @Query("SELECT * FROM members WHERE status = :status ORDER BY name ASC")
-    fun getMembersByStatus(status: MemberStatus): Flow<List<Member>>
+    @Query("SELECT * FROM members WHERE gender = :gender AND status = :status")
+    fun getMembersByGender(gender: Gender, status: MemberStatus = MemberStatus.ACTIVE): Flow<List<Member>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMember(member: Member): Long
@@ -35,15 +33,15 @@ interface MemberDao {
     @Delete
     suspend fun deleteMember(member: Member)
 
-    @Query("SELECT COUNT(*) FROM members")
-    suspend fun getTotalMembersCount(): Int
-
-    @Query("SELECT COUNT(*) FROM members WHERE familyId = :familyId")
-    suspend fun getMembersCountByFamily(familyId: Long): Int
+    @Query("UPDATE members SET status = :status, updatedAt = :updatedAt WHERE id = :id")
+    suspend fun updateMemberStatus(id: Long, status: MemberStatus, updatedAt: java.util.Date)
 
     @Query("SELECT COUNT(*) FROM members WHERE status = :status")
-    suspend fun getMembersCountByStatus(status: MemberStatus): Int
+    suspend fun countMembersByStatus(status: MemberStatus = MemberStatus.ACTIVE): Int
 
-    @Query("SELECT * FROM members LIMIT :limit OFFSET :offset")
-    suspend fun getMembersPaged(limit: Int, offset: Int): List<Member>
+    @Query("SELECT COUNT(*) FROM members WHERE familyId = :familyId")
+    suspend fun countMembersByFamily(familyId: Long): Int
+
+    @Query("SELECT * FROM members ORDER BY createdAt DESC LIMIT 10")
+    suspend fun getRecentMembers(): List<Member>
 }
