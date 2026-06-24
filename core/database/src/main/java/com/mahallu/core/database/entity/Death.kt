@@ -8,11 +8,16 @@ import java.util.Date
 
 @Entity(
     tableName = "deaths",
-    foreignKeys = [ForeignKey(entity = Member::class, parentColumns = ["id"], childColumns = ["memberId"])]
+    foreignKeys = [
+        ForeignKey(entity = Family::class, parentColumns = ["id"], childColumns = ["familyId"], onDelete = ForeignKey.SET_NULL),
+        ForeignKey(entity = Member::class, parentColumns = ["id"], childColumns = ["memberId"], onDelete = ForeignKey.SET_NULL)
+    ],
+    indices = [Index("familyId"), Index("memberId")]
 )
 data class Death(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val memberId: Long?,
+    val familyId: Long?,
     val name: String,
     val fatherName: String,
     val dateOfDeath: Date,
@@ -20,6 +25,6 @@ data class Death(
     val causeOfDeath: String?,
     val age: Int?,
     val remarks: String?,
-    val familyId: Long?,
+    val certificateGenerated: Boolean = false,
     val createdAt: Date = Date()
 )

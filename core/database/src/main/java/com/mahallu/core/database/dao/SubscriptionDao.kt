@@ -1,6 +1,7 @@
 package com.mahallu.core.database.dao
 
 import androidx.room.*
+import com.mahallu.core.database.entity.PaymentStatus
 import com.mahallu.core.database.entity.Subscription
 import com.mahallu.core.database.entity.SubscriptionType
 import kotlinx.coroutines.flow.Flow
@@ -16,14 +17,17 @@ interface SubscriptionDao {
     @Query("SELECT * FROM subscriptions WHERE memberId = :memberId ORDER BY date DESC")
     fun getSubscriptionsByMember(memberId: Long): Flow<List<Subscription>>
 
-    @Query("SELECT * FROM subscriptions WHERE year = :year AND month = :month")
-    fun getSubscriptionsByMonth(year: Int, month: Int): Flow<List<Subscription>>
+    @Query("SELECT * FROM subscriptions WHERE id = :id")
+    suspend fun getSubscriptionById(id: Long): Subscription?
 
-    @Query("SELECT * FROM subscriptions WHERE year = :year")
-    fun getSubscriptionsByYear(year: Int): Flow<List<Subscription>>
+    @Query("SELECT * FROM subscriptions WHERE status = :status ORDER BY date DESC")
+    fun getSubscriptionsByStatus(status: PaymentStatus): Flow<List<Subscription>>
 
-    @Query("SELECT * FROM subscriptions WHERE type = :type ORDER BY date DESC")
+    @Query("SELECT * FROM subscriptions WHERE subscriptionType = :type ORDER BY date DESC")
     fun getSubscriptionsByType(type: SubscriptionType): Flow<List<Subscription>>
+
+    @Query("SELECT SUM(amount) FROM subscriptions WHERE status = 'PAID' AND date BETWEEN :startDate AND :endDate")
+    suspend fun getTotalCollection(startDate: Long, endDate: Long): Double?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSubscription(subscription: Subscription): Long
@@ -34,12 +38,6 @@ interface SubscriptionDao {
     @Delete
     suspend fun deleteSubscription(subscription: Subscription)
 
-    @Query("SELECT SUM(amount) FROM subscriptions WHERE year = :year AND month = :month")
-    suspend fun getTotalCollectionByMonth(year: Int, month: Int): Double?
-
-    @Query("SELECT SUM(amount) FROM subscriptions WHERE year = :year")
-    suspend fun getTotalCollectionByYear(year: Int): Double?
-
-    @Query("SELECT COUNT(*) FROM subscriptions WHERE year = :year AND month = :month")
-    suspend fun getCountByMonth(year: Int, month: Int): Int
+    @Query("UPDATE subscriptions SET status = :status WHERE id = :id")
+    suspend fun updateSubscriptionStatus(id: Long, status: PaymentStatus)
 }

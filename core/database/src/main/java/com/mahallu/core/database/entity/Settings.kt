@@ -12,12 +12,9 @@ data class Settings(
     val email: String?,
     val logoUri: String?,
     val sealUri: String?,
+    val website: String?,
     val subscriptionAmount: Double = 0.0,
-    val currencySymbol: String = "₹",
-    val backupEnabled: Boolean = true,
-    val backupFrequency: BackupFrequency = BackupFrequency.DAILY,
-    val lastBackupDate: Long? = null,
+    val yearlySubscriptionAmount: Double = 0.0,
+    val createdAt: Long = System.currentTimeMillis(),
     val updatedAt: Long = System.currentTimeMillis()
 )
-
-enum class BackupFrequency { DAILY, WEEKLY, MONTHLY }

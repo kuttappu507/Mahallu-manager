@@ -12,7 +12,7 @@ data class User(
     val role: UserRole,
     val name: String,
     val email: String?,
-    val mobile: String?,
+    val phone: String?,
     val isActive: Boolean = true,
     val lastLoginAt: Date? = null,
     val createdAt: Date = Date(),

@@ -15,83 +15,77 @@ class Converters {
     fun fromFamilyStatus(status: FamilyStatus): String = status.name
 
     @TypeConverter
-    fun toFamilyStatus(value: String): FamilyStatus = enumValueOf(value)
-
-    @TypeConverter
-    fun fromGender(gender: Gender): String = gender.name
-
-    @TypeConverter
-    fun toGender(value: String): Gender = enumValueOf(value)
-
-    @TypeConverter
-    fun fromMaritalStatus(status: MaritalStatus): String = status.name
-
-    @TypeConverter
-    fun toMaritalStatus(value: String): MaritalStatus = enumValueOf(value)
+    fun toFamilyStatus(value: String): FamilyStatus = FamilyStatus.valueOf(value)
 
     @TypeConverter
     fun fromMemberStatus(status: MemberStatus): String = status.name
 
     @TypeConverter
-    fun toMemberStatus(value: String): MemberStatus = enumValueOf(value)
+    fun toMemberStatus(value: String): MemberStatus = MemberStatus.valueOf(value)
+
+    @TypeConverter
+    fun fromGender(gender: Gender): String = gender.name
+
+    @TypeConverter
+    fun toGender(value: String): Gender = Gender.valueOf(value)
+
+    @TypeConverter
+    fun fromMaritalStatus(status: MaritalStatus): String = status.name
+
+    @TypeConverter
+    fun toMaritalStatus(value: String): MaritalStatus = MaritalStatus.valueOf(value)
 
     @TypeConverter
     fun fromUserRole(role: UserRole): String = role.name
 
     @TypeConverter
-    fun toUserRole(value: String): UserRole = enumValueOf(value)
+    fun toUserRole(value: String): UserRole = UserRole.valueOf(value)
 
     @TypeConverter
     fun fromSubscriptionType(type: SubscriptionType): String = type.name
 
     @TypeConverter
-    fun toSubscriptionType(value: String): SubscriptionType = enumValueOf(value)
+    fun toSubscriptionType(value: String): SubscriptionType = SubscriptionType.valueOf(value)
 
     @TypeConverter
     fun fromPaymentMethod(method: PaymentMethod): String = method.name
 
     @TypeConverter
-    fun toPaymentMethod(value: String): PaymentMethod = enumValueOf(value)
+    fun toPaymentMethod(value: String): PaymentMethod = PaymentMethod.valueOf(value)
+
+    @TypeConverter
+    fun fromPaymentStatus(status: PaymentStatus): String = status.name
+
+    @TypeConverter
+    fun toPaymentStatus(value: String): PaymentStatus = PaymentStatus.valueOf(value)
 
     @TypeConverter
     fun fromDonationPurpose(purpose: DonationPurpose): String = purpose.name
 
     @TypeConverter
-    fun toDonationPurpose(value: String): DonationPurpose = enumValueOf(value)
+    fun toDonationPurpose(value: String): DonationPurpose = DonationPurpose.valueOf(value)
 
     @TypeConverter
-    fun fromTransactionType(type: TransactionType): String = type.name
+    fun fromFinanceType(type: FinanceType): String = type.name
 
     @TypeConverter
-    fun toTransactionType(value: String): TransactionType = enumValueOf(value)
+    fun toFinanceType(value: String): FinanceType = FinanceType.valueOf(value)
 
     @TypeConverter
     fun fromFinanceCategory(category: FinanceCategory): String = category.name
 
     @TypeConverter
-    fun toFinanceCategory(value: String): FinanceCategory = enumValueOf(value)
+    fun toFinanceCategory(value: String): FinanceCategory = FinanceCategory.valueOf(value)
 
     @TypeConverter
-    fun fromReferenceType(type: ReferenceType): String = type.name
+    fun fromWelfareCategory(category: WelfareCategory): String = category.name
 
     @TypeConverter
-    fun toReferenceType(value: String): ReferenceType = enumValueOf(value)
-
-    @TypeConverter
-    fun fromWelfareType(type: WelfareType): String = type.name
-
-    @TypeConverter
-    fun toWelfareType(value: String): WelfareType = enumValueOf(value)
+    fun toWelfareCategory(value: String): WelfareCategory = WelfareCategory.valueOf(value)
 
     @TypeConverter
     fun fromWelfareStatus(status: WelfareStatus): String = status.name
 
     @TypeConverter
-    fun toWelfareStatus(value: String): WelfareStatus = enumValueOf(value)
-
-    @TypeConverter
-    fun fromBackupFrequency(frequency: BackupFrequency): String = frequency.name
-
-    @TypeConverter
-    fun toBackupFrequency(value: String): BackupFrequency = enumValueOf(value)
+    fun toWelfareStatus(value: String): WelfareStatus = WelfareStatus.valueOf(value)
 }
