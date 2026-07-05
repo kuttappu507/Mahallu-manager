@@ -78,8 +78,9 @@ fun LoginScreen(
             }
 
             if (uiState is LoginUiState.Error) {
+                val errorState = uiState as LoginUiState.Error
                 Text(
-                    text = (uiState as LoginUiState.Error).message,
+                    text = errorState.message,
                     color = MaterialTheme.colorScheme.error
                 )
             }

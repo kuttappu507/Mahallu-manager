@@ -66,7 +66,9 @@ fun MahalluTheme(
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
-            val window = (view.context as Activity).window
+            val context = view.context
+            require(context is Activity) { "Expected Activity context but got ${context.javaClass}" }
+            val window = context.window
             window.statusBarColor = colorScheme.background.toArgb()
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
         }

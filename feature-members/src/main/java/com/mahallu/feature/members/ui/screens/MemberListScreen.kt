@@ -20,8 +20,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.mahallu.core.ui.theme.MahalluTheme
-import com.mahallu.feature.members.ui.viewmodel.MemberViewModel
 import com.mahallu.domain.model.MemberWithFamily
+import com.mahallu.feature.members.ui.viewmodel.MemberUiState
+import com.mahallu.feature.members.ui.viewmodel.MemberViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -90,7 +91,7 @@ fun MemberListScreen(
                 }
             }
         ) { paddingValues ->
-            when (uiState) {
+            when (val currentState = uiState) {
                 is MemberUiState.Loading -> {
                     Box(
                         modifier = Modifier
@@ -102,7 +103,6 @@ fun MemberListScreen(
                     }
                 }
                 is MemberUiState.Success -> {
-                    val members = (uiState as MemberUiState.Success).members
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxSize()
@@ -110,13 +110,13 @@ fun MemberListScreen(
                         contentPadding = PaddingValues(16.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        items(members, key = { it.member.id }) { memberWithFamily ->
+                        items(currentState.members, key = { it.member.id }) { memberWithFamily ->
                             MemberCard(
                                 memberWithFamily = memberWithFamily,
                                 onClick = { onMemberClick(memberWithFamily.member.id) }
                             )
                         }
-                        if (members.isEmpty()) {
+                        if (currentState.members.isEmpty()) {
                             item {
                                 EmptyStateView(
                                     title = "No Members Found",
@@ -134,7 +134,7 @@ fun MemberListScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = (uiState as MemberUiState.Error).message,
+                            text = currentState.message,
                             color = MahalluTheme.colors.error
                         )
                     }

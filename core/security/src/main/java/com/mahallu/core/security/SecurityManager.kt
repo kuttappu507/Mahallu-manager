@@ -54,7 +54,9 @@ class SecurityManager {
     }
 
     private fun getSecretKey(): SecretKey {
-        return keyStore.getEntry(keyAlias, null) as KeyStore.SecretKeyEntry
+        val entry = keyStore.getEntry(keyAlias, null)
+        require(entry is KeyStore.SecretKeyEntry) { "Expected SecretKeyEntry but got ${entry?.javaClass}" }
+        return entry.secretKey
     }
 
     fun encryptFile(inputFile: File, outputFile: File) {
