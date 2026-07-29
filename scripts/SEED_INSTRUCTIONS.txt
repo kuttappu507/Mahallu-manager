@@ -1,0 +1,16 @@
+Mahallu Manager - Database Seeder
+==================================
+
+The Mahallu Manager APK has a small bug - its seed data (default admin
+user) doesn't run on first launch. This Python script seeds the database
+directly via adb.
+
+Quick start:
+  1. Install MahalluManager-debug.apk on your phone
+  2. Enable USB debugging (Settings > About > Build number 7x > Developer options)
+  3. Connect phone via USB
+  4. Run: python3 seed_mahallu.py
+  5. Open Mahallu Manager and log in with: admin / admin123
+
+Full instructions are in the bundled SEED_INSTRUCTIONS.txt in the
+MahalluManager-Seed-Package.zip.
