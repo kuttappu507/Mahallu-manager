@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<full-backup-content>
+    <exclude domain="sharedpref" path="mahallu_secure_prefs.xml" />
+    <exclude domain="sharedpref" path="mahallu_drive_prefs.xml" />
+    <exclude domain="database" path="mahallu_db" />
+</full-backup-content>
