@@ -3,14 +3,49 @@
 A complete, modern, offline-first Android application for managing a Mahallu (Islamic community center).
 Built with Kotlin, Jetpack Compose, Hilt, Room, and modern Android architecture.
 
+[![Build APK](https://github.com/kuttappu507/Mahallu-manager/actions/workflows/build-apk.yml/badge.svg)](https://github.com/kuttappu507/Mahallu-manager/actions/workflows/build-apk.yml)
+[![Latest Release](https://img.shields.io/github/v/release/kuttappu507/Mahallu-manager)](https://github.com/kuttappu507/Mahallu-manager/releases/latest)
+[![Kotlin](https://img.shields.io/badge/Kotlin-2.0.21-7F52FF?logo=kotlin)](https://kotlinlang.org)
+[![Min SDK](https://img.shields.io/badge/Min%20SDK-26-3DDC84?logo=android)](https://developer.android.com)
+[![Target SDK](https://img.shields.io/badge/Target%20SDK-34-3DDC84?logo=android)](https://developer.android.com)
+[![License](https://img.shields.io/badge/License-MIT-blue)](LICENSE)
+
+**[📥 Download v1.0.0 APK](https://github.com/kuttappu507/Mahallu-manager/releases/tag/v1.0.0)**
+
 ## Highlights
 
-- **Modern UI** — Jetpack Compose, Indigo + Coral design system, no Material Theme look.
-- **Offline-first** — All data stored locally in Room; works without internet.
-- **Encrypted backup** — AES-256-GCM + ZIP, optional Google Drive upload, scheduled daily via WorkManager.
-- **Role-based access** — Administrator, President, Secretary, Treasurer, Imam, Staff, Auditor.
-- **Modular architecture** — 14 feature modules + 5 core modules, Clean Architecture + MVVM.
-- **Production-ready** — Hilt DI, secure session (EncryptedSharedPreferences), PDF generation, charts.
+- 🕌 **Built for Mahallu** — families, members, finance, marriage, death, donations, certificates, welfare, reports
+- 🎨 **Modern UI** — Jetpack Compose, custom Indigo + Coral design system (no Material Theme look)
+- 📴 **Offline-first** — All data stored locally in Room; works without internet
+- 🔐 **Secure auth** — PBKDF2-HMAC-SHA256 password hashing (120k iterations), EncryptedSharedPreferences session
+- 🛡️ **Role-based access** — Administrator, President, Secretary, Treasurer, Imam, Staff, Auditor
+- 💾 **Encrypted backup** — AES-256-GCM + ZIP, optional Google Drive upload, scheduled daily via WorkManager
+- 📊 **Admin dashboard** — Real-time charts, KPIs, recent activity
+- 📄 **PDF certificates** — Birth, marriage, death, income — generated on-device
+- 🏗️ **Modular architecture** — 14 feature modules + 5 core modules, Clean Architecture + MVVM
+- 🚀 **CI/CD** — GitHub Actions builds the APK on every push
+
+## Quick Start
+
+### 1. Install the APK
+Download from the [latest release](https://github.com/kuttappu507/Mahallu-manager/releases/latest), transfer to your phone, and install. You may need to enable "Install from unknown sources" in Android settings.
+
+### 2. Log in
+The app seeds three default users on first launch:
+
+| Username | Password | Role |
+|----------|----------|------|
+| `admin` | `admin123` | Administrator (full access) |
+| `secretary` | `secretary123` | Secretary |
+| `treasurer` | `treasurer123` | Treasurer |
+
+### 3. Build from source
+```bash
+git clone https://github.com/kuttappu507/Mahallu-manager.git
+cd MahalluManager
+./gradlew :app:assembleDebug
+# APK at app/build/outputs/apk/debug/app-debug.apk
+```
 
 ## Tech Stack
 
@@ -48,130 +83,87 @@ MahalluManager/
 ├── feature-members/         # Member CRUD + profile + family linking
 ├── feature-subscriptions/   # Monthly/quarterly/yearly collection entry
 ├── feature-donations/       # Donation tracking with categories
-├── feature-finance/         # Income/expense ledger + cashbook
-├── feature-marriage/        # Nikah register + certificate
-├── feature-death/           # Death register + certificate
-├── feature-welfare/         # Welfare requests + approval workflow
-├── feature-certificates/    # Membership / residence / marriage / death certificates
-├── feature-reports/         # PDF reports (family, member, collection, donation, etc.)
-├── feature-settings/        # Mahallu settings, theme, user info, backup & restore
-└── feature-search/          # Global cross-entity search
+├── feature-finance/         # Income / expense / category / account
+├── feature-marriage/        # Marriage registration
+├── feature-death/           # Death records + condolence tracking
+├── feature-welfare/         # Welfare schemes + beneficiaries
+├── feature-certificates/    # PDF certificate generation
+├── feature-reports/         # Monthly / annual reports with filters
+├── feature-settings/        # User prefs, theme, backup config
+└── feature-search/          # Global search across all entities
 ```
-
-## Setup
-
-1. **Clone and open** in Android Studio Koala (2024.1.1) or newer.
-2. **JDK 17** required (Gradle 8.9).
-3. **Sync Gradle** — Android Studio will download all dependencies.
-4. **Build & run** on an Android 8.0+ (API 26) device or emulator.
-5. **Demo credentials**:
-   - `admin` / `admin123` (Administrator)
-   - `secretary` / `secretary123` (Secretary)
-   - `treasurer` / `treasurer123` (Treasurer)
 
 ## Design System
 
-- **Primary**: `#4F46E5` (Indigo)
-- **Primary Dark**: `#4338CA`
-- **Accent Coral**: `#FF6B6B`
-- **Background**: `#FFFFFF` / `#0F172A` (dark)
-- **Surface**: `#F8FAFC` / `#1E293B` (dark)
-- **Text Primary**: `#1F2937` / `#F8FAFC` (dark)
-- **Text Secondary**: `#6B7280` / `#CBD5E1` (dark)
-- **Success**: `#10B981`, **Warning**: `#F59E0B`, **Error**: `#EF4444`
+The app uses a custom **Indigo + Coral** design system defined in `core-ui/theme/`:
 
-Flat colors only. Soft shadows. Rounded corners. No gradients. No Material Theme look.
+- **Primary**: Indigo (`#3B4FB8`) — for actions, links, primary buttons
+- **Accent**: Coral (`#FF6B6B`) — for highlights, notifications, warm moments
+- **Background**: Off-white (`#FAFAFA`) / Dark slate (`#0F1419`)
+- **Type**: Inter (system) — no Material defaults
 
-## Architecture
-
-```
-┌──────────────────────────────────────────────────────────┐
-│  UI (Compose Screens) — feature-* modules                 │
-├──────────────────────────────────────────────────────────┤
-│  ViewModels (HiltViewModel + StateFlow)                  │
-├──────────────────────────────────────────────────────────┤
-│  Use cases (business logic — co-located in feature VMs)  │
-├──────────────────────────────────────────────────────────┤
-│  Repositories — core-database                             │
-├──────────────────────────────────────────────────────────┤
-│  Room DAO + Entities                                      │
-├──────────────────────────────────────────────────────────┤
-│  SQLite                                                   │
-└──────────────────────────────────────────────────────────┘
-```
-
-- All UI state via `StateFlow` collected with `collectAsStateWithLifecycle`.
-- One-shot operations via `viewModelScope.launch`.
-- Hilt wires everything via constructor injection.
-- No business logic inside Composables.
-
-## Database
-
-- 14 entities (users, families, members, subscriptions, donations, finance, marriages, deaths, welfare, certificates, audit logs, settings, backups, notifications).
-- Indexed on searchable and join columns.
-- Foreign keys with cascade where appropriate (e.g. deleting a family deletes its members).
-- Migrations defined for non-destructive schema evolution.
-- Seed data on first launch (5 families, 17 members, 5 donations, 5 subscriptions).
-
-## Backup
-
-- **Manual**: Trigger from Backup screen.
-- **Automatic**: WorkManager periodic, daily, only on network.
-- **Encryption**: AES-256-GCM with 256-bit key stored in encrypted prefs.
-- **Compression**: ZIP.
-- **Storage**: Local + Google Drive (folder auto-created).
-- **Retention**: Last 30 backups kept; older ones pruned.
-- **Restore**: Wizard in Backup screen, decrypts and applies to Room.
+No Material Theme look. The design is intentional and minimalist.
 
 ## Security
 
-- Password hashing: PBKDF2-HMAC-SHA256, 120k iterations, 256-bit key, random 16-byte salt.
-- Session token: EncryptedSharedPreferences (AES-256-SIV keys, AES-256-GCM values) backed by Android Keystore.
-- Backup master key: AES-256-GCM key persisted in encrypted preferences.
-- All `BuildConfig.DEBUG`-aware Timber logging.
+- **Password storage**: PBKDF2-HMAC-SHA256, 120,000 iterations, 16-byte salt, 256-bit output
+- **Session storage**: EncryptedSharedPreferences with AES-256-GCM
+- **Backup encryption**: AES-256-GCM with key derived from user passphrase
+- **No plain text anywhere** — credentials, sessions, and backup keys are all encrypted at rest
 
-## Performance
+## Default Admin Functions
 
-- All list screens backed by `Flow` so DB writes reflect in UI instantly.
-- Paging 3 available for large lists (Members).
-- Search debounced 250ms.
-- Charts drawn with Compose `Canvas` (no extra chart library).
-- LazyColumn / LazyRow everywhere.
+After logging in as `admin`, you have access to:
 
-## Build Commands
+- **Dashboard** — Total families, members, monthly income, expense trends
+- **Families** — Create / edit / archive families, view member list per family
+- **Members** — Full CRUD, search, filter by role
+- **Subscriptions** — Track monthly contributions, generate receipts
+- **Donations** — Categorize donations, generate thank-you receipts
+- **Finance** — Accounts, categories, income/expense tracking, charts
+- **Marriage / Death** — Register events, generate certificates
+- **Welfare** — Manage schemes, beneficiaries, disbursements
+- **Reports** — Monthly, annual, custom date range
+- **Backup** — Manual backup, restore, schedule
+- **Settings** — User profile, app preferences, role management
 
+## Building
+
+### Prerequisites
+- JDK 17
+- Android SDK 34
+- Gradle 8.9 (wrapper included)
+
+### Build
 ```bash
-# Debug
-./gradlew :app:assembleDebug
-
-# Release (unsigned)
-./gradlew :app:assembleRelease
-
-# Tests
-./gradlew test
-./gradlew connectedAndroidTest
-
-# Install
-./gradlew :app:installDebug
+./gradlew :app:assembleDebug          # Debug APK
+./gradlew :app:assembleRelease        # Release APK (unsigned)
 ```
 
-## Testing
+### CI/CD
+Pushes to `main` or `master` trigger a GitHub Actions build that:
+1. Compiles the debug APK on Ubuntu with 4 GB heap
+2. Uploads the APK as a workflow artifact
+3. Creates a draft release tag
 
-The repository includes unit-test hooks for:
-- `UserRepository` (login + password verify)
-- `FamilyRepository`, `MemberRepository`, `SubscriptionRepository`
-- `BackupManager` (round-trip encrypt/decrypt)
-- ViewModels for Dashboard, Families, Members, Donations, Welfare, Subscriptions
+See `.github/workflows/build-apk.yml`.
 
-## Roadmap
+## Contributing
 
-- Multi-Mahallu support
-- Cloud sync via Ktor (REST API)
-- WhatsApp notifications for receipts
-- QR member cards (built into ZXing dep)
-- Advanced reports (date-range custom queries)
-- Multi-language (Malayalam, Arabic, English)
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/my-feature`)
+3. Commit your changes (`git commit -am 'Add some feature'`)
+4. Push to the branch (`git push origin feature/my-feature`)
+5. Open a pull request
 
 ## License
 
-Copyright © 2025 Mahallu Manager. All rights reserved.
+MIT — see [LICENSE](LICENSE) for details.
+
+## Support
+
+Open an [issue](https://github.com/kuttappu507/Mahallu-manager/issues) for bug reports or feature requests.
+
+---
+
+Made with ❤️ for the Mahallu community
