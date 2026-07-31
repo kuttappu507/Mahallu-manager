@@ -43,6 +43,9 @@ class MarriageEditViewModel @Inject constructor(
     private val _state = MutableStateFlow(MarriageEditState())
     val state: StateFlow<MarriageEditState> = _state.asStateFlow()
 
+    /** Return the current marriage record (for caller to pre-fill the certificate). */
+    fun current(): MarriageEditState = _state.value
+
     init {
         val id = savedStateHandle.get<String>("id").orEmpty()
         if (id.isNotBlank()) {

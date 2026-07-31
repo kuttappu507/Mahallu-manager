@@ -23,6 +23,7 @@ dependencies {
     implementation(project(":core-ui"))
     implementation(project(":core-database"))
     implementation(project(":core-security"))
+    implementation(project(":feature-certificates"))
 
     implementation(libs.kotlin.stdlib)
     implementation(libs.kotlinx.coroutines.core)

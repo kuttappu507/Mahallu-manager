@@ -1,5 +1,6 @@
 package com.mahallu.manager.feature.subscriptions
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mahallu.manager.core.database.entity.FamilyEntity
@@ -7,9 +8,14 @@ import com.mahallu.manager.core.database.entity.MemberEntity
 import com.mahallu.manager.core.database.entity.SubscriptionEntity
 import com.mahallu.manager.core.database.repository.FamilyRepository
 import com.mahallu.manager.core.database.repository.MemberRepository
+import com.mahallu.manager.core.database.repository.SettingsRepository
 import com.mahallu.manager.core.database.repository.SubscriptionRepository
 import com.mahallu.manager.core.util.IdGenerator
+import com.mahallu.manager.feature.certificates.pdf.Align
+import com.mahallu.manager.feature.certificates.pdf.PdfGenerator
+import com.mahallu.manager.feature.certificates.pdf.PdfTextLine
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -25,6 +31,8 @@ data class CollectionEntryState(
     val members: List<MemberEntity> = emptyList(),
     val selectedFamilyId: String = "",
     val selectedMemberId: String = "",
+    val selectedFamilyName: String = "",
+    val selectedMemberName: String = "",
     val type: String = "MONTHLY",
     val amount: String = "500",
     val paymentMethod: String = "CASH",
@@ -32,15 +40,19 @@ data class CollectionEntryState(
     val date: Long = System.currentTimeMillis(),
     val isSaving: Boolean = false,
     val saved: Boolean = false,
+    val pdfPath: String? = null,
     val receiptNumber: String = "",
     val error: String? = null
 )
 
 @HiltViewModel
 class CollectionEntryViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val subRepo: SubscriptionRepository,
     private val familyRepo: FamilyRepository,
     private val memberRepo: MemberRepository,
+    private val settingsRepo: SettingsRepository,
+    private val pdfGenerator: PdfGenerator,
     savedStateHandle: androidx.lifecycle.SavedStateHandle
 ) : ViewModel() {
 
@@ -58,10 +70,13 @@ class CollectionEntryViewModel @Inject constructor(
             viewModelScope.launch {
                 val m = memberRepo.getById(preMemberId)
                 if (m != null) {
+                    val fam = m.familyId.takeIf { it.isNotBlank() }?.let { familyRepo.getById(it) }
                     _state.update {
                         it.copy(
                             selectedMemberId = m.id,
-                            selectedFamilyId = m.familyId
+                            selectedMemberName = m.name,
+                            selectedFamilyId = m.familyId,
+                            selectedFamilyName = fam?.houseName.orEmpty()
                         )
                     }
                 }
@@ -72,10 +87,13 @@ class CollectionEntryViewModel @Inject constructor(
     fun selectMember(memberId: String) {
         viewModelScope.launch {
             val m = memberRepo.getById(memberId)
+            val fam = m?.familyId?.takeIf { it.isNotBlank() }?.let { familyRepo.getById(it) }
             _state.update {
                 it.copy(
                     selectedMemberId = m?.id.orEmpty(),
-                    selectedFamilyId = m?.familyId.orEmpty()
+                    selectedMemberName = m?.name.orEmpty(),
+                    selectedFamilyId = m?.familyId.orEmpty(),
+                    selectedFamilyName = fam?.houseName.orEmpty()
                 )
             }
         }
@@ -83,11 +101,16 @@ class CollectionEntryViewModel @Inject constructor(
 
     fun selectFamily(familyId: String) {
         viewModelScope.launch {
-            val members = memberRepo.observeByFamily(familyId)
-            members.collect { list ->
+            val fam = familyRepo.getById(familyId)
+            memberRepo.observeByFamily(familyId).collect { list ->
                 _state.update {
-                    it.copy(members = list, selectedFamilyId = familyId,
-                        selectedMemberId = list.firstOrNull()?.id.orEmpty())
+                    it.copy(
+                        members = list,
+                        selectedFamilyId = familyId,
+                        selectedFamilyName = fam?.houseName.orEmpty(),
+                        selectedMemberId = list.firstOrNull()?.id.orEmpty(),
+                        selectedMemberName = list.firstOrNull()?.name.orEmpty()
+                    )
                 }
                 return@collect
             }
@@ -101,8 +124,8 @@ class CollectionEntryViewModel @Inject constructor(
     fun save() {
         val s = _state.value
         val amount = s.amount.toDoubleOrNull()
-        if (s.selectedFamilyId.isBlank()) {
-            _state.update { it.copy(error = "Select a family") }
+        if (s.selectedFamilyId.isBlank() && s.selectedMemberId.isBlank()) {
+            _state.update { it.copy(error = "Select a family or member first") }
             return
         }
         if (amount == null || amount <= 0) {
@@ -127,7 +150,52 @@ class CollectionEntryViewModel @Inject constructor(
                 month = cal.get(Calendar.MONTH) + 1
             )
             subRepo.save(entity)
-            _state.update { it.copy(isSaving = false, saved = true) }
+
+            // Generate the PDF receipt right away
+            val pdfPath = try {
+                val mahalluName = settingsRepo.getString("mahallu.name", "Mahallu Manager")
+                val formattedDate = java.text.SimpleDateFormat("dd MMM yyyy", java.util.Locale.getDefault()).format(s.date)
+                val lines = mutableListOf<PdfTextLine>()
+                lines += PdfTextLine(mahalluName, sizeSp = 22f, bold = true, align = Align.CENTER)
+                lines += PdfTextLine("Subscription Receipt", sizeSp = 16f, bold = true, align = Align.CENTER)
+                lines += PdfTextLine(" ", sizeSp = 8f)
+                lines += PdfTextLine("Receipt No: ${s.receiptNumber}", sizeSp = 12f, bold = true)
+                lines += PdfTextLine("Date: $formattedDate", sizeSp = 11f)
+                lines += PdfTextLine(" ", sizeSp = 6f)
+                lines += PdfTextLine("Received from:", sizeSp = 11f, color = android.graphics.Color.DKGRAY)
+                val family = s.selectedFamilyName.ifBlank { s.selectedMemberName }
+                lines += PdfTextLine(family.ifBlank { "[Family / Member]" }, sizeSp = 14f, bold = true)
+                if (s.selectedMemberName.isNotBlank() && s.selectedMemberName != s.selectedFamilyName) {
+                    lines += PdfTextLine("Member: ${s.selectedMemberName}", sizeSp = 11f)
+                }
+                lines += PdfTextLine(" ", sizeSp = 6f)
+                lines += PdfTextLine("Subscription Type: ${s.type}", sizeSp = 11f)
+                lines += PdfTextLine("The sum of", sizeSp = 11f)
+                lines += PdfTextLine("Rs. ${"%,.2f".format(amount)}", sizeSp = 22f, bold = true, color = android.graphics.Color.parseColor("#3B4FB8"))
+                lines += PdfTextLine("(", sizeSp = 10f, color = android.graphics.Color.DKGRAY)
+                lines += PdfTextLine("Payment: ${s.paymentMethod}", sizeSp = 11f)
+                if (s.remarks.isNotBlank()) {
+                    lines += PdfTextLine("Remarks: ${s.remarks.trim()}", sizeSp = 11f)
+                }
+                lines += PdfTextLine(" ", sizeSp = 14f)
+                lines += PdfTextLine("Issued on: ${java.text.SimpleDateFormat("dd MMM yyyy", java.util.Locale.getDefault()).format(java.util.Date())}", sizeSp = 11f, align = Align.RIGHT)
+                lines += PdfTextLine("Authorised Signatory", sizeSp = 11f, bold = true, align = Align.RIGHT)
+
+                val file = pdfGenerator.generate(
+                    fileName = "subscription_${s.receiptNumber}.pdf",
+                    spec = com.mahallu.manager.feature.certificates.pdf.PdfDocumentSpec(
+                        title = "Subscription Receipt",
+                        subtitle = mahalluName,
+                        lines = lines,
+                        footer = "$mahalluName • Generated by Mahallu Manager"
+                    )
+                )
+                file.absolutePath
+            } catch (t: Throwable) {
+                null
+            }
+
+            _state.update { it.copy(isSaving = false, saved = true, pdfPath = pdfPath) }
         }
     }
 }

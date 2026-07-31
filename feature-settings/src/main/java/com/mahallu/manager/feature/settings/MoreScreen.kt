@@ -99,9 +99,28 @@ fun MoreScreen(
                     }
                     Spacer(Modifier.width(14.dp))
                     Column(modifier = Modifier.weight(1f)) {
-                        Text(state.userName, style = MaterialTheme.typography.titleMedium, color = colors.textPrimary, fontWeight = FontWeight.SemiBold)
-                        Text(state.userRole, style = MaterialTheme.typography.labelLarge, color = colors.primaryIndigo)
-                        Text(state.mahalluName, style = MaterialTheme.typography.bodySmall, color = colors.textSecondary, maxLines = 1)
+                        Text(
+                            state.userName,
+                            style = MaterialTheme.typography.titleMedium,
+                            color = colors.textPrimary,
+                            fontWeight = FontWeight.SemiBold,
+                            maxLines = 1,
+                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                        )
+                        Text(
+                            state.userRole,
+                            style = MaterialTheme.typography.labelLarge,
+                            color = colors.primaryIndigo,
+                            maxLines = 1,
+                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                        )
+                        Text(
+                            state.mahalluName,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = colors.textSecondary,
+                            maxLines = 1,
+                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                        )
                     }
                 }
             }

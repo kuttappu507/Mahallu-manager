@@ -138,7 +138,10 @@ private fun FamilyRow(family: FamilyEntity, onClick: () -> Unit) {
                     Text(
                         text = family.familyNumber,
                         style = MaterialTheme.typography.labelSmall,
-                        color = colors.textTertiary
+                        color = colors.textTertiary,
+                        maxLines = 1,
+                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f, fill = false)
                     )
                     Spacer(Modifier.width(8.dp))
                     Box(
@@ -167,13 +170,16 @@ private fun FamilyRow(family: FamilyEntity, onClick: () -> Unit) {
                     text = family.houseName,
                     style = MaterialTheme.typography.titleSmall,
                     color = colors.textPrimary,
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.SemiBold,
+                    maxLines = 1,
+                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                 )
                 Text(
                     text = family.address,
                     style = MaterialTheme.typography.bodySmall,
                     color = colors.textSecondary,
-                    maxLines = 2
+                    maxLines = 2,
+                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                 )
             }
             family.primaryMobile?.let {

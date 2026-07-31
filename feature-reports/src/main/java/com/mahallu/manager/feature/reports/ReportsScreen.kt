@@ -20,6 +20,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Assessment
 import androidx.compose.material.icons.rounded.ChevronRight
 import androidx.compose.material.icons.rounded.Description
+import androidx.compose.material.icons.rounded.PictureAsPdf
+import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -29,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -37,6 +40,8 @@ import com.mahallu.manager.core.ui.components.AppCard
 import com.mahallu.manager.core.ui.components.AppButton
 import com.mahallu.manager.core.ui.components.TopAppBar
 import com.mahallu.manager.core.ui.theme.LocalMahalluColors
+import com.mahallu.manager.core.ui.util.PdfShare
+import java.io.File
 
 private data class ReportType(val key: String, val title: String, val description: String, val icon: ImageVector)
 
@@ -44,6 +49,7 @@ private data class ReportType(val key: String, val title: String, val descriptio
 fun ReportsScreen(onBack: () -> Unit, viewModel: ReportsViewModel = hiltViewModel()) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val colors = LocalMahalluColors.current
+    val context = LocalContext.current
     val reports = listOf(
         ReportType("FAMILY", "Family Register", "All registered families", Icons.Rounded.Assessment),
         ReportType("MEMBER", "Member Register", "All registered members", Icons.Rounded.Assessment),
@@ -66,6 +72,39 @@ fun ReportsScreen(onBack: () -> Unit, viewModel: ReportsViewModel = hiltViewMode
                         .padding(12.dp)
                 ) {
                     Text(state.message ?: "", color = colors.success, style = MaterialTheme.typography.bodySmall)
+                }
+            }
+            if (state.lastGeneratedPath != null) {
+                AppCard(
+                    modifier = Modifier.padding(horizontal = 14.dp).fillMaxWidth(),
+                    backgroundColor = colors.primaryIndigo.copy(alpha = 0.06f),
+                    contentPadding = PaddingValues(14.dp)
+                ) {
+                    Column {
+                        Text(
+                            text = "Last report: ${File(state.lastGeneratedPath!!).name}",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = colors.textPrimary,
+                            fontWeight = FontWeight.SemiBold,
+                            maxLines = 1,
+                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                        )
+                        Spacer(Modifier.height(10.dp))
+                        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                            AppButton(
+                                text = "View",
+                                onClick = { PdfShare.open(context, File(state.lastGeneratedPath!!)) },
+                                leadingIcon = Icons.Rounded.PictureAsPdf,
+                                modifier = Modifier.weight(1f)
+                            )
+                            AppButton(
+                                text = "Share",
+                                onClick = { PdfShare.share(context, File(state.lastGeneratedPath!!)) },
+                                leadingIcon = Icons.Rounded.Share,
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                    }
                 }
             }
             LazyColumn(
@@ -91,20 +130,27 @@ fun ReportsScreen(onBack: () -> Unit, viewModel: ReportsViewModel = hiltViewMode
                             }
                             Spacer(Modifier.width(12.dp))
                             Column(modifier = Modifier.weight(1f)) {
-                                Text(report.title, style = MaterialTheme.typography.titleSmall, color = colors.textPrimary, fontWeight = FontWeight.SemiBold)
-                                Text(report.description, style = MaterialTheme.typography.bodySmall, color = colors.textSecondary)
+                                Text(
+                                    report.title,
+                                    style = MaterialTheme.typography.titleSmall,
+                                    color = colors.textPrimary,
+                                    fontWeight = FontWeight.SemiBold,
+                                    maxLines = 1,
+                                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                                )
+                                Text(
+                                    report.description,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = colors.textSecondary,
+                                    maxLines = 2,
+                                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                                )
                             }
                             Icon(Icons.Rounded.ChevronRight, contentDescription = null, tint = colors.textTertiary)
                         }
                     }
                 }
             }
-            AppButton(
-                text = if (state.isGenerating) "Generating..." else "Generate as PDF",
-                onClick = { viewModel.generate("FAMILY") },
-                isLoading = state.isGenerating,
-                modifier = Modifier.padding(14.dp)
-            )
         }
     }
 }

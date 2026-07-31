@@ -138,25 +138,34 @@ private fun MemberRow(member: MemberEntity, onClick: () -> Unit) {
                         text = member.name,
                         style = MaterialTheme.typography.titleSmall,
                         color = colors.textPrimary,
-                        fontWeight = FontWeight.SemiBold
+                        fontWeight = FontWeight.SemiBold,
+                        maxLines = 1,
+                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f, fill = false)
                     )
                     Spacer(Modifier.width(8.dp))
                     Text(
                         text = member.memberNumber,
                         style = MaterialTheme.typography.labelSmall,
-                        color = colors.textTertiary
+                        color = colors.textTertiary,
+                        maxLines = 1,
+                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                     )
                 }
                 Text(
                     text = "${member.relationToHead ?: "Member"} • ${Formatters.calculateAge(member.dateOfBirth)} years",
                     style = MaterialTheme.typography.bodySmall,
-                    color = colors.textSecondary
+                    color = colors.textSecondary,
+                    maxLines = 1,
+                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                 )
                 if (!member.arabicName.isNullOrBlank()) {
                     Text(
                         text = member.arabicName!!,
                         style = MaterialTheme.typography.labelMedium,
-                        color = colors.textTertiary
+                        color = colors.textTertiary,
+                        maxLines = 1,
+                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                     )
                 }
             }

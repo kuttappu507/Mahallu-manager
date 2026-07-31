@@ -24,6 +24,8 @@ import androidx.navigation.navArgument
 import com.mahallu.manager.core.ui.components.AppBottomNavBar
 import com.mahallu.manager.core.ui.theme.LocalMahalluColors
 import com.mahallu.manager.feature.certificates.CertificateListScreen
+import com.mahallu.manager.feature.certificates.CertificatePrefillData
+import com.mahallu.manager.feature.certificates.CertificatePrefillHolder
 import com.mahallu.manager.feature.certificates.DeathCertificateScreen
 import com.mahallu.manager.feature.certificates.MarriageCertificateScreen
 import com.mahallu.manager.feature.certificates.MembershipCertificateScreen
@@ -134,7 +136,18 @@ fun MainShell(
                     MemberDetailScreen(
                         onBack = { navController.popBackStack() },
                         onEdit = { id -> navController.navigate("member_edit?id=$id") },
-                        onAddCollection = { id -> navController.navigate("collection_entry?memberId=$id") }
+                        onAddCollection = { id -> navController.navigate("collection_entry?memberId=$id") },
+                        onGenerateCertificate = { m ->
+                            CertificatePrefillHolder.set(
+                                CertificatePrefillData(
+                                    memberName = m.name,
+                                    fatherName = m.fatherName,
+                                    address = m.address,
+                                    memberNumber = m.memberNumber
+                                )
+                            )
+                            navController.navigate("certificate/MEMBERSHIP")
+                        }
                     )
                 }
                 composable("member_edit?id={memberId}", arguments = listOf(navArgument("memberId") {
@@ -175,7 +188,23 @@ fun MainShell(
                 composable("marriage_edit?id={id}", arguments = listOf(navArgument("id") {
                     type = NavType.StringType; nullable = true; defaultValue = ""
                 })) {
-                    MarriageEditScreen(onDone = { navController.popBackStack() })
+                    MarriageEditScreen(
+                        onDone = { navController.popBackStack() },
+                        onGenerateCertificate = { m ->
+                            CertificatePrefillHolder.set(
+                                CertificatePrefillData(
+                                    brideName = m.brideName,
+                                    groomName = m.groomName,
+                                    fatherName = m.brideFatherName,
+                                    address = m.nikahLocation,
+                                    witnesses = listOf(m.witnessOneName, m.witnessTwoName).filter { it.isNotBlank() }.joinToString(", "),
+                                    registrationNumber = m.registrationNumber,
+                                    date = java.text.SimpleDateFormat("dd MMM yyyy", java.util.Locale.getDefault()).format(m.nikahDate)
+                                )
+                            )
+                            navController.navigate("certificate/MARRIAGE")
+                        }
+                    )
                 }
                 composable("deaths") {
                     DeathListScreen(
@@ -187,7 +216,21 @@ fun MainShell(
                 composable("death_edit?id={id}", arguments = listOf(navArgument("id") {
                     type = NavType.StringType; nullable = true; defaultValue = ""
                 })) {
-                    DeathEditScreen(onDone = { navController.popBackStack() })
+                    DeathEditScreen(
+                        onDone = { navController.popBackStack() },
+                        onGenerateCertificate = { d ->
+                            CertificatePrefillHolder.set(
+                                CertificatePrefillData(
+                                    deceasedName = d.name,
+                                    fatherName = d.fatherName,
+                                    address = d.burialLocation,
+                                    registrationNumber = d.registrationNumber,
+                                    date = java.text.SimpleDateFormat("dd MMM yyyy", java.util.Locale.getDefault()).format(d.dateOfDeath)
+                                )
+                            )
+                            navController.navigate("certificate/DEATH")
+                        }
+                    )
                 }
                 composable("welfare") {
                     WelfareScreen(

@@ -130,18 +130,23 @@ private fun FamilyHeroCard(family: com.mahallu.manager.core.database.entity.Fami
                     text = family.houseName,
                     style = MaterialTheme.typography.headlineSmall,
                     color = colors.textPrimary,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                 )
                 Text(
                     text = family.familyNumber,
                     style = MaterialTheme.typography.labelLarge,
-                    color = colors.primaryIndigo
+                    color = colors.primaryIndigo,
+                    maxLines = 1,
+                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                 )
                 Text(
                     text = family.address,
                     style = MaterialTheme.typography.bodySmall,
                     color = colors.textSecondary,
-                    maxLines = 2
+                    maxLines = 2,
+                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                 )
             }
         }
@@ -188,12 +193,16 @@ private fun MemberRow(member: MemberEntity, onClick: () -> Unit) {
                     text = member.name,
                     style = MaterialTheme.typography.titleSmall,
                     color = colors.textPrimary,
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.SemiBold,
+                    maxLines = 1,
+                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                 )
                 Text(
                     text = "${member.relationToHead ?: "Member"} • ${member.occupation ?: "—"}",
                     style = MaterialTheme.typography.bodySmall,
-                    color = colors.textSecondary
+                    color = colors.textSecondary,
+                    maxLines = 1,
+                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                 )
             }
             Text(

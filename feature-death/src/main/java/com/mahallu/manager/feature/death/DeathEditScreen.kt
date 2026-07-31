@@ -35,6 +35,7 @@ import com.mahallu.manager.core.ui.util.Formatters
 @Composable
 fun DeathEditScreen(
     onDone: () -> Unit,
+    onGenerateCertificate: (DeathEditState) -> Unit = {},
     viewModel: DeathEditViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -89,6 +90,14 @@ fun DeathEditScreen(
                 }
                 Spacer(Modifier.height(20.dp))
                 AppButton(text = if (state.isSaving) "Saving..." else "Save", onClick = { viewModel.save() }, isLoading = state.isSaving)
+                if (state.id.isNotBlank() && state.name.isNotBlank()) {
+                    Spacer(Modifier.height(10.dp))
+                    AppButton(
+                        text = "Generate Death Certificate",
+                        onClick = { onGenerateCertificate(viewModel.current()) },
+                        leadingIcon = androidx.compose.material.icons.Icons.Rounded.PictureAsPdf
+                    )
+                }
                 Spacer(Modifier.height(24.dp))
             }
         }

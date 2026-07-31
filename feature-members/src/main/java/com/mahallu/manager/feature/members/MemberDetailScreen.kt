@@ -47,7 +47,8 @@ import com.mahallu.manager.core.ui.util.Formatters
 fun MemberDetailScreen(
     onBack: () -> Unit,
     onEdit: (String) -> Unit,
-    onAddCollection: (String) -> Unit
+    onAddCollection: (String) -> Unit,
+    onGenerateCertificate: (com.mahallu.manager.core.database.entity.MemberEntity) -> Unit = {}
 ) {
     val vm: MemberDetailViewModel = hiltViewModel()
     val state by vm.state.collectAsStateWithLifecycle()
@@ -76,11 +77,19 @@ fun MemberDetailScreen(
                         modifier = Modifier.padding(horizontal = 14.dp).fillMaxWidth(),
                         contentPadding = PaddingValues(14.dp)
                     ) {
-                        AppButton(
-                            text = "Record Subscription / Collection",
-                            onClick = { onAddCollection(m.id) },
-                            leadingIcon = Icons.Rounded.MonetizationOn
-                        )
+                        androidx.compose.foundation.layout.Column {
+                            AppButton(
+                                text = "Record Subscription / Collection",
+                                onClick = { onAddCollection(m.id) },
+                                leadingIcon = Icons.Rounded.MonetizationOn
+                            )
+                            Spacer(Modifier.height(10.dp))
+                            AppButton(
+                                text = "Generate Membership Certificate",
+                                onClick = { onGenerateCertificate(m) },
+                                leadingIcon = androidx.compose.material.icons.Icons.Rounded.PictureAsPdf
+                            )
+                        }
                     }
                 }
                 item {
@@ -176,19 +185,25 @@ private fun MemberHeroCard(member: com.mahallu.manager.core.database.entity.Memb
                     text = member.name,
                     style = MaterialTheme.typography.headlineSmall,
                     color = colors.textPrimary,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                 )
                 if (!member.arabicName.isNullOrBlank()) {
                     Text(
                         text = member.arabicName!!,
                         style = MaterialTheme.typography.titleMedium,
-                        color = colors.textSecondary
+                        color = colors.textSecondary,
+                        maxLines = 1,
+                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                     )
                 }
                 Text(
                     text = "${member.memberNumber} • ${member.relationToHead ?: "Member"}",
                     style = MaterialTheme.typography.labelMedium,
-                    color = accent
+                    color = accent,
+                    maxLines = 1,
+                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                 )
             }
         }

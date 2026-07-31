@@ -61,6 +61,9 @@ class DeathEditViewModel @Inject constructor(
         }
     }
 
+    /** Return the current death record (for caller to pre-fill the certificate). */
+    fun current(): DeathEditState = _state.value
+
     fun update(transform: (DeathEditState) -> DeathEditState) {
         _state.update(transform)
     }

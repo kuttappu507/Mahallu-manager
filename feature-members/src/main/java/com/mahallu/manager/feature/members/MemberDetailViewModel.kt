@@ -42,4 +42,7 @@ class MemberDetailViewModel @Inject constructor(
             }
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), MemberDetailState())
+
+    /** Return the current member record (for caller to pre-fill the certificate). */
+    fun currentMember(): MemberEntity? = state.value.member
 }

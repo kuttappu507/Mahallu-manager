@@ -31,6 +31,7 @@ import com.mahallu.manager.core.ui.util.Formatters
 @Composable
 fun MarriageEditScreen(
     onDone: () -> Unit,
+    onGenerateCertificate: (MarriageEditState) -> Unit = {},
     viewModel: MarriageEditViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -93,6 +94,14 @@ fun MarriageEditScreen(
                 }
                 Spacer(Modifier.height(20.dp))
                 AppButton(text = if (state.isSaving) "Saving..." else "Save Marriage", onClick = { viewModel.save() }, isLoading = state.isSaving)
+                if (state.id.isNotBlank() && state.brideName.isNotBlank() && state.groomName.isNotBlank()) {
+                    Spacer(Modifier.height(10.dp))
+                    AppButton(
+                        text = "Generate Marriage Certificate",
+                        onClick = { onGenerateCertificate(viewModel.current()) },
+                        leadingIcon = androidx.compose.material.icons.Icons.Rounded.PictureAsPdf
+                    )
+                }
                 Spacer(Modifier.height(24.dp))
             }
         }

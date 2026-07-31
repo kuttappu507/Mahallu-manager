@@ -52,8 +52,43 @@ class CertificateFormViewModel @Inject constructor(
         _state.update(transform)
     }
 
+    /** Reset the form so switching certificate types doesn't leak state between them. */
+    fun reset() {
+        _state.update { CertificateFormState() }
+    }
+
+    /** Pre-populate fields (used when generating a cert from an existing entity). */
+    fun prefill(
+        memberName: String? = null,
+        fatherName: String? = null,
+        address: String? = null,
+        memberNumber: String? = null,
+        brideName: String? = null,
+        groomName: String? = null,
+        witnesses: String? = null,
+        registrationNumber: String? = null,
+        date: String? = null,
+        deceasedName: String? = null
+    ) {
+        _state.update {
+            it.copy(
+                memberName = memberName ?: it.memberName,
+                fatherName = fatherName ?: it.fatherName,
+                address = address ?: it.address,
+                memberNumber = memberNumber ?: it.memberNumber,
+                brideName = brideName ?: it.brideName,
+                groomName = groomName ?: it.groomName,
+                witnesses = witnesses ?: it.witnesses,
+                registrationNumber = registrationNumber ?: it.registrationNumber,
+                date = date ?: it.date,
+                deceasedName = deceasedName ?: it.deceasedName
+            )
+        }
+    }
+
     fun generate(type: String) {
-        _state.update { it.copy(isGenerating = true) }
+        if (_state.value.isGenerating) return
+        _state.update { it.copy(isGenerating = true, message = null) }
         viewModelScope.launch {
             try {
                 val mahalluName = settingsRepo.getString("mahallu.name", "Mahallu Manager")
@@ -73,28 +108,29 @@ class CertificateFormViewModel @Inject constructor(
                 when (type) {
                     "MEMBERSHIP" -> {
                         lines += PdfTextLine("Name: ${s.memberName.ifBlank { "[Name]" }}", sizeSp = 12f)
-                        lines += PdfTextLine("Father: ${s.fatherName.ifBlank { "[Father Name]" }}", sizeSp = 12f)
+                        lines += PdfTextLine("Father / Spouse: ${s.fatherName.ifBlank { "[Father / Spouse Name]" }}", sizeSp = 12f)
                         lines += PdfTextLine("Address: ${s.address.ifBlank { "[Address]" }}", sizeSp = 12f)
                         lines += PdfTextLine("Member ID: ${s.memberNumber.ifBlank { "[Member ID]" }}", sizeSp = 12f)
                     }
                     "RESIDENCE" -> {
                         lines += PdfTextLine("Name: ${s.memberName.ifBlank { "[Name]" }}", sizeSp = 12f)
-                        lines += PdfTextLine("Father: ${s.fatherName.ifBlank { "[Father Name]" }}", sizeSp = 12f)
+                        lines += PdfTextLine("Father / Spouse: ${s.fatherName.ifBlank { "[Father / Spouse Name]" }}", sizeSp = 12f)
                         lines += PdfTextLine("Address: ${s.address.ifBlank { "[Address]" }}", sizeSp = 12f)
-                        lines += PdfTextLine("Ward: ${s.ward.ifBlank { "[Ward]" }}", sizeSp = 12f)
-                        lines += PdfTextLine("Pincode: ${s.pincode.ifBlank { "[Pincode]" }}", sizeSp = 12f)
+                        lines += PdfTextLine("Ward: ${s.ward.ifBlank { "[Ward]" }}    Pincode: ${s.pincode.ifBlank { "[Pincode]" }}", sizeSp = 12f)
                     }
                     "MARRIAGE" -> {
                         lines += PdfTextLine("Bride: ${s.brideName.ifBlank { "[Bride Name]" }}", sizeSp = 12f)
                         lines += PdfTextLine("Groom: ${s.groomName.ifBlank { "[Groom Name]" }}", sizeSp = 12f)
-                        lines += PdfTextLine("Date: ${s.date.ifBlank { "[Date]" }}", sizeSp = 12f)
+                        lines += PdfTextLine("Nikah Date: ${s.date.ifBlank { "[Date]" }}", sizeSp = 12f)
+                        lines += PdfTextLine("Location: ${s.address.ifBlank { "[Location]" }}", sizeSp = 12f)
                         lines += PdfTextLine("Witnesses: ${s.witnesses.ifBlank { "[Witnesses]" }}", sizeSp = 12f)
                         lines += PdfTextLine("Registration #: ${s.registrationNumber.ifBlank { "[Reg #]" }}", sizeSp = 12f)
                     }
                     "DEATH" -> {
                         lines += PdfTextLine("Name: ${s.deceasedName.ifBlank { "[Name]" }}", sizeSp = 12f)
-                        lines += PdfTextLine("Father: ${s.fatherName.ifBlank { "[Father Name]" }}", sizeSp = 12f)
+                        lines += PdfTextLine("Father / Spouse: ${s.fatherName.ifBlank { "[Father / Spouse Name]" }}", sizeSp = 12f)
                         lines += PdfTextLine("Date of Death: ${s.date.ifBlank { "[Date]" }}", sizeSp = 12f)
+                        lines += PdfTextLine("Place: ${s.address.ifBlank { "[Place]" }}", sizeSp = 12f)
                         lines += PdfTextLine("Registration #: ${s.registrationNumber.ifBlank { "[Reg #]" }}", sizeSp = 12f)
                     }
                 }
@@ -111,20 +147,25 @@ class CertificateFormViewModel @Inject constructor(
                         footer = "$mahalluName • Generated by Mahallu Manager"
                     )
                 )
+                val subjectName = when (type) {
+                    "MARRIAGE" -> "${s.brideName} & ${s.groomName}"
+                    "DEATH" -> s.deceasedName
+                    else -> s.memberName
+                }
                 val certEntity = CertificateEntity(
                     id = IdGenerator.newId(),
                     certificateNumber = "CRT-${System.currentTimeMillis().toString().takeLast(7)}",
                     type = type,
                     subjectId = "",
-                    subjectName = s.memberName.ifBlank { s.deceasedName },
-                    issuedTo = s.memberName.ifBlank { s.deceasedName },
+                    subjectName = subjectName,
+                    issuedTo = subjectName,
                     issuedDate = System.currentTimeMillis(),
                     pdfPath = file.absolutePath
                 )
                 certificateRepo.save(certEntity)
                 _state.update { it.copy(pdfPath = file.absolutePath, isGenerating = false, message = "PDF generated: ${file.name}") }
             } catch (t: Throwable) {
-                _state.update { it.copy(isGenerating = false, message = "Failed: ${t.message}") }
+                _state.update { it.copy(isGenerating = false, message = "Failed: ${t.message ?: t::class.java.simpleName}") }
             }
         }
     }

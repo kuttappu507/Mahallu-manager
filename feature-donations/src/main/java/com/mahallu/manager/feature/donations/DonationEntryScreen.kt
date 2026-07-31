@@ -15,6 +15,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material.icons.rounded.PictureAsPdf
+import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -24,6 +26,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -36,6 +39,8 @@ import com.mahallu.manager.core.ui.components.ChipPill
 import com.mahallu.manager.core.ui.components.TopAppBar
 import com.mahallu.manager.core.ui.theme.LocalMahalluColors
 import com.mahallu.manager.core.ui.util.Formatters
+import com.mahallu.manager.core.ui.util.PdfShare
+import java.io.File
 
 @Composable
 fun DonationEntryScreen(
@@ -44,8 +49,12 @@ fun DonationEntryScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val colors = LocalMahalluColors.current
+    val context = LocalContext.current
 
-    LaunchedEffect(state.saved) { if (state.saved) onDone() }
+    // Don't auto-navigate if a PDF was generated — let the user view/share it first.
+    LaunchedEffect(state.saved, state.pdfPath) {
+        if (state.saved && state.pdfPath == null) onDone()
+    }
 
     Box(modifier = Modifier.fillMaxSize().background(colors.background)) {
         Column(modifier = Modifier.fillMaxSize()) {
@@ -115,11 +124,47 @@ fun DonationEntryScreen(
                     }
                 }
                 Spacer(Modifier.height(16.dp))
-                AppButton(
-                    text = if (state.isSaving) "Saving..." else "Save & Generate Receipt",
-                    onClick = { viewModel.save() },
-                    isLoading = state.isSaving
-                )
+                if (state.pdfPath != null) {
+                    AppCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        backgroundColor = colors.success.copy(alpha = 0.10f),
+                        contentPadding = androidx.compose.foundation.layout.PaddingValues(14.dp)
+                    ) {
+                        Text(
+                            text = "✓ Saved. Receipt generated: ${File(state.pdfPath).name}",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = colors.textPrimary,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                    Spacer(Modifier.height(12.dp))
+                    Row(horizontalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.fillMaxWidth()) {
+                        AppButton(
+                            text = "View Receipt",
+                            onClick = { PdfShare.open(context, File(state.pdfPath!!)) },
+                            modifier = Modifier.weight(1f),
+                            leadingIcon = Icons.Rounded.PictureAsPdf
+                        )
+                        AppButton(
+                            text = "Share",
+                            onClick = { PdfShare.share(context, File(state.pdfPath!!)) },
+                            modifier = Modifier.weight(1f),
+                            leadingIcon = Icons.Rounded.Share
+                        )
+                    }
+                    Spacer(Modifier.height(10.dp))
+                    AppButton(
+                        text = "Done",
+                        onClick = onDone,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                } else {
+                    AppButton(
+                        text = if (state.isSaving) "Saving..." else "Save & Generate Receipt",
+                        onClick = { viewModel.save() },
+                        isLoading = state.isSaving
+                    )
+                }
                 Spacer(Modifier.height(24.dp))
             }
         }
