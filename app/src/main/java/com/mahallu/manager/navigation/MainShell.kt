@@ -141,8 +141,8 @@ fun MainShell(
                             CertificatePrefillHolder.set(
                                 CertificatePrefillData(
                                     memberName = m.name,
-                                    fatherName = m.fatherName,
-                                    address = m.address,
+                                    fatherName = m.fatherName.orEmpty(),
+                                    address = m.address.orEmpty(),
                                     memberNumber = m.memberNumber
                                 )
                             )
