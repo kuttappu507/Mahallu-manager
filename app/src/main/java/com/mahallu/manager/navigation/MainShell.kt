@@ -141,7 +141,7 @@ fun MainShell(
                             CertificatePrefillHolder.set(
                                 CertificatePrefillData(
                                     memberName = m.name,
-                                    fatherName = m.fatherName.orEmpty(),
+                                    fatherName = "",  // MemberEntity doesn't have fatherName
                                     address = m.address.orEmpty(),
                                     memberNumber = m.memberNumber
                                 )
