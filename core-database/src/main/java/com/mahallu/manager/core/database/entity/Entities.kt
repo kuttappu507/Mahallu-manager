@@ -74,7 +74,6 @@ data class MemberEntity(
     val memberNumber: String,
     val familyId: String,
     val name: String,
-    val arabicName: String? = null,
     val gender: String, // MALE, FEMALE, OTHER
     val dateOfBirth: Long,
     val occupation: String? = null,

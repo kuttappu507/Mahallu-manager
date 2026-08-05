@@ -38,11 +38,14 @@ class DeathEditViewModel @Inject constructor(
     private val _state = MutableStateFlow(DeathEditState())
     val state: StateFlow<DeathEditState> = _state.asStateFlow()
 
+    private var dirty = false
+
     init {
         val id = savedStateHandle.get<String>("id").orEmpty()
         if (id.isNotBlank()) {
             viewModelScope.launch {
-                repo.getById(id)?.let { d ->
+                repo.observeById(id).collect { d ->
+                    if (d == null || dirty) return@collect
                     _state.value = DeathEditState(
                         id = d.id,
                         registrationNumber = d.registrationNumber,
@@ -65,6 +68,7 @@ class DeathEditViewModel @Inject constructor(
     fun current(): DeathEditState = _state.value
 
     fun update(transform: (DeathEditState) -> DeathEditState) {
+        dirty = true
         _state.update(transform)
     }
 

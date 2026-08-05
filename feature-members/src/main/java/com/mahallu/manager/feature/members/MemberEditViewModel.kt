@@ -20,7 +20,6 @@ data class MemberEditState(
     val memberNumber: String = "",
     val familyId: String = "",
     val name: String = "",
-    val arabicName: String = "",
     val gender: String = "MALE",
     val dateOfBirth: Long = System.currentTimeMillis(),
     val occupation: String = "",
@@ -52,6 +51,8 @@ class MemberEditViewModel @Inject constructor(
     private val _state = MutableStateFlow(MemberEditState())
     val state: StateFlow<MemberEditState> = _state.asStateFlow()
 
+    private var dirty = false
+
     init {
         loadFamilies()
         val id = savedStateHandle.get<String>("memberId").orEmpty()
@@ -76,14 +77,17 @@ class MemberEditViewModel @Inject constructor(
     private fun loadExisting(id: String) {
         _state.update { it.copy(isLoading = true) }
         viewModelScope.launch {
-            val m = memberRepo.getById(id)
-            if (m != null) {
+            memberRepo.observeById(id).collect { m ->
+                if (m == null) {
+                    _state.update { it.copy(isLoading = false) }
+                    return@collect
+                }
+                if (dirty) return@collect
                 _state.value = MemberEditState(
                     id = m.id,
                     memberNumber = m.memberNumber,
                     familyId = m.familyId,
                     name = m.name,
-                    arabicName = m.arabicName.orEmpty(),
                     gender = m.gender,
                     dateOfBirth = m.dateOfBirth,
                     occupation = m.occupation.orEmpty(),
@@ -105,6 +109,7 @@ class MemberEditViewModel @Inject constructor(
     }
 
     fun update(transform: (MemberEditState) -> MemberEditState) {
+        dirty = true
         _state.update(transform)
     }
 
@@ -123,7 +128,6 @@ class MemberEditViewModel @Inject constructor(
                 memberNumber = s.memberNumber.ifBlank { "MEM-${id.takeLast(6).uppercase()}" },
                 familyId = s.familyId,
                 name = s.name.trim(),
-                arabicName = s.arabicName.trim().ifBlank { null },
                 gender = s.gender,
                 dateOfBirth = s.dateOfBirth,
                 occupation = s.occupation.trim().ifBlank { null },

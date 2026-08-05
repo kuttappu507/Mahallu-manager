@@ -13,7 +13,9 @@ import javax.inject.Singleton
 class SubscriptionRepository @Inject constructor(
     private val dao: SubscriptionDao,
     private val familyDao: FamilyDao,
-    private val memberDao: MemberDao
+    private val memberDao: MemberDao,
+    private val currentActor: CurrentActor,
+    private val auditLog: AuditLogRepository
 ) {
     fun observeAll(): Flow<List<SubscriptionEntity>> = dao.observeAll()
     fun observeByFamily(familyId: String): Flow<List<SubscriptionEntity>> = dao.observeByFamily(familyId)
@@ -25,16 +27,34 @@ class SubscriptionRepository @Inject constructor(
     suspend fun recent(limit: Int): List<SubscriptionEntity> = dao.recent(limit)
     suspend fun all(): List<SubscriptionEntity> = dao.all()
 
-    suspend fun save(entity: SubscriptionEntity) = dao.upsert(entity)
+    suspend fun save(entity: SubscriptionEntity) {
+        val existing = dao.getById(entity.id)
+        dao.upsert(entity)
+        auditLog.log(
+            userId = currentActor.snapshot()?.userId.orEmpty(),
+            userName = currentActor.snapshot()?.userName.orEmpty(),
+            action = if (existing == null) "SUBSCRIPTION_RECORDED" else "SUBSCRIPTION_UPDATED",
+            entityType = "subscription",
+            entityId = entity.id,
+            description = "${if (existing == null) "Recorded" else "Updated"} ${entity.type.lowercase()} collection of ${entity.amount} (receipt ${entity.receiptNumber})"
+        )
+    }
     suspend fun saveAll(items: List<SubscriptionEntity>) = dao.upsertAll(items)
-    suspend fun delete(id: String) = dao.delete(id)
+    suspend fun delete(id: String) {
+        val entity = dao.getById(id)
+        dao.delete(id)
+        auditLog.log(
+            userId = currentActor.snapshot()?.userId.orEmpty(),
+            userName = currentActor.snapshot()?.userName.orEmpty(),
+            action = "SUBSCRIPTION_DELETED",
+            entityType = "subscription",
+            entityId = id,
+            description = "Deleted subscription receipt ${entity?.receiptNumber.orEmpty()}"
+        )
+    }
 
     /** Families that have NOT paid a monthly subscription for the current month. */
     suspend fun defaulters(year: Int, month: Int): List<DefaulterFamily> {
-        val start = DateUtils.monthStartTimestamp(year, month)
-        val end = start + 30L * 24 * 60 * 60 * 1000
-        val families = familyDao.observeAll().let { emptyList<com.mahallu.manager.core.database.entity.FamilyEntity>() }
-        // Compute by reading from DB
         val allFamilies = familyDao.page(limit = 1000, offset = 0)
         val paid = dao.recent(5000)
             .filter { it.type == "MONTHLY" && it.year == year && it.month == month }
@@ -43,7 +63,6 @@ class SubscriptionRepository @Inject constructor(
         return allFamilies
             .filter { it.status == "ACTIVE" && it.id !in paid }
             .map { f ->
-                val lastPaid = paid.firstOrNull() // simplified; would query separately
                 val memberCount = memberDao.countByFamily(f.id)
                 DefaulterFamily(
                     family = f,

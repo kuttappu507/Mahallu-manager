@@ -16,6 +16,7 @@ data class DashboardSummary(
     val pendingDues: Double = 0.0,
     val donationsThisMonth: Double = 0.0,
     val welfareBeneficiaries: Int = 0,
+    val certificateCount: Int = 0,
     val recentActivities: List<ActivityItem> = emptyList()
 )
 

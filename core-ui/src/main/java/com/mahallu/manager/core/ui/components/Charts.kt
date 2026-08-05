@@ -17,16 +17,20 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.mahallu.manager.core.ui.theme.LocalMahalluColors
@@ -53,12 +57,18 @@ fun LineChart(
         return
     }
     val maxValue = remember(points) { max(points.maxOf { it.value }, 1f) }
+    val progress = animatedFloat(1f)
 
     Column(modifier = modifier) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(180.dp)
+                .graphicsLayer {
+                    scaleY = progress.coerceIn(0f, 1f)
+                    transformOrigin = TransformOrigin(0f, 1f)
+                    alpha = progress.coerceIn(0f, 1f)
+                }
         ) {
             Canvas(modifier = Modifier.fillMaxSize()) {
                 val w = size.width
@@ -159,7 +169,17 @@ fun BarChart(
                 LegendDot(label = seriesLabels.second, color = secondaryColor)
             }
         }
-        Box(modifier = Modifier.fillMaxWidth().height(180.dp)) {
+        val progress = animatedFloat(1f)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(180.dp)
+                .graphicsLayer {
+                    scaleY = progress.coerceIn(0f, 1f)
+                    transformOrigin = TransformOrigin(0f, 1f)
+                    alpha = progress.coerceIn(0f, 1f)
+                }
+        ) {
             Canvas(modifier = Modifier.fillMaxSize()) {
                 val w = size.width
                 val h = size.height
@@ -247,15 +267,20 @@ fun InfoRow(
     value: String,
     modifier: Modifier = Modifier
 ) {
-    Row(
-        modifier = modifier.fillMaxWidth().padding(vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
     ) {
-        Text(text = label, style = MaterialTheme.typography.bodyMedium, color = LocalMahalluColors.current.textSecondary)
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelMedium,
+            color = LocalMahalluColors.current.textSecondary
+        )
+        Spacer(Modifier.height(4.dp))
         Text(
             text = value,
-            style = MaterialTheme.typography.bodyMedium,
+            style = MaterialTheme.typography.bodyLarge,
             color = LocalMahalluColors.current.textPrimary,
             fontWeight = FontWeight.Medium
         )

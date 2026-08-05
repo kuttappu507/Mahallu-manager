@@ -30,6 +30,7 @@ import com.mahallu.manager.feature.certificates.DeathCertificateScreen
 import com.mahallu.manager.feature.certificates.MarriageCertificateScreen
 import com.mahallu.manager.feature.certificates.MembershipCertificateScreen
 import com.mahallu.manager.feature.certificates.ResidenceCertificateScreen
+import com.mahallu.manager.feature.dashboard.AnnouncementScreen
 import com.mahallu.manager.feature.dashboard.DashboardScreen
 import com.mahallu.manager.feature.death.DeathEditScreen
 import com.mahallu.manager.feature.death.DeathListScreen
@@ -91,7 +92,14 @@ fun MainShell(
         containerColor = LocalMahalluColors.current.background
     ) { padding ->
         Box(modifier = Modifier.fillMaxSize().padding(padding)) {
-            NavHost(navController = navController, startDestination = "dashboard") {
+            NavHost(
+                navController = navController,
+                startDestination = "dashboard",
+                enterTransition = { androidx.compose.animation.fadeIn(androidx.compose.animation.core.tween(220)) },
+                exitTransition = { androidx.compose.animation.fadeOut(androidx.compose.animation.core.tween(160)) },
+                popEnterTransition = { androidx.compose.animation.fadeIn(androidx.compose.animation.core.tween(220)) },
+                popExitTransition = { androidx.compose.animation.fadeOut(androidx.compose.animation.core.tween(160)) }
+            ) {
                 composable("dashboard") {
                     DashboardScreen(
                         onNavigate = { route -> navController.navigate(route) }
@@ -124,7 +132,8 @@ fun MainShell(
                     FamilyDetailScreen(
                         onBack = { navController.popBackStack() },
                         onEdit = { id -> navController.navigate("family_edit?id=$id") },
-                        onMemberClick = { id -> navController.navigate("member_detail/$id") }
+                        onMemberClick = { id -> navController.navigate("member_detail/$id") },
+                        onStatement = { navController.navigate("finance") }
                     )
                 }
                 composable("family_edit?id={familyId}", arguments = listOf(navArgument("familyId") {
@@ -272,7 +281,15 @@ fun MainShell(
                     GlobalSearchScreen(
                         onBack = { navController.popBackStack() },
                         onFamilyClick = { id -> navController.navigate("family_detail/$id") },
-                        onMemberClick = { id -> navController.navigate("member_detail/$id") }
+                        onMemberClick = { id -> navController.navigate("member_detail/$id") },
+                        onMarriageClick = { id -> navController.navigate("marriage_edit?id=$id") },
+                        onDeathClick = { id -> navController.navigate("death_edit?id=$id") },
+                        onWelfareClick = { id -> navController.navigate("welfare_edit?id=$id") }
+                    )
+                }
+                composable("announcements") {
+                    AnnouncementScreen(
+                        onDone = { navController.popBackStack() }
                     )
                 }
             }

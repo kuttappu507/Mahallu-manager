@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import java.util.Calendar
 import javax.inject.Inject
 
 data class FinanceUiState(
@@ -19,6 +20,8 @@ data class FinanceUiState(
     val balance: Double = 0.0,
     val entries: List<FinanceEntryEntity> = emptyList(),
     val typeFilter: String = "ALL",
+    val monthFilter: Long = -1L,
+    val monthChips: List<Pair<String, Long>> = emptyList(),
     val isLoading: Boolean = true
 )
 
@@ -28,23 +31,39 @@ class FinanceViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val typeFilter = MutableStateFlow("ALL")
+    private val monthFilter = MutableStateFlow(DateUtils.startOfMonth())
+
+    private fun monthOptions(): List<Pair<String, Long>> {
+        val now = Calendar.getInstance().timeInMillis
+        val current = DateUtils.startOfMonth(now)
+        val prev = DateUtils.startOfMonth(current - 1)
+        return listOf(
+            DateUtils.formatMonth(current) to current,
+            DateUtils.formatMonth(prev) to prev
+        )
+    }
 
     val state: StateFlow<FinanceUiState> = combine(
         repo.observeAll(),
-        typeFilter
-    ) { all, t ->
-        val filtered = if (t == "ALL") all else all.filter { it.type == t }
-        val totalIn = all.filter { it.type == "INCOME" }.sumOf { it.amount }
-        val totalOut = all.filter { it.type == "EXPENSE" }.sumOf { it.amount }
+        typeFilter,
+        monthFilter
+    ) { all, t, m ->
+        val inRange = if (m < 0L) all else all.filter { it.date in m..DateUtils.endOfMonth(m) }
+        val filtered = if (t == "ALL") inRange else inRange.filter { it.type == t }
+        val totalIn = inRange.filter { it.type == "INCOME" }.sumOf { it.amount }
+        val totalOut = inRange.filter { it.type == "EXPENSE" }.sumOf { it.amount }
         FinanceUiState(
             totalIncome = totalIn,
             totalExpense = totalOut,
             balance = totalIn - totalOut,
             entries = filtered,
             typeFilter = t,
+            monthFilter = m,
+            monthChips = monthOptions(),
             isLoading = false
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), FinanceUiState())
 
     fun setType(t: String) { typeFilter.value = t }
+    fun setMonth(m: Long) { monthFilter.value = m }
 }

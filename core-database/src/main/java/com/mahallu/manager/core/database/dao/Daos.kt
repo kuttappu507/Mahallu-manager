@@ -80,6 +80,9 @@ interface FamilyDao {
     @Query("SELECT COUNT(*) FROM families WHERE status = :status")
     suspend fun countByStatus(status: String): Int
 
+    @Query("SELECT COUNT(*) FROM families WHERE status = :status")
+    fun observeCountByStatus(status: String): Flow<Int>
+
     @Query("DELETE FROM families")
     suspend fun clear()
 }
@@ -118,7 +121,6 @@ interface MemberDao {
         WHERE name LIKE '%' || :q || '%'
            OR mobile LIKE '%' || :q || '%'
            OR memberNumber LIKE '%' || :q || '%'
-           OR arabicName LIKE '%' || :q || '%'
         ORDER BY name
     """)
     suspend fun search(q: String): List<com.mahallu.manager.core.database.entity.MemberEntity>
@@ -158,6 +160,9 @@ interface SubscriptionDao {
 
     @Query("SELECT SUM(amount) FROM subscriptions WHERE date BETWEEN :start AND :end")
     fun observeTotalBetween(start: Long, end: Long): Flow<Double?>
+
+    @Query("SELECT DISTINCT familyId FROM subscriptions WHERE type = 'MONTHLY' AND date BETWEEN :start AND :end")
+    fun observePaidFamilyIds(start: Long, end: Long): Flow<List<String>>
 
     @Query("SELECT * FROM subscriptions ORDER BY date DESC LIMIT :limit")
     suspend fun recent(limit: Int): List<com.mahallu.manager.core.database.entity.SubscriptionEntity>
@@ -255,6 +260,9 @@ interface MarriageDao {
     @Query("SELECT * FROM marriages WHERE id = :id")
     suspend fun getById(id: String): com.mahallu.manager.core.database.entity.MarriageEntity?
 
+    @Query("SELECT * FROM marriages WHERE id = :id")
+    fun observeById(id: String): Flow<com.mahallu.manager.core.database.entity.MarriageEntity?>
+
     @Query("SELECT * FROM marriages ORDER BY nikahDate DESC")
     fun observeAll(): Flow<List<com.mahallu.manager.core.database.entity.MarriageEntity>>
 
@@ -288,6 +296,9 @@ interface DeathDao {
     @Query("SELECT * FROM deaths WHERE id = :id")
     suspend fun getById(id: String): com.mahallu.manager.core.database.entity.DeathEntity?
 
+    @Query("SELECT * FROM deaths WHERE id = :id")
+    fun observeById(id: String): Flow<com.mahallu.manager.core.database.entity.DeathEntity?>
+
     @Query("SELECT * FROM deaths ORDER BY dateOfDeath DESC")
     fun observeAll(): Flow<List<com.mahallu.manager.core.database.entity.DeathEntity>>
 
@@ -320,11 +331,23 @@ interface WelfareDao {
     @Query("SELECT * FROM welfare_requests WHERE id = :id")
     suspend fun getById(id: String): com.mahallu.manager.core.database.entity.WelfareEntity?
 
+    @Query("SELECT * FROM welfare_requests WHERE id = :id")
+    fun observeById(id: String): Flow<com.mahallu.manager.core.database.entity.WelfareEntity?>
+
     @Query("SELECT * FROM welfare_requests ORDER BY date DESC")
     fun observeAll(): Flow<List<com.mahallu.manager.core.database.entity.WelfareEntity>>
 
     @Query("SELECT * FROM welfare_requests WHERE status = :status ORDER BY date DESC")
     fun observeByStatus(status: String): Flow<List<com.mahallu.manager.core.database.entity.WelfareEntity>>
+
+    @Query("""
+        SELECT * FROM welfare_requests
+        WHERE applicantName LIKE '%' || :q || '%'
+           OR category LIKE '%' || :q || '%'
+           OR reason LIKE '%' || :q || '%'
+        ORDER BY date DESC
+    """)
+    suspend fun search(q: String): List<com.mahallu.manager.core.database.entity.WelfareEntity>
 
     @Query("SELECT SUM(amount) FROM welfare_requests WHERE status IN ('APPROVED','DISBURSED') AND date BETWEEN :start AND :end")
     fun observeDisbursedBetween(start: Long, end: Long): Flow<Double?>
@@ -349,6 +372,9 @@ interface CertificateDao {
 
     @Query("SELECT * FROM certificates ORDER BY issuedDate DESC")
     fun observeAll(): Flow<List<com.mahallu.manager.core.database.entity.CertificateEntity>>
+
+    @Query("SELECT COUNT(*) FROM certificates")
+    fun observeCount(): Flow<Int>
 
     @Query("SELECT * FROM certificates WHERE type = :type ORDER BY issuedDate DESC")
     fun observeByType(type: String): Flow<List<com.mahallu.manager.core.database.entity.CertificateEntity>>

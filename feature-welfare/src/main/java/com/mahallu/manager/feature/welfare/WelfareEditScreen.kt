@@ -2,6 +2,7 @@ package com.mahallu.manager.feature.welfare
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -82,7 +83,10 @@ fun WelfareEditScreen(
                 Spacer(Modifier.height(12.dp))
                 Text("Category", style = MaterialTheme.typography.labelLarge, color = colors.textSecondary)
                 Spacer(Modifier.height(6.dp))
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Row(
+                    modifier = Modifier.horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
                     listOf("MEDICAL", "EDUCATION", "MARRIAGE", "FINANCIAL", "OTHER").forEach { c ->
                         ChipPill(text = c, selected = state.category == c, onClick = { viewModel.update { it.copy(category = c) } })
                     }
@@ -96,7 +100,10 @@ fun WelfareEditScreen(
                 Spacer(Modifier.height(12.dp))
                 Text("Status", style = MaterialTheme.typography.labelLarge, color = colors.textSecondary)
                 Spacer(Modifier.height(6.dp))
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Row(
+                    modifier = Modifier.horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
                     listOf("PENDING", "APPROVED", "DISBURSED", "REJECTED").forEach { s ->
                         ChipPill(text = s, selected = state.status == s, onClick = { viewModel.update { it.copy(status = s) } })
                     }

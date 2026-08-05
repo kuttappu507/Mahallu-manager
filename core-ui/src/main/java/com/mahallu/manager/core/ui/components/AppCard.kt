@@ -1,8 +1,14 @@
 package com.mahallu.manager.core.ui.components
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,9 +28,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -50,7 +59,15 @@ fun AppCard(
     content: @Composable () -> Unit
 ) {
     val shape = RoundedCornerShape(cornerRadius)
+    val interaction = remember { MutableInteractionSource() }
+    val pressed by interaction.collectIsPressedAsState()
+    val scale by animateFloatAsState(
+        targetValue = if (onClick != null && pressed) 0.97f else 1f,
+        animationSpec = tween(120, easing = FastOutSlowInEasing),
+        label = "card-scale"
+    )
     val baseModifier = modifier
+        .scale(scale)
         .shadow(
             elevation = elevation,
             shape = shape,
@@ -63,7 +80,10 @@ fun AppCard(
             if (borderColor != null) Modifier.border(1.dp, borderColor, shape)
             else Modifier
         )
-        .then(if (onClick != null) Modifier.clickable { onClick() } else Modifier)
+        .then(
+            if (onClick != null) Modifier.clickable(interactionSource = interaction, indication = null) { onClick() }
+            else Modifier
+        )
         .padding(contentPadding)
 
     Box(modifier = baseModifier) { content() }
@@ -154,23 +174,24 @@ fun StatTile(
     icon: ImageVector,
     accent: Color = LocalMahalluColors.current.primaryIndigo,
     modifier: Modifier = Modifier,
-    onClick: (() -> Unit)? = null
+    onClick: (() -> Unit)? = null,
+    index: Int = 0
 ) {
-    AppCard(
-        modifier = modifier,
-        onClick = onClick,
-        contentPadding = PaddingValues(14.dp)
-    ) {
-        Column {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth()
+    val colors = LocalMahalluColors.current
+    AnimatedReveal(modifier = modifier, index = index) {
+        AppCard(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = onClick,
+            contentPadding = PaddingValues(vertical = 12.dp, horizontal = 6.dp)
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(7.dp)
             ) {
                 Box(
                     modifier = Modifier
-                        .size(36.dp)
-                        .clip(CircleShape)
+                        .size(34.dp)
+                        .clip(RoundedCornerShape(11.dp))
                         .background(accent.copy(alpha = 0.12f)),
                     contentAlignment = Alignment.Center
                 ) {
@@ -178,23 +199,24 @@ fun StatTile(
                         imageVector = icon,
                         contentDescription = null,
                         tint = accent,
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier.size(17.dp)
                     )
                 }
+                Text(
+                    text = value,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = colors.textPrimary,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1
+                )
+                Text(
+                    text = label,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = colors.textSecondary,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1
+                )
             }
-            Spacer(Modifier.height(10.dp))
-            Text(
-                text = label,
-                style = MaterialTheme.typography.labelMedium,
-                color = LocalMahalluColors.current.textSecondary
-            )
-            Spacer(Modifier.height(4.dp))
-            Text(
-                text = value,
-                style = MaterialTheme.typography.titleLarge,
-                color = LocalMahalluColors.current.textPrimary,
-                fontWeight = FontWeight.Bold
-            )
         }
     }
 }

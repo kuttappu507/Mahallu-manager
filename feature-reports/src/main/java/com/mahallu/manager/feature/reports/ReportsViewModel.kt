@@ -57,9 +57,7 @@ class ReportsViewModel @Inject constructor(
             try {
                 val (title, headers, rows) = when (reportType) {
                     "FAMILY" -> Triple("Family Register", listOf("Number", "House Name", "Address", "Mobile", "Status"),
-                        familyRepo.observeAll().let { emptyList<Array<String>>() }.let {
-                            runBlockingRows(familyRepo)
-                        })
+                        runBlockingFamilyRows())
                     "MEMBER" -> Triple("Member Register", listOf("Member ID", "Name", "Family", "Gender", "Age"),
                         runBlockingMemberRows())
                     "COLLECTION" -> Triple("Collection Report", listOf("Receipt", "Type", "Date", "Amount", "Method"),
@@ -90,9 +88,8 @@ class ReportsViewModel @Inject constructor(
         }
     }
 
-    private suspend fun runBlockingRows(repo: FamilyRepository): List<Array<String>> {
-        val list = repo.observeAll().let { emptyList<com.mahallu.manager.core.database.entity.FamilyEntity>() }
-        val page = repo.search("")
+    private suspend fun runBlockingFamilyRows(): List<Array<String>> {
+        val page = familyRepo.search("")
         return page.map { arrayOf(it.familyNumber, it.houseName, it.address, it.primaryMobile ?: "", it.status) }
     }
 

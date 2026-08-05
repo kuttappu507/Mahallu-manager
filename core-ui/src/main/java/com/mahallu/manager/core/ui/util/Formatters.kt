@@ -9,6 +9,7 @@ import java.util.Locale
 object Formatters {
     private val indianRupeeFormat: NumberFormat = NumberFormat.getNumberInstance(Locale("en", "IN"))
     private val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+    private val dateWithWeekdayFormat = SimpleDateFormat("EEE, MMM d yyyy", Locale.getDefault())
     private val dateTimeFormat = SimpleDateFormat("dd MMM yyyy, hh:mm a", Locale.getDefault())
     private val isoDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
     private val displayDateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
@@ -25,6 +26,7 @@ object Formatters {
     }
 
     fun date(timestamp: Long): String = dateFormat.format(Date(timestamp))
+    fun dateWithWeekday(timestamp: Long): String = dateWithWeekdayFormat.format(Date(timestamp))
     fun dateTime(timestamp: Long): String = dateTimeFormat.format(Date(timestamp))
     fun isoDate(timestamp: Long): String = isoDateFormat.format(Date(timestamp))
     fun displayDate(timestamp: Long): String = displayDateFormat.format(Date(timestamp))
@@ -47,6 +49,15 @@ object Formatters {
         var age = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR)
         if (today.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR)) age--
         return age
+    }
+
+    fun initials(name: String): String {
+        val parts = name.trim().split("\\s+".toRegex()).filter { it.isNotEmpty() }
+        return when {
+            parts.isEmpty() -> "?"
+            parts.size == 1 -> parts.first().take(2).uppercase(Locale.getDefault())
+            else -> (parts.first().first().toString() + parts.last().first()).uppercase(Locale.getDefault())
+        }
     }
 
     fun greeting(): String {

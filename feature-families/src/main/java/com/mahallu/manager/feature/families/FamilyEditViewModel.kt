@@ -43,6 +43,8 @@ class FamilyEditViewModel @Inject constructor(
     private val _state = MutableStateFlow(FamilyEditState())
     val state: StateFlow<FamilyEditState> = _state.asStateFlow()
 
+    private var dirty = false
+
     init {
         val id = savedStateHandle.get<String>("familyId").orEmpty()
         if (id.isNotBlank()) loadExisting(id)
@@ -52,8 +54,12 @@ class FamilyEditViewModel @Inject constructor(
     private fun loadExisting(id: String) {
         _state.update { it.copy(isLoading = true) }
         viewModelScope.launch {
-            val fam = repo.getById(id)
-            if (fam != null) {
+            repo.observeById(id).collect { fam ->
+                if (fam == null) {
+                    _state.update { it.copy(isLoading = false) }
+                    return@collect
+                }
+                if (dirty) return@collect
                 _state.value = FamilyEditState(
                     id = fam.id,
                     familyNumber = fam.familyNumber,
@@ -71,13 +77,12 @@ class FamilyEditViewModel @Inject constructor(
                     isEditing = true,
                     isLoading = false
                 )
-            } else {
-                _state.update { it.copy(isLoading = false) }
             }
         }
     }
 
     fun update(transform: (FamilyEditState) -> FamilyEditState) {
+        dirty = true
         _state.update(transform)
     }
 

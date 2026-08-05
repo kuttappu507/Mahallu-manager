@@ -19,8 +19,8 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.material.icons.rounded.Notifications
 import androidx.compose.material.icons.rounded.Search
@@ -40,22 +40,27 @@ import com.mahallu.manager.core.ui.theme.RadiusFull
 import com.mahallu.manager.core.ui.theme.RadiusLg
 import com.mahallu.manager.core.ui.theme.RadiusMd
 
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.ui.text.TextStyle
+
 @Composable
 fun AppSearchBar(
     query: String,
     onQueryChange: (String) -> Unit,
     placeholder: String = "Search...",
     modifier: Modifier = Modifier,
-    onClick: (() -> Unit)? = null
+    onClick: (() -> Unit)? = null,
+    count: Int? = null
 ) {
     val colors = LocalMahalluColors.current
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(46.dp)
+            .height(48.dp)
+            .padding(horizontal = 18.dp, vertical = 4.dp)
             .clip(RoundedCornerShape(RadiusMd.value.dp))
-            .background(colors.surfaceVariant)
-            .border(1.dp, colors.border, RoundedCornerShape(RadiusMd.value.dp))
+            .background(Color.White)
+            .border(1.5.dp, colors.border, RoundedCornerShape(RadiusMd.value.dp))
             .then(if (onClick != null) Modifier.clickable { onClick() } else Modifier)
             .padding(horizontal = 14.dp),
         contentAlignment = Alignment.CenterStart
@@ -65,14 +70,43 @@ fun AppSearchBar(
                 imageVector = Icons.Rounded.Search,
                 contentDescription = null,
                 tint = colors.textSecondary,
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(18.dp)
             )
-            Spacer(Modifier.width(8.dp))
-            Text(
-                text = if (query.isEmpty()) placeholder else query,
-                color = if (query.isEmpty()) colors.textTertiary else colors.textPrimary,
-                style = MaterialTheme.typography.bodyMedium
+            Spacer(Modifier.width(10.dp))
+            BasicTextField(
+                value = query,
+                onValueChange = onQueryChange,
+                textStyle = TextStyle(
+                    color = colors.textPrimary,
+                    fontSize = MaterialTheme.typography.bodyMedium.fontSize
+                ),
+                singleLine = true,
+                decorationBox = { innerTextField ->
+                    Box {
+                        if (query.isEmpty()) {
+                            Text(
+                                text = placeholder,
+                                color = colors.textTertiary,
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
+                        innerTextField()
+                    }
+                },
+                modifier = Modifier.weight(1f)
             )
+            if (count != null) {
+                Text(
+                    text = count.toString(),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = colors.textSecondary,
+                    fontWeight = FontWeight.ExtraBold,
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(Color(0xFFF1F5F9))
+                        .padding(horizontal = 7.dp, vertical = 3.dp)
+                )
+            }
         }
     }
 }
@@ -99,7 +133,7 @@ fun TopAppBar(
     ) {
         if (showBack && onBackClick != null) {
             IconCircleButton(
-                icon = Icons.Rounded.ArrowBack,
+                icon = Icons.AutoMirrored.Rounded.ArrowBack,
                 onClick = onBackClick,
                 backgroundColor = Color.Transparent,
                 tint = colors.textPrimary

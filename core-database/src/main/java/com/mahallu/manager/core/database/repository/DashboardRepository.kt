@@ -1,6 +1,7 @@
 package com.mahallu.manager.core.database.repository
 
 import com.mahallu.manager.core.database.dao.AuditLogDao
+import com.mahallu.manager.core.database.dao.CertificateDao
 import com.mahallu.manager.core.database.dao.DonationDao
 import com.mahallu.manager.core.database.dao.FamilyDao
 import com.mahallu.manager.core.database.dao.FinanceDao
@@ -23,6 +24,7 @@ class DashboardRepository @Inject constructor(
     private val donationDao: DonationDao,
     private val financeDao: FinanceDao,
     private val welfareDao: WelfareDao,
+    private val certificateDao: CertificateDao,
     private val auditDao: AuditLogDao
 ) {
     fun observeSummary(): Flow<DashboardSummary> {
@@ -39,14 +41,22 @@ class DashboardRepository @Inject constructor(
             StatsData(families, members, collection ?: 0.0, donations ?: 0.0)
         }
 
-        return combine(statsFlow, welfareDao.observeAll(), auditDao.observeRecent(8)) { stats, welfare, logs ->
+        val pendingDuesFlow = combine(
+            familyDao.observeCountByStatus("ACTIVE"),
+            subscriptionDao.observePaidFamilyIds(monthStart, monthEnd)
+        ) { activeFamilies, paidIds ->
+            (activeFamilies - paidIds.distinct().size).coerceAtLeast(0)
+        }
+
+        return combine(statsFlow, pendingDuesFlow, welfareDao.observeAll(), certificateDao.observeCount(), auditDao.observeRecent(8)) { stats, pendingCount, welfare, certCount, logs ->
             DashboardSummary(
                 totalFamilies = stats.families,
                 totalMembers = stats.members,
                 collectionThisMonth = stats.collection,
-                pendingDues = 0.0,
+                pendingDues = pendingCount * DEFAULT_MONTHLY_AMOUNT,
                 donationsThisMonth = stats.donations,
                 welfareBeneficiaries = welfare.count { it.status == "APPROVED" || it.status == "DISBURSED" },
+                certificateCount = certCount,
                 recentActivities = logs.map { it.toActivityItem() }
             )
         }
@@ -92,6 +102,10 @@ class DashboardRepository @Inject constructor(
         val collection: Double,
         val donations: Double
     )
+
+    companion object {
+        private const val DEFAULT_MONTHLY_AMOUNT = 500.0
+    }
 
     private fun buildMonthPairs(count: Int): List<Triple<String, Long, Long>> {
         val now = System.currentTimeMillis()

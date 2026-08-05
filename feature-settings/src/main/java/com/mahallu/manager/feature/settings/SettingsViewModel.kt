@@ -3,6 +3,7 @@ package com.mahallu.manager.feature.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mahallu.manager.core.database.repository.SettingsRepository
+import com.mahallu.manager.core.database.repository.ThemeModeController
 import com.mahallu.manager.core.security.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,7 +28,8 @@ data class SettingsUiState(
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val sessionManager: SessionManager,
-    private val settingsRepo: SettingsRepository
+    private val settingsRepo: SettingsRepository,
+    private val themeModeController: ThemeModeController
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(SettingsUiState())
@@ -62,10 +64,8 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun setTheme(mode: String) {
-        viewModelScope.launch {
-            settingsRepo.put("theme_mode", mode)
-            _state.update { it.copy(themeMode = mode) }
-        }
+        themeModeController.setTheme(mode)
+        _state.update { it.copy(themeMode = mode) }
     }
 
     fun setAutoBackup(enabled: Boolean) {

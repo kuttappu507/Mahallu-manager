@@ -2,6 +2,7 @@ package com.mahallu.manager.feature.subscriptions
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -105,7 +106,10 @@ fun CollectionEntryScreen(
                 Spacer(Modifier.height(16.dp))
                 Text("Collection Type", style = MaterialTheme.typography.labelLarge, color = colors.textSecondary)
                 Spacer(Modifier.height(6.dp))
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Row(
+                    modifier = Modifier.horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
                     listOf("MONTHLY", "QUARTERLY", "YEARLY", "SPECIAL").forEach { t ->
                         ChipPill(text = t, selected = state.type == t, onClick = { viewModel.update { it.copy(type = t) } })
                     }
@@ -131,7 +135,10 @@ fun CollectionEntryScreen(
                 Spacer(Modifier.height(16.dp))
                 Text("Payment Method", style = MaterialTheme.typography.labelLarge, color = colors.textSecondary)
                 Spacer(Modifier.height(6.dp))
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Row(
+                    modifier = Modifier.horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
                     listOf("CASH", "UPI", "BANK", "CHEQUE", "OTHER").forEach { p ->
                         ChipPill(text = p, selected = state.paymentMethod == p, onClick = { viewModel.update { it.copy(paymentMethod = p) } })
                     }

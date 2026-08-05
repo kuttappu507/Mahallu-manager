@@ -16,12 +16,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.FamilyRestroom
 import androidx.compose.material.icons.rounded.Groups
 import androidx.compose.material.icons.rounded.ReceiptLong
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.VolunteerActivism
+import androidx.compose.material.icons.rounded.AccountBalanceWallet
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -48,6 +49,9 @@ fun GlobalSearchScreen(
     onBack: () -> Unit,
     onFamilyClick: (String) -> Unit,
     onMemberClick: (String) -> Unit,
+    onMarriageClick: (String) -> Unit,
+    onDeathClick: (String) -> Unit,
+    onWelfareClick: (String) -> Unit,
     viewModel: GlobalSearchViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -58,7 +62,7 @@ fun GlobalSearchScreen(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconCircleButton(icon = Icons.Rounded.ArrowBack, onClick = onBack, backgroundColor = colors.background, tint = colors.textPrimary)
+            IconCircleButton(icon = Icons.AutoMirrored.Rounded.ArrowBack, onClick = onBack, backgroundColor = colors.background, tint = colors.textPrimary)
             AppTextField(
                 value = state.query,
                 onValueChange = viewModel::setQuery,
@@ -116,8 +120,7 @@ fun GlobalSearchScreen(
                         ResultCard(
                             title = "${d.receiptNumber} • ${d.donorName}",
                             subtitle = "${d.category} • ${Formatters.currency(d.amount)}",
-                            icon = Icons.Rounded.VolunteerActivism,
-                            onClick = { }
+                            icon = Icons.Rounded.VolunteerActivism
                         )
                     }
                 }
@@ -127,8 +130,7 @@ fun GlobalSearchScreen(
                         ResultCard(
                             title = "${s.receiptNumber} • ${s.type}",
                             subtitle = "${Formatters.currency(s.amount)} • ${Formatters.date(s.date)}",
-                            icon = Icons.Rounded.ReceiptLong,
-                            onClick = { }
+                            icon = Icons.Rounded.ReceiptLong
                         )
                     }
                 }
@@ -139,7 +141,7 @@ fun GlobalSearchScreen(
                             title = "${m.registrationNumber} • ${m.brideName} & ${m.groomName}",
                             subtitle = "Nikah: ${Formatters.date(m.nikahDate)}",
                             icon = Icons.Rounded.FamilyRestroom,
-                            onClick = { }
+                            onClick = { onMarriageClick(m.id) }
                         )
                     }
                 }
@@ -150,7 +152,28 @@ fun GlobalSearchScreen(
                             title = "${d.registrationNumber} • ${d.name}",
                             subtitle = "Died: ${Formatters.date(d.dateOfDeath)}",
                             icon = Icons.Rounded.FamilyRestroom,
-                            onClick = { }
+                            onClick = { onDeathClick(d.id) }
+                        )
+                    }
+                }
+                if (state.results.welfare.isNotEmpty()) {
+                    item { SectionTitle("Welfare (${state.results.welfare.size})") }
+                    items(state.results.welfare) { w ->
+                        ResultCard(
+                            title = "${w.applicantName} • ${w.category}",
+                            subtitle = "${Formatters.currency(w.amount)} • ${w.status}",
+                            icon = Icons.Rounded.VolunteerActivism,
+                            onClick = { onWelfareClick(w.id) }
+                        )
+                    }
+                }
+                if (state.results.finance.isNotEmpty()) {
+                    item { SectionTitle("Finance (${state.results.finance.size})") }
+                    items(state.results.finance) { f ->
+                        ResultCard(
+                            title = "${f.category} • ${f.type}",
+                            subtitle = "${Formatters.currency(f.amount)} • ${f.description}",
+                            icon = Icons.Rounded.AccountBalanceWallet
                         )
                     }
                 }
@@ -171,7 +194,7 @@ private fun SectionTitle(title: String) {
 }
 
 @Composable
-private fun ResultCard(title: String, subtitle: String, icon: ImageVector, onClick: () -> Unit) {
+private fun ResultCard(title: String, subtitle: String, icon: ImageVector, onClick: (() -> Unit)? = null) {
     val colors = LocalMahalluColors.current
     AppCard(
         modifier = Modifier.fillMaxWidth(),

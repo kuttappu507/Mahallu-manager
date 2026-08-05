@@ -45,10 +45,7 @@ class GlobalSearchRepository @Inject constructor(
         }
         val marrs = async { marriageDao.search(query).take(limitPerCategory) }
         val deats = async { deathDao.search(query).take(limitPerCategory) }
-        val wels = async {
-            welfareDao.observeAll().let { emptyList<com.mahallu.manager.core.database.entity.WelfareEntity>() }
-            welfareDao.let { emptyList<com.mahallu.manager.core.database.entity.WelfareEntity>() }
-        }
+        val wels = async { welfareDao.search(query).take(limitPerCategory) }
         val fins = async {
             financeDao.all().filter {
                 it.description.contains(query, ignoreCase = true) ||

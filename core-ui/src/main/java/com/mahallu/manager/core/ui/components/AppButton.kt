@@ -144,13 +144,16 @@ fun ChipPill(
     accent: Color = LocalMahalluColors.current.primaryIndigo
 ) {
     val colors = LocalMahalluColors.current
-    val bg = if (selected) accent else colors.surfaceVariant
-    val fg = if (selected) Color.White else colors.textSecondary
+    val bg = if (selected) colors.primaryIndigo.copy(alpha = 0.12f) else colors.surface
+    val fg = if (selected) accent else colors.textSecondary
+    val borderColor = if (selected) Color.Transparent else colors.border
+    val shape = RoundedCornerShape(RadiusFull.value.dp)
 
     Box(
         modifier = Modifier
-            .clip(RoundedCornerShape(RadiusFull.value.dp))
+            .clip(shape)
             .background(bg)
+            .border(1.dp, borderColor, shape)
             .then(if (onClick != null) Modifier.clickable { onClick() } else Modifier)
             .padding(horizontal = 14.dp, vertical = 8.dp),
         contentAlignment = Alignment.Center
@@ -159,7 +162,7 @@ fun ChipPill(
             text = text,
             color = fg,
             style = MaterialTheme.typography.labelMedium,
-            fontWeight = FontWeight.Medium
+            fontWeight = FontWeight.Bold
         )
     }
 }
@@ -195,20 +198,34 @@ fun SmallActionButton(
     modifier: Modifier = Modifier,
     accent: Color = LocalMahalluColors.current.primaryIndigo
 ) {
+    val colors = LocalMahalluColors.current
     Column(
         modifier = modifier
-            .clip(RoundedCornerShape(RadiusMd.value.dp))
-            .background(LocalMahalluColors.current.surfaceVariant)
+            .clip(RoundedCornerShape(16.dp))
+            .background(colors.surface)
+            .border(1.dp, colors.border, RoundedCornerShape(16.dp))
             .clickable { onClick() }
-            .padding(horizontal = 10.dp, vertical = 10.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding(horizontal = 4.dp, vertical = 12.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(7.dp)
     ) {
-        Icon(imageVector = icon, contentDescription = null, tint = accent, modifier = Modifier.size(20.dp))
-        Spacer(Modifier.height(4.dp))
+        Box(
+            modifier = Modifier
+                .size(38.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .background(accent),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(imageVector = icon, contentDescription = null, tint = Color.White, modifier = Modifier.size(18.dp))
+        }
         Text(
             text = label,
             style = MaterialTheme.typography.labelSmall,
-            color = LocalMahalluColors.current.textSecondary
+            color = Color(0xFF475569),
+            fontWeight = FontWeight.ExtraBold,
+            minLines = 2,
+            maxLines = 2,
+            textAlign = androidx.compose.ui.text.style.TextAlign.Center
         )
     }
 }

@@ -145,63 +145,63 @@ class SeedData @Inject constructor(
         fun dob(yearsAgo: Int) = now - yearsAgo * year
 
         // Family 1 - 4 members
-        members += MemberEntity("mem-5421", "MEM-5421", "fam-1001", "Muhammed Safwan", null, "MALE",
+        members += MemberEntity("mem-5421", "MEM-5421", "fam-1001", "Muhammed Safwan", "MALE",
             dob(26), "Business", "B.Com", "B+", "MARRIED",
             "+91 9876543210", null, "Indian", null, null, null, "HEAD")
-        members += MemberEntity("mem-5422", "MEM-5422", "fam-1001", "Fathima Safwana", null, "FEMALE",
+        members += MemberEntity("mem-5422", "MEM-5422", "fam-1001", "Fathima Safwana", "FEMALE",
             dob(24), "Teacher", "B.Ed", "A+", "MARRIED",
             "+91 9876543211", null, "Indian", null, null, null, "SPOUSE")
-        members += MemberEntity("mem-5423", "MEM-5423", "fam-1001", "Ayaan Safwan", null, "MALE",
+        members += MemberEntity("mem-5423", "MEM-5423", "fam-1001", "Ayaan Safwan", "MALE",
             dob(5), "Student", null, "O+", "SINGLE",
             null, null, "Indian", null, null, null, "SON")
-        members += MemberEntity("mem-5424", "MEM-5424", "fam-1001", "Mariam Safwana", null, "FEMALE",
+        members += MemberEntity("mem-5424", "MEM-5424", "fam-1001", "Mariam Safwana", "FEMALE",
             dob(3), "Student", null, null, "SINGLE",
             null, null, "Indian", null, null, null, "DAUGHTER")
 
         // Family 2 - 3 members
-        members += MemberEntity("mem-5501", "MEM-5501", "fam-1002", "Ibrahim Kutty", null, "MALE",
+        members += MemberEntity("mem-5501", "MEM-5501", "fam-1002", "Ibrahim Kutty", "MALE",
             dob(55), "Retired", "SSLC", "A+", "MARRIED",
             "+91 9876501234", null, "Indian", null, null, null, "HEAD")
-        members += MemberEntity("mem-5502", "MEM-5502", "fam-1002", "Khadeeja Beevi", null, "FEMALE",
+        members += MemberEntity("mem-5502", "MEM-5502", "fam-1002", "Khadeeja Beevi", "FEMALE",
             dob(50), "Homemaker", "SSLC", "B+", "MARRIED",
             "+91 9876501235", null, "Indian", null, null, null, "SPOUSE")
-        members += MemberEntity("mem-5503", "MEM-5503", "fam-1002", "Naseer Ahmed", null, "MALE",
+        members += MemberEntity("mem-5503", "MEM-5503", "fam-1002", "Naseer Ahmed", "MALE",
             dob(28), "Engineer", "B.Tech", "O+", "SINGLE",
             "+91 9876501236", null, "Indian", null, null, null, "SON")
 
         // Family 3 - 3 members
-        members += MemberEntity("mem-5601", "MEM-5601", "fam-1003", "Mohammed Ali", null, "MALE",
+        members += MemberEntity("mem-5601", "MEM-5601", "fam-1003", "Mohammed Ali", "MALE",
             dob(60), "Business", "Plus Two", "AB+", "MARRIED",
             "+91 9876512345", null, "Indian", null, null, null, "HEAD")
-        members += MemberEntity("mem-5602", "MEM-5602", "fam-1003", "Rukhiya Beevi", null, "FEMALE",
+        members += MemberEntity("mem-5602", "MEM-5602", "fam-1003", "Rukhiya Beevi", "FEMALE",
             dob(55), "Homemaker", "SSLC", "A+", "MARRIED",
             "+91 9876512346", null, "Indian", null, null, null, "SPOUSE")
-        members += MemberEntity("mem-5603", "MEM-5603", "fam-1003", "Salman Ali", null, "MALE",
+        members += MemberEntity("mem-5603", "MEM-5603", "fam-1003", "Salman Ali", "MALE",
             dob(30), "Doctor", "MBBS", "B+", "MARRIED",
             "+91 9876512347", null, "Indian", null, null, null, "SON")
 
         // Family 4 - 4 members
-        members += MemberEntity("mem-5701", "MEM-5701", "fam-1004", "Hassan Khan", null, "MALE",
+        members += MemberEntity("mem-5701", "MEM-5701", "fam-1004", "Hassan Khan", "MALE",
             dob(45), "Teacher", "M.A.", "O+", "MARRIED",
             "+91 9876523456", null, "Indian", null, null, null, "HEAD")
-        members += MemberEntity("mem-5702", "MEM-5702", "fam-1004", "Sumayya Khan", null, "FEMALE",
+        members += MemberEntity("mem-5702", "MEM-5702", "fam-1004", "Sumayya Khan", "FEMALE",
             dob(40), "Teacher", "B.Ed", "A+", "MARRIED",
             "+91 9876523457", null, "Indian", null, null, null, "SPOUSE")
-        members += MemberEntity("mem-5703", "MEM-5703", "fam-1004", "Rayyan Khan", null, "MALE",
+        members += MemberEntity("mem-5703", "MEM-5703", "fam-1004", "Rayyan Khan", "MALE",
             dob(15), "Student", null, "O+", "SINGLE",
             null, null, "Indian", null, null, null, "SON")
-        members += MemberEntity("mem-5704", "MEM-5704", "fam-1004", "Zara Khan", null, "FEMALE",
+        members += MemberEntity("mem-5704", "MEM-5704", "fam-1004", "Zara Khan", "FEMALE",
             dob(12), "Student", null, null, "SINGLE",
             null, null, "Indian", null, null, null, "DAUGHTER")
 
         // Family 5 - 3 members
-        members += MemberEntity("mem-5801", "MEM-5801", "fam-1005", "Ismail Rawther", null, "MALE",
+        members += MemberEntity("mem-5801", "MEM-5801", "fam-1005", "Ismail Rawther", "MALE",
             dob(70), "Retired", "SSLC", "B+", "MARRIED",
             "+91 9876534567", null, "Indian", null, null, null, "HEAD")
-        members += MemberEntity("mem-5802", "MEM-5802", "fam-1005", "Fathima Ismail", null, "FEMALE",
+        members += MemberEntity("mem-5802", "MEM-5802", "fam-1005", "Fathima Ismail", "FEMALE",
             dob(65), "Homemaker", null, "O+", "MARRIED",
             null, null, "Indian", null, null, null, "SPOUSE")
-        members += MemberEntity("mem-5803", "MEM-5803", "fam-1005", "Ashraf Ismail", null, "MALE",
+        members += MemberEntity("mem-5803", "MEM-5803", "fam-1005", "Ashraf Ismail", "MALE",
             dob(35), "Shopkeeper", "Plus Two", "A+", "MARRIED",
             "+91 9876534568", null, "Indian", null, null, null, "SON")
 

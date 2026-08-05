@@ -2,6 +2,7 @@ package com.mahallu.manager.feature.members
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -95,12 +96,6 @@ fun MemberEditScreen(
                     isRequired = true
                 )
                 Spacer(Modifier.height(12.dp))
-                AppTextField(
-                    value = state.arabicName,
-                    onValueChange = { v -> viewModel.update { it.copy(arabicName = v) } },
-                    label = "Arabic Name"
-                )
-                Spacer(Modifier.height(12.dp))
                 Text("Gender", style = MaterialTheme.typography.labelLarge, color = colors.textSecondary)
                 Spacer(Modifier.height(6.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -114,7 +109,7 @@ fun MemberEditScreen(
                     onValueChange = { },
                     label = "Date of Birth",
                     readOnly = true,
-                    helperText = "Default: today (tap to change in v2)"
+                    helperText = "Defaults to today"
                 )
                 Spacer(Modifier.height(12.dp))
                 AppTextField(
@@ -151,7 +146,10 @@ fun MemberEditScreen(
                 Spacer(Modifier.height(12.dp))
                 Text("Marital Status", style = MaterialTheme.typography.labelLarge, color = colors.textSecondary)
                 Spacer(Modifier.height(6.dp))
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Row(
+                    modifier = Modifier.horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
                     listOf("SINGLE", "MARRIED", "DIVORCED", "WIDOWED").forEach { s ->
                         ChipPill(text = s, selected = state.maritalStatus == s, onClick = { viewModel.update { it.copy(maritalStatus = s) } })
                     }

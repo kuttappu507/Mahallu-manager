@@ -8,7 +8,9 @@ import javax.inject.Singleton
 
 @Singleton
 class MemberRepository @Inject constructor(
-    private val dao: MemberDao
+    private val dao: MemberDao,
+    private val currentActor: CurrentActor,
+    private val auditLog: AuditLogRepository
 ) {
     fun observeAll(): Flow<List<MemberEntity>> = dao.observeAll()
     fun observeById(id: String): Flow<MemberEntity?> = dao.observeById(id)
@@ -19,7 +21,29 @@ class MemberRepository @Inject constructor(
     suspend fun search(query: String): List<MemberEntity> = dao.search(query)
     suspend fun count(): Int = dao.count()
 
-    suspend fun save(member: MemberEntity) = dao.upsert(member)
+    suspend fun save(member: MemberEntity) {
+        val existing = dao.getById(member.id)
+        dao.upsert(member)
+        auditLog.log(
+            userId = currentActor.snapshot()?.userId.orEmpty(),
+            userName = currentActor.snapshot()?.userName.orEmpty(),
+            action = if (existing == null) "MEMBER_ADDED" else "MEMBER_UPDATED",
+            entityType = "member",
+            entityId = member.id,
+            description = "${if (existing == null) "Added" else "Updated"} member ${member.name}"
+        )
+    }
     suspend fun saveAll(items: List<MemberEntity>) = dao.upsertAll(items)
-    suspend fun delete(id: String) = dao.delete(id)
+    suspend fun delete(id: String) {
+        val member = dao.getById(id)
+        dao.delete(id)
+        auditLog.log(
+            userId = currentActor.snapshot()?.userId.orEmpty(),
+            userName = currentActor.snapshot()?.userName.orEmpty(),
+            action = "MEMBER_DELETED",
+            entityType = "member",
+            entityId = id,
+            description = "Deleted member ${member?.name.orEmpty()}"
+        )
+    }
 }

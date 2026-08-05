@@ -1,6 +1,9 @@
 package com.mahallu.manager.core.ui.components
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,13 +15,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Dashboard
 import androidx.compose.material.icons.rounded.FamilyRestroom
 import androidx.compose.material.icons.rounded.Groups
 import androidx.compose.material.icons.rounded.MoreHoriz
-import androidx.compose.material.icons.rounded.AccountBalance
 import androidx.compose.material.icons.rounded.AccountBalanceWallet
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -28,9 +32,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.mahallu.manager.core.ui.theme.LocalMahalluColors
 
@@ -66,8 +73,16 @@ fun AppBottomNavBar(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .background(colors.background)
-            .padding(horizontal = 12.dp, vertical = 8.dp)
+            .background(colors.surface)
+            .drawBehind {
+                drawLine(
+                    color = colors.border,
+                    start = Offset(0f, 0f),
+                    end = Offset(size.width, 0f),
+                    strokeWidth = 1f
+                )
+            }
+            .padding(start = 10.dp, top = 8.dp, end = 10.dp, bottom = 12.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -92,34 +107,44 @@ private fun BottomNavItemView(
         targetValue = if (isSelected) colors.primaryIndigo else colors.textTertiary,
         label = "nav-tint"
     )
+    val pillWidth: Dp by animateDpAsState(
+        targetValue = if (isSelected) 52.dp else 36.dp,
+        animationSpec = tween(280, easing = FastOutSlowInEasing),
+        label = "pill-width"
+    )
+    val pillAlpha by animateColorAsState(
+        targetValue = if (isSelected) colors.primaryIndigo.copy(alpha = 0.10f) else Color.Transparent,
+        label = "pill-bg"
+    )
+
     Column(
         modifier = Modifier
-            .clip(androidx.compose.foundation.shape.RoundedCornerShape(14.dp))
             .clickable { onClick() }
-            .padding(horizontal = 10.dp, vertical = 6.dp),
+            .padding(horizontal = 4.dp, vertical = 4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Box(
             modifier = Modifier
-                .size(if (isSelected) 40.dp else 32.dp)
-                .clip(CircleShape)
-                .background(if (isSelected) colors.primaryIndigo.copy(alpha = 0.12f) else Color.Transparent),
+                .width(pillWidth)
+                .height(30.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .background(pillAlpha),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 imageVector = item.icon,
                 contentDescription = item.label,
                 tint = tint,
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(21.dp)
             )
         }
-        Spacer(Modifier.height(2.dp))
+        Spacer(Modifier.height(4.dp))
         Text(
             text = item.label,
             style = MaterialTheme.typography.labelSmall,
             color = tint,
-            fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Medium
+            fontWeight = FontWeight.ExtraBold
         )
     }
 }

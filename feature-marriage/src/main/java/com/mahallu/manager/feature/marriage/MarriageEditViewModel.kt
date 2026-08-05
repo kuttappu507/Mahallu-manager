@@ -46,12 +46,14 @@ class MarriageEditViewModel @Inject constructor(
     /** Return the current marriage record (for caller to pre-fill the certificate). */
     fun current(): MarriageEditState = _state.value
 
+    private var dirty = false
+
     init {
         val id = savedStateHandle.get<String>("id").orEmpty()
         if (id.isNotBlank()) {
             viewModelScope.launch {
-                val m = repo.getById(id)
-                if (m != null) {
+                repo.observeById(id).collect { m ->
+                    if (m == null || dirty) return@collect
                     _state.value = MarriageEditState(
                         id = m.id,
                         registrationNumber = m.registrationNumber,
@@ -75,6 +77,7 @@ class MarriageEditViewModel @Inject constructor(
     }
 
     fun update(transform: (MarriageEditState) -> MarriageEditState) {
+        dirty = true
         _state.update(transform)
     }
 

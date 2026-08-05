@@ -3,7 +3,7 @@
     <color name="primary_indigo">#4F46E5</color>
     <color name="primary_dark">#4338CA</color>
     <color name="accent_coral">#FF6B6B</color>
-    <color name="background">#FFFFFF</color>
+    <color name="background">#F8FAFC</color>
     <color name="surface">#F8FAFC</color>
     <color name="text_primary">#1F2937</color>
     <color name="text_secondary">#6B7280</color>

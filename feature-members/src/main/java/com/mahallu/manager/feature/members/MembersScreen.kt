@@ -16,11 +16,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Female
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.ChevronRight
 import androidx.compose.material.icons.rounded.Groups
-import androidx.compose.material.icons.rounded.Male
-import androidx.compose.material.icons.rounded.PersonAdd
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -29,7 +29,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -38,8 +40,7 @@ import com.mahallu.manager.core.ui.components.AppCard
 import com.mahallu.manager.core.ui.components.AppSearchBar
 import com.mahallu.manager.core.ui.components.ChipPill
 import com.mahallu.manager.core.ui.components.EmptyState
-import com.mahallu.manager.core.ui.components.FabAdd
-import com.mahallu.manager.core.ui.components.TopAppBar
+import com.mahallu.manager.core.ui.components.IconCircleButton
 import com.mahallu.manager.core.ui.theme.LocalMahalluColors
 import com.mahallu.manager.core.ui.util.Formatters
 
@@ -54,17 +55,44 @@ fun MembersScreen(
 
     Box(modifier = Modifier.fillMaxSize().background(colors.background)) {
         Column(modifier = Modifier.fillMaxSize()) {
-            TopAppBar(
-                title = "Members",
-                showBack = false,
-                onSearchClick = { },
-                trailingActions = { FabAdd(onClick = onAddMember) }
-            )
+            // Page head — title + count + add button
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 18.dp, start = 18.dp, end = 18.dp, bottom = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Members",
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = colors.textPrimary,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(Modifier.width(10.dp))
+                Text(
+                    text = state.members.size.toString(),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = colors.primaryIndigo,
+                    fontWeight = FontWeight.ExtraBold,
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(colors.primaryIndigo.copy(alpha = 0.10f))
+                        .padding(horizontal = 10.dp, vertical = 5.dp)
+                )
+                Spacer(Modifier.weight(1f))
+                IconCircleButton(
+                    icon = Icons.Rounded.Add,
+                    onClick = onAddMember,
+                    backgroundColor = Color.White,
+                    tint = colors.textPrimary
+                )
+            }
 
             AppSearchBar(
                 query = state.query,
                 onQueryChange = viewModel::setQuery,
-                placeholder = "Search members..."
+                placeholder = "Search members...",
+                count = state.members.size
             )
 
             Spacer(Modifier.height(10.dp))
@@ -72,7 +100,7 @@ fun MembersScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 14.dp),
+                    .padding(horizontal = 18.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 listOf("ALL", "MALE", "FEMALE").forEach { filter ->
@@ -96,12 +124,22 @@ fun MembersScreen(
                 )
             } else {
                 LazyColumn(
-                    contentPadding = PaddingValues(horizontal = 14.dp, vertical = 8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    contentPadding = PaddingValues(horizontal = 18.dp, vertical = 8.dp),
+                    verticalArrangement = Arrangement.spacedBy(9.dp),
                     modifier = Modifier.weight(1f)
                 ) {
                     items(state.members, key = { it.id }) { member ->
                         MemberRow(member, onClick = { onMemberClick(member.id) })
+                    }
+                    item {
+                        Text(
+                            text = "Showing ${state.members.size} of ${state.totalCount} members",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = colors.textTertiary,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 4.dp)
+                        )
                     }
                 }
             }
@@ -115,60 +153,68 @@ private fun MemberRow(member: MemberEntity, onClick: () -> Unit) {
     AppCard(
         modifier = Modifier.fillMaxWidth(),
         onClick = onClick,
+        cornerRadius = 17.dp,
         contentPadding = PaddingValues(horizontal = 14.dp, vertical = 12.dp)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
+            // Avatar with initials
             Box(
                 modifier = Modifier
                     .size(44.dp)
                     .clip(CircleShape)
-                    .background(if (member.gender == "MALE") colors.info.copy(alpha = 0.10f) else colors.accentCoral.copy(alpha = 0.10f)),
+                    .background(
+                        if (member.gender == "MALE") colors.primaryIndigo.copy(alpha = 0.10f)
+                        else colors.purple.copy(alpha = 0.12f)
+                    ),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    imageVector = if (member.gender == "MALE") Icons.Rounded.Male else Icons.Rounded.Female,
-                    contentDescription = null,
-                    tint = if (member.gender == "MALE") colors.info else colors.accentCoral
+                Text(
+                    text = Formatters.initials(member.name),
+                    style = MaterialTheme.typography.titleSmall,
+                    color = if (member.gender == "MALE") colors.primaryIndigo else colors.purple,
+                    fontWeight = FontWeight.Bold
                 )
             }
             Spacer(Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = member.name,
-                        style = MaterialTheme.typography.titleSmall,
-                        color = colors.textPrimary,
-                        fontWeight = FontWeight.SemiBold,
-                        maxLines = 1,
-                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
-                        modifier = Modifier.weight(1f, fill = false)
-                    )
-                    Spacer(Modifier.width(8.dp))
-                    Text(
-                        text = member.memberNumber,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = colors.textTertiary,
-                        maxLines = 1,
-                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
-                    )
-                }
                 Text(
-                    text = "${member.relationToHead ?: "Member"} • ${Formatters.calculateAge(member.dateOfBirth)} years",
-                    style = MaterialTheme.typography.bodySmall,
+                    text = member.name,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = colors.textPrimary,
+                    fontWeight = FontWeight.ExtraBold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(Modifier.height(2.dp))
+                Text(
+                    text = "${member.memberNumber} • ${member.relationToHead ?: "Member"}",
+                    style = MaterialTheme.typography.labelSmall,
                     color = colors.textSecondary,
                     maxLines = 1,
-                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis
                 )
-                if (!member.arabicName.isNullOrBlank()) {
-                    Text(
-                        text = member.arabicName!!,
-                        style = MaterialTheme.typography.labelMedium,
-                        color = colors.textTertiary,
-                        maxLines = 1,
-                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
-                    )
-                }
             }
+            Spacer(Modifier.width(8.dp))
+            Text(
+                text = (member.gender ?: "MEMBER").uppercase(),
+                style = MaterialTheme.typography.labelSmall,
+                fontWeight = FontWeight.ExtraBold,
+                color = if (member.gender == "MALE") colors.primaryIndigo else colors.purple,
+                modifier = Modifier
+                    .clip(RoundedCornerShape(7.dp))
+                    .background(
+                        if (member.gender == "MALE") colors.primaryIndigo.copy(alpha = 0.10f)
+                        else colors.purple.copy(alpha = 0.12f)
+                    )
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
+            )
+            Spacer(Modifier.width(6.dp))
+            Icon(
+                imageVector = Icons.Rounded.ChevronRight,
+                contentDescription = null,
+                tint = colors.borderStrong,
+                modifier = Modifier.size(17.dp)
+            )
         }
     }
 }

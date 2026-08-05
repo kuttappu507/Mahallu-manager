@@ -5,8 +5,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mahallu.manager.core.database.entity.CertificateEntity
 import com.mahallu.manager.core.database.repository.CertificateRepository
+import com.mahallu.manager.core.database.repository.DeathRepository
+import com.mahallu.manager.core.database.repository.FamilyRepository
+import com.mahallu.manager.core.database.repository.MarriageRepository
+import com.mahallu.manager.core.database.repository.MemberRepository
 import com.mahallu.manager.core.database.repository.SettingsRepository
 import com.mahallu.manager.core.util.IdGenerator
+import com.mahallu.manager.core.ui.util.Formatters
 import com.mahallu.manager.feature.certificates.pdf.Align
 import com.mahallu.manager.feature.certificates.pdf.PdfGenerator
 import com.mahallu.manager.feature.certificates.pdf.PdfTable
@@ -19,6 +24,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
+data class CertificateRecordOption(
+    val id: String,
+    val title: String,
+    val subtitle: String
+)
 
 data class CertificateFormState(
     val memberName: String = "",
@@ -35,7 +46,9 @@ data class CertificateFormState(
     val deceasedName: String = "",
     val pdfPath: String? = null,
     val isGenerating: Boolean = false,
-    val message: String? = null
+    val message: String? = null,
+    val recordQuery: String = "",
+    val recordOptions: List<CertificateRecordOption> = emptyList()
 )
 
 @HiltViewModel
@@ -43,7 +56,11 @@ class CertificateFormViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val pdfGenerator: PdfGenerator,
     private val certificateRepo: CertificateRepository,
-    private val settingsRepo: SettingsRepository
+    private val settingsRepo: SettingsRepository,
+    private val memberRepo: MemberRepository,
+    private val familyRepo: FamilyRepository,
+    private val marriageRepo: MarriageRepository,
+    private val deathRepo: DeathRepository
 ) : ViewModel() {
     private val _state = MutableStateFlow(CertificateFormState())
     val state: StateFlow<CertificateFormState> = _state.asStateFlow()
@@ -83,6 +100,104 @@ class CertificateFormViewModel @Inject constructor(
                 date = date ?: it.date,
                 deceasedName = deceasedName ?: it.deceasedName
             )
+        }
+    }
+
+    fun searchRecords(type: String, query: String) {
+        if (query.isBlank()) {
+            _state.update { it.copy(recordQuery = "", recordOptions = emptyList()) }
+            return
+        }
+        _state.update { it.copy(recordQuery = query) }
+        viewModelScope.launch {
+            val options = when (type) {
+                "MEMBERSHIP", "RESIDENCE" -> memberRepo.search(query).map {
+                    CertificateRecordOption(
+                        id = it.id,
+                        title = it.name,
+                        subtitle = "${it.memberNumber} • ${it.relationToHead ?: "Member"}"
+                    )
+                }
+                "MARRIAGE" -> marriageRepo.search(query).map {
+                    CertificateRecordOption(
+                        id = it.id,
+                        title = "${it.brideName} & ${it.groomName}",
+                        subtitle = it.registrationNumber
+                    )
+                }
+                "DEATH" -> deathRepo.search(query).map {
+                    CertificateRecordOption(
+                        id = it.id,
+                        title = it.name,
+                        subtitle = it.registrationNumber
+                    )
+                }
+                else -> emptyList()
+            }
+            _state.update { it.copy(recordOptions = options.take(20)) }
+        }
+    }
+
+    fun selectRecord(type: String, option: CertificateRecordOption) {
+        viewModelScope.launch {
+            when (type) {
+                "MEMBERSHIP" -> {
+                    val m = memberRepo.getById(option.id) ?: return@launch
+                    val fam = m.familyId?.let { familyRepo.getById(it) }
+                    _state.update {
+                        it.copy(
+                            memberName = m.name,
+                            fatherName = "",
+                            address = m.address ?: fam?.address ?: "",
+                            memberNumber = m.memberNumber,
+                            recordQuery = "",
+                            recordOptions = emptyList()
+                        )
+                    }
+                }
+                "RESIDENCE" -> {
+                    val m = memberRepo.getById(option.id) ?: return@launch
+                    val fam = m.familyId?.let { familyRepo.getById(it) }
+                    _state.update {
+                        it.copy(
+                            memberName = m.name,
+                            fatherName = "",
+                            address = m.address ?: fam?.address ?: "",
+                            ward = fam?.ward ?: "",
+                            pincode = fam?.pincode ?: "",
+                            recordQuery = "",
+                            recordOptions = emptyList()
+                        )
+                    }
+                }
+                "MARRIAGE" -> {
+                    val mar = marriageRepo.getById(option.id) ?: return@launch
+                    _state.update {
+                        it.copy(
+                            brideName = mar.brideName,
+                            groomName = mar.groomName,
+                            witnesses = listOfNotNull(mar.witnessOneName, mar.witnessTwoName).joinToString(", "),
+                            registrationNumber = mar.registrationNumber,
+                            date = Formatters.date(mar.nikahDate),
+                            recordQuery = "",
+                            recordOptions = emptyList()
+                        )
+                    }
+                }
+                "DEATH" -> {
+                    val d = deathRepo.getById(option.id) ?: return@launch
+                    _state.update {
+                        it.copy(
+                            deceasedName = d.name,
+                            fatherName = d.fatherName ?: "",
+                            registrationNumber = d.registrationNumber,
+                            date = Formatters.date(d.dateOfDeath),
+                            recordQuery = "",
+                            recordOptions = emptyList()
+                        )
+                    }
+                }
+            }
         }
     }
 

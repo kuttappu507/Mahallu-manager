@@ -41,4 +41,5 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.timber)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.core.ktx)
 }

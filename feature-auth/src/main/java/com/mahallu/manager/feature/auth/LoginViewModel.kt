@@ -4,6 +4,8 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.mahallu.manager.core.database.entity.UserEntity
+import com.mahallu.manager.core.database.repository.AuditActor
+import com.mahallu.manager.core.database.repository.CurrentActor
 import com.mahallu.manager.core.database.repository.SeedData
 import com.mahallu.manager.core.database.repository.UserRepository
 import com.mahallu.manager.core.security.SessionManager
@@ -27,7 +29,8 @@ class LoginViewModel @Inject constructor(
     application: Application,
     private val userRepository: UserRepository,
     private val sessionManager: SessionManager,
-    private val seedData: SeedData
+    private val seedData: SeedData,
+    private val currentActor: CurrentActor
 ) : AndroidViewModel(application) {
 
     private val _authState = MutableStateFlow(AuthState())
@@ -48,9 +51,11 @@ class LoginViewModel @Inject constructor(
             if (userId != null) {
                 val user = userRepository.getById(userId)
                 if (user != null && user.isActive) {
+                    currentActor.set(AuditActor(user.id, user.fullName))
                     _authState.update { it.copy(isLoggedIn = true, currentUser = user) }
                 } else {
                     sessionManager.clear()
+                    currentActor.set(null)
                 }
             }
         }
@@ -80,6 +85,7 @@ class LoginViewModel @Inject constructor(
                     sessionManager.putBoolean(SessionManager.KEY_REMEMBER, remember)
                     sessionManager.putBoolean(SessionManager.KEY_LOGGED_IN, true)
                     sessionManager.putLong(SessionManager.KEY_LOGIN_TIME, System.currentTimeMillis())
+                    currentActor.set(AuditActor(user.id, user.fullName))
                     _authState.update { AuthState(isLoggedIn = true, currentUser = user) }
                     onSuccess()
                 },
@@ -92,6 +98,7 @@ class LoginViewModel @Inject constructor(
 
     fun logout() {
         sessionManager.clear()
+        currentActor.set(null)
         _authState.value = AuthState()
     }
 

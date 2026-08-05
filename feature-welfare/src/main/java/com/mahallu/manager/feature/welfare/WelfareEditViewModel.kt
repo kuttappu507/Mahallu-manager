@@ -40,6 +40,8 @@ class WelfareEditViewModel @Inject constructor(
     private val _state = MutableStateFlow(WelfareEditState())
     val state: StateFlow<WelfareEditState> = _state.asStateFlow()
 
+    private var dirty = false
+
     init {
         viewModelScope.launch {
             familyRepo.observeAll().collect { fams ->
@@ -49,7 +51,8 @@ class WelfareEditViewModel @Inject constructor(
         val id = savedStateHandle.get<String>("id").orEmpty()
         if (id.isNotBlank()) {
             viewModelScope.launch {
-                repo.getById(id)?.let { w ->
+                repo.observeById(id).collect { w ->
+                    if (w == null || dirty) return@collect
                     _state.value = WelfareEditState(
                         id = w.id,
                         familyId = w.familyId,
@@ -67,6 +70,7 @@ class WelfareEditViewModel @Inject constructor(
     }
 
     fun update(transform: (WelfareEditState) -> WelfareEditState) {
+        dirty = true
         _state.update(transform)
     }
 

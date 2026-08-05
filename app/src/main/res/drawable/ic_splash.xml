@@ -4,10 +4,43 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
+
+    <!-- Left minaret -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M54,30 L54,78 M40,46 L68,46 M38,62 L70,62" />
+        android:pathData="M30,44 L25,53 L27.5,53 L27.5,84 L32.5,84 L32.5,53 L35,53 Z" />
+    <!-- Right minaret -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M54,24 L36,54 L36,84 L72,84 L72,54 Z" />
+        android:pathData="M78,44 L73,53 L75.5,53 L75.5,84 L80.5,84 L80.5,53 L83,53 Z" />
+
+    <!-- Dome -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M42,66 C42,50 49,42 54,42 C59,42 66,50 66,66 L61,66 L61,71 L47,71 L47,66 Z" />
+    <!-- Dome finial (spire + ball) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,35 L54,42 L53.6,42 L53.6,35 Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,32 m-2,0 a2,2 0 1,0 4,0 a2,2 0 1,0 -4,0" />
+
+    <!-- Main building -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M36,84 L36,71 L72,71 L72,84 Z" />
+
+    <!-- Entrance arch cutout -->
+    <path
+        android:fillColor="#312E81"
+        android:pathData="M47,84 L47,75 Q47,71 54,71 Q61,71 61,75 L61,84 Z" />
+    <!-- Left window cutout -->
+    <path
+        android:fillColor="#312E81"
+        android:pathData="M38,80 L38,74 Q39.5,71 41,74 L41,80 Z" />
+    <!-- Right window cutout -->
+    <path
+        android:fillColor="#312E81"
+        android:pathData="M67,80 L67,74 Q68.5,71 70,74 L70,80 Z" />
 </vector>

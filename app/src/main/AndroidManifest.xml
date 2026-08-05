@@ -22,6 +22,7 @@
         </intent>
         <package android:name="com.google.android.apps.docs" />
         <package android:name="com.google.android.gms" />
+        <package android:name="com.whatsapp" />
     </queries>
 
     <application

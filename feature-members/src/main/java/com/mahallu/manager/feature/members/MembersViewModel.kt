@@ -41,8 +41,7 @@ class MembersViewModel @Inject constructor(
             (q.isBlank() ||
                 m.name.contains(q, ignoreCase = true) ||
                 m.memberNumber.contains(q, ignoreCase = true) ||
-                (m.mobile?.contains(q, ignoreCase = true) == true) ||
-                (m.arabicName?.contains(q, ignoreCase = true) == true))
+                (m.mobile?.contains(q, ignoreCase = true) == true))
         }
         MembersUiState(
             members = filtered,

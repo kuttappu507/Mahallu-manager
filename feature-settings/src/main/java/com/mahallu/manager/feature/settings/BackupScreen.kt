@@ -57,12 +57,15 @@ fun BackupScreen(onBack: () -> Unit, viewModel: BackupViewModel = hiltViewModel(
                 contentPadding = PaddingValues(16.dp)
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    IconCircleButton(
-                        icon = Icons.Rounded.Backup,
-                        onClick = { },
-                        backgroundColor = colors.primaryIndigo,
-                        tint = androidx.compose.ui.graphics.Color.White
-                    )
+                    Box(
+                        modifier = Modifier
+                            .size(44.dp)
+                            .clip(CircleShape)
+                            .background(colors.primaryIndigo),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(Icons.Rounded.Backup, contentDescription = null, tint = androidx.compose.ui.graphics.Color.White)
+                    }
                     Spacer(Modifier.width(12.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         Text("Cloud Backup", style = MaterialTheme.typography.titleMedium, color = colors.textPrimary, fontWeight = FontWeight.SemiBold)

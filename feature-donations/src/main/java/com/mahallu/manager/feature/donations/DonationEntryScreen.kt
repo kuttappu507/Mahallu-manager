@@ -1,6 +1,7 @@
 package com.mahallu.manager.feature.donations
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -84,7 +85,10 @@ fun DonationEntryScreen(
                 Spacer(Modifier.height(12.dp))
                 Text("Category", style = MaterialTheme.typography.labelLarge, color = colors.textSecondary)
                 Spacer(Modifier.height(6.dp))
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Row(
+                    modifier = Modifier.horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
                     listOf("GENERAL", "MASJID", "BUILDING", "EDUCATION", "MEDICAL", "WELFARE", "OTHER").forEach { c ->
                         ChipPill(text = c, selected = state.category == c, onClick = { viewModel.update { it.copy(category = c) } })
                     }
@@ -96,7 +100,10 @@ fun DonationEntryScreen(
                 Spacer(Modifier.height(12.dp))
                 Text("Payment Method", style = MaterialTheme.typography.labelLarge, color = colors.textSecondary)
                 Spacer(Modifier.height(6.dp))
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Row(
+                    modifier = Modifier.horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
                     listOf("CASH", "UPI", "BANK", "CHEQUE", "OTHER").forEach { p ->
                         ChipPill(text = p, selected = state.paymentMethod == p, onClick = { viewModel.update { it.copy(paymentMethod = p) } })
                     }
