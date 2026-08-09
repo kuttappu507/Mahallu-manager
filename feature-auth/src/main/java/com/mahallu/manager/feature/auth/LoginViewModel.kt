@@ -9,6 +9,7 @@ import com.mahallu.manager.core.database.repository.CurrentActor
 import com.mahallu.manager.core.database.repository.SeedData
 import com.mahallu.manager.core.database.repository.UserRepository
 import com.mahallu.manager.core.security.SessionManager
+import com.mahallu.manager.feature.auth.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -63,11 +64,11 @@ class LoginViewModel @Inject constructor(
 
     fun login(username: String, password: String, remember: Boolean, onSuccess: () -> Unit) {
         if (username.isBlank()) {
-            _authState.update { it.copy(error = "Enter username or mobile") }
+            _authState.update { it.copy(error = getApplication<Application>().getString(R.string.login_error_enter_username)) }
             return
         }
         if (password.isBlank()) {
-            _authState.update { it.copy(error = "Enter password") }
+            _authState.update { it.copy(error = getApplication<Application>().getString(R.string.login_error_enter_password)) }
             return
         }
         _authState.update { it.copy(isLoading = true, error = null) }
@@ -90,7 +91,7 @@ class LoginViewModel @Inject constructor(
                     onSuccess()
                 },
                 onFailure = { err ->
-                    _authState.update { it.copy(isLoading = false, error = err.message ?: "Login failed") }
+                    _authState.update { it.copy(isLoading = false, error = err.message ?: getApplication<Application>().getString(R.string.login_error_failed)) }
                 }
             )
         }
@@ -107,5 +108,5 @@ class LoginViewModel @Inject constructor(
     }
 
     fun currentRole(): String? = sessionManager.getString(SessionManager.KEY_ROLE)
-    fun currentUserName(): String = sessionManager.getString(SessionManager.KEY_FULL_NAME, "User") ?: "User"
+    fun currentUserName(): String = sessionManager.getString(SessionManager.KEY_FULL_NAME, getApplication<Application>().getString(R.string.login_default_user_name)) ?: getApplication<Application>().getString(R.string.login_default_user_name)
 }

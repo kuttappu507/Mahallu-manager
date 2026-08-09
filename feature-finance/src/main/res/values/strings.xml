@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Finance screen -->
+    <string name="finance_title">Finance</string>
+    <string name="finance_masjid_name">Masjid An-Noor</string>
+    <string name="finance_filter_all">All</string>
+    <string name="finance_filter_income">Income</string>
+    <string name="finance_filter_expense">Expense</string>
+    <string name="finance_total_income">Total income</string>
+    <string name="finance_total_expenses">Total expenses</string>
+    <string name="finance_recent_activity">Recent activity</string>
+    <string name="finance_transactions_this_month">%1$d transactions · this month</string>
+    <string name="finance_net_balance_month">Net balance · %1$s</string>
+    <string name="finance_trend_up">+18.4% vs June</string>
+    <string name="finance_trend_down">−12.4% vs May</string>
+    <string name="finance_income">Income</string>
+    <string name="finance_expenses">Expenses</string>
+    <string name="finance_row_detail">%1$s • %2$s • %3$s</string>
+
+    <!-- Finance share -->
+    <string name="finance_share_summary_header">%1$s — Finance Summary\n</string>
+    <string name="finance_share_balance">Balance: %1$s\n</string>
+    <string name="finance_share_income">Income: %1$s\n</string>
+    <string name="finance_share_expenses">Expenses: %1$s</string>
+    <string name="finance_share_chooser">Share finance summary</string>
+
+    <!-- Income/Expense entry screen -->
+    <string name="finance_add_income">Add Income</string>
+    <string name="finance_add_expense">Add Expense</string>
+    <string name="finance_field_type">Type</string>
+    <string name="finance_type_income">Income</string>
+    <string name="finance_type_expense">Expense</string>
+    <string name="finance_field_category">Category</string>
+    <string name="finance_cat_subscription">Subscription</string>
+    <string name="finance_cat_donation">Donation</string>
+    <string name="finance_cat_rent">Rent</string>
+    <string name="finance_cat_other_income">Other Income</string>
+    <string name="finance_cat_salary">Salary</string>
+    <string name="finance_cat_electricity">Electricity</string>
+    <string name="finance_cat_water">Water</string>
+    <string name="finance_cat_maintenance">Maintenance</string>
+    <string name="finance_cat_welfare">Welfare</string>
+    <string name="finance_cat_other_expense">Other Expense</string>
+    <string name="finance_field_description">Description</string>
+    <string name="finance_field_amount">Amount</string>
+    <string name="finance_field_date">Date</string>
+    <string name="finance_field_payment_method">Payment Method</string>
+    <string name="finance_pay_cash">Cash</string>
+    <string name="finance_pay_upi">UPI</string>
+    <string name="finance_pay_bank">Bank</string>
+    <string name="finance_pay_cheque">Cheque</string>
+    <string name="finance_pay_other">Other</string>
+    <string name="finance_field_remarks">Remarks</string>
+    <string name="finance_saving">Saving...</string>
+    <string name="finance_save_entry">Save Entry</string>
+    <string name="finance_error_description_required">Description is required</string>
+    <string name="finance_error_valid_amount">Enter a valid amount</string>
+
+    <!-- Content descriptions -->
+    <string name="cd_save">Save</string>
+</resources>

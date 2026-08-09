@@ -1,11 +1,15 @@
 package com.mahallu.manager.feature.settings
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mahallu.manager.core.database.repository.LanguageController
 import com.mahallu.manager.core.database.repository.SettingsRepository
 import com.mahallu.manager.core.database.repository.ThemeModeController
 import com.mahallu.manager.core.security.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import feature.settings.feature.settings.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,6 +23,7 @@ data class SettingsUiState(
     val mahalluPhone: String = "",
     val mahalluEmail: String = "",
     val themeMode: String = "system",
+    val language: String = "en",
     val backupAutoEnabled: Boolean = true,
     val userName: String = "User",
     val userRole: String = "",
@@ -27,9 +32,11 @@ data class SettingsUiState(
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val sessionManager: SessionManager,
     private val settingsRepo: SettingsRepository,
-    private val themeModeController: ThemeModeController
+    private val themeModeController: ThemeModeController,
+    private val languageController: LanguageController
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(SettingsUiState())
@@ -38,13 +45,14 @@ class SettingsViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             _state.value = SettingsUiState(
-                mahalluName = settingsRepo.getString("mahallu.name", "Mahallu Manager"),
+                mahalluName = settingsRepo.getString("mahallu.name", context.getString(R.string.settings_app_name)),
                 mahalluAddress = settingsRepo.getString("mahallu.address", ""),
                 mahalluPhone = settingsRepo.getString("mahallu.phone", ""),
                 mahalluEmail = settingsRepo.getString("mahallu.email", ""),
                 themeMode = settingsRepo.getString("theme_mode", "system"),
+                language = settingsRepo.getString(LanguageController.KEY, LanguageController.DEFAULT),
                 backupAutoEnabled = settingsRepo.getBoolean("backup.auto_enabled", true),
-                userName = sessionManager.getString(SessionManager.KEY_FULL_NAME, "User") ?: "User",
+                userName = sessionManager.getString(SessionManager.KEY_FULL_NAME, context.getString(R.string.settings_default_user)) ?: context.getString(R.string.settings_default_user),
                 userRole = sessionManager.getString(SessionManager.KEY_ROLE, "") ?: "",
                 lastBackupAt = settingsRepo.getLong("backup.last_at", 0)
             )
@@ -66,6 +74,11 @@ class SettingsViewModel @Inject constructor(
     fun setTheme(mode: String) {
         themeModeController.setTheme(mode)
         _state.update { it.copy(themeMode = mode) }
+    }
+
+    fun setLanguage(lang: String) {
+        languageController.setLanguage(lang)
+        _state.update { it.copy(language = lang) }
     }
 
     fun setAutoBackup(enabled: Boolean) {

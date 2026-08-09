@@ -30,6 +30,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -42,6 +43,7 @@ import com.mahallu.manager.core.ui.components.FabAdd
 import com.mahallu.manager.core.ui.components.TopAppBar
 import com.mahallu.manager.core.ui.theme.LocalMahalluColors
 import com.mahallu.manager.core.ui.util.Formatters
+import feature.subscriptions.feature.subscriptions.R
 
 @Composable
 fun SubscriptionsScreen(
@@ -55,7 +57,7 @@ fun SubscriptionsScreen(
     Box(modifier = Modifier.fillMaxSize().background(colors.background)) {
         Column(modifier = Modifier.fillMaxSize()) {
             TopAppBar(
-                title = "Subscriptions",
+                title = stringResource(R.string.subscriptions_title),
                 showBack = true,
                 onBackClick = onBack,
                 trailingActions = { FabAdd(onClick = onAddCollection) }
@@ -68,7 +70,7 @@ fun SubscriptionsScreen(
                 contentPadding = PaddingValues(16.dp)
             ) {
                 Column {
-                    Text("Total This Month", style = MaterialTheme.typography.labelLarge, color = colors.textSecondary)
+                    Text(stringResource(R.string.subscriptions_total_this_month), style = MaterialTheme.typography.labelLarge, color = colors.textSecondary)
                     Text(
                         text = Formatters.currency(state.totalThisMonth),
                         style = MaterialTheme.typography.headlineMedium,
@@ -81,7 +83,7 @@ fun SubscriptionsScreen(
             AppSearchBar(
                 query = state.query,
                 onQueryChange = viewModel::setQuery,
-                placeholder = "Search by receipt # or remarks..."
+                placeholder = stringResource(R.string.subscriptions_search_placeholder)
             )
 
             Spacer(Modifier.height(10.dp))
@@ -136,7 +138,7 @@ private fun SubscriptionRow(sub: SubscriptionEntity) {
                     color = colors.textTertiary
                 )
                 Text(
-                    text = "${sub.type} • ${sub.paymentMethod}",
+                    text = stringResource(R.string.subscriptions_row_detail, sub.type, sub.paymentMethod),
                     style = MaterialTheme.typography.bodySmall,
                     color = colors.textSecondary
                 )

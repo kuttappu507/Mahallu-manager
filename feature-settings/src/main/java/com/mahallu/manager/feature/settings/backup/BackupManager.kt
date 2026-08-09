@@ -7,6 +7,7 @@ import com.mahallu.manager.core.database.repository.BackupRepository
 import com.mahallu.manager.core.security.AesGcmCipher
 import com.mahallu.manager.core.util.IdGenerator
 import dagger.hilt.android.qualifiers.ApplicationContext
+import feature.settings.feature.settings.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -59,7 +60,7 @@ class BackupManager @Inject constructor(
         } catch (t: Throwable) {
             Timber.e(t, "Backup failed")
             backupRepo.save(pending.copy(status = "FAILED", message = t.message))
-            BackupOutcome(false, backupId, t.message ?: "Unknown error")
+            BackupOutcome(false, backupId, t.message ?: context.getString(R.string.backup_unknown_error))
         }
     }
 
@@ -67,13 +68,13 @@ class BackupManager @Inject constructor(
         try {
             val backups = backupRepo.allSuccessful()
             val backup = backups.firstOrNull { it.id == backupId }
-                ?: return@withContext Result.failure(IllegalStateException("Backup not found"))
+                ?: return@withContext Result.failure(IllegalStateException(context.getString(R.string.backup_not_found)))
             val local = backup.localPath?.let { File(it) }
-                ?: return@withContext Result.failure(IllegalStateException("Local backup file missing"))
+                ?: return@withContext Result.failure(IllegalStateException(context.getString(R.string.backup_file_missing)))
             val encrypted = FileInputStream(local).use { it.readBytes() }
             val masterKey = ensureMasterKey()
             AesGcmCipher.decrypt(encrypted, masterKey)
-            backupRepo.save(backup.copy(status = "RESTORED", message = "Restored at ${System.currentTimeMillis()}"))
+            backupRepo.save(backup.copy(status = "RESTORED", message = context.getString(R.string.backup_restored_at, System.currentTimeMillis())))
             Result.success(Unit)
         } catch (t: Throwable) {
             Timber.e(t, "Restore failed")

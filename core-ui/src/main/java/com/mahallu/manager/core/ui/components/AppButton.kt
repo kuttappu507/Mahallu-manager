@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -31,8 +32,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.mahallu.manager.core.ui.R
 import com.mahallu.manager.core.ui.theme.LocalMahalluColors
 import com.mahallu.manager.core.ui.theme.RadiusFull
 import com.mahallu.manager.core.ui.theme.RadiusLg
@@ -67,7 +71,7 @@ fun AppButton(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(52.dp)
+            .heightIn(min = 52.dp)
             .shadow(0.dp)
             .clip(shape)
             .background(animatedBg)
@@ -98,7 +102,10 @@ fun AppButton(
                     text = text,
                     color = animatedFg,
                     fontWeight = FontWeight.SemiBold,
-                    style = MaterialTheme.typography.titleSmall
+                    style = MaterialTheme.typography.titleSmall,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
                 )
                 if (trailingIcon != null) {
                     Spacer(Modifier.width(8.dp))
@@ -183,7 +190,7 @@ fun FabAdd(
     ) {
         Icon(
             imageVector = Icons.Rounded.Add,
-            contentDescription = "Add",
+            contentDescription = stringResource(R.string.cd_add),
             tint = Color.White,
             modifier = Modifier.size(28.dp)
         )
@@ -225,6 +232,7 @@ fun SmallActionButton(
             fontWeight = FontWeight.ExtraBold,
             minLines = 2,
             maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
             textAlign = androidx.compose.ui.text.style.TextAlign.Center
         )
     }

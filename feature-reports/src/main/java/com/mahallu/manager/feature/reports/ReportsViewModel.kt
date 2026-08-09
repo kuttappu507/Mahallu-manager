@@ -16,6 +16,7 @@ import com.mahallu.manager.feature.reports.pdf.PdfTable
 import com.mahallu.manager.feature.reports.pdf.PdfTextLine
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import feature.reports.feature.reports.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -56,34 +57,43 @@ class ReportsViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val (title, headers, rows) = when (reportType) {
-                    "FAMILY" -> Triple("Family Register", listOf("Number", "House Name", "Address", "Mobile", "Status"),
+                    "FAMILY" -> Triple(context.getString(R.string.reports_family_register),
+                        listOf(context.getString(R.string.reports_header_number), context.getString(R.string.reports_header_house_name), context.getString(R.string.reports_header_address), context.getString(R.string.reports_header_mobile), context.getString(R.string.reports_header_status)),
                         runBlockingFamilyRows())
-                    "MEMBER" -> Triple("Member Register", listOf("Member ID", "Name", "Family", "Gender", "Age"),
+                    "MEMBER" -> Triple(context.getString(R.string.reports_member_register),
+                        listOf(context.getString(R.string.reports_header_member_id), context.getString(R.string.reports_header_name), context.getString(R.string.reports_header_family), context.getString(R.string.reports_header_gender), context.getString(R.string.reports_header_age)),
                         runBlockingMemberRows())
-                    "COLLECTION" -> Triple("Collection Report", listOf("Receipt", "Type", "Date", "Amount", "Method"),
+                    "COLLECTION" -> Triple(context.getString(R.string.reports_collection_report),
+                        listOf(context.getString(R.string.reports_header_receipt), context.getString(R.string.reports_header_type), context.getString(R.string.reports_header_date), context.getString(R.string.reports_header_amount), context.getString(R.string.reports_header_method)),
                         subRepo.all().map { arrayOf(it.receiptNumber, it.type, it.date.toString(), it.amount.toString(), it.paymentMethod) })
-                    "DONATION" -> Triple("Donation Report", listOf("Receipt", "Donor", "Category", "Date", "Amount"),
+                    "DONATION" -> Triple(context.getString(R.string.reports_donation_report),
+                        listOf(context.getString(R.string.reports_header_receipt), context.getString(R.string.reports_header_donor), context.getString(R.string.reports_header_category), context.getString(R.string.reports_header_date), context.getString(R.string.reports_header_amount)),
                         donationRepo.all().map { arrayOf(it.receiptNumber, it.donorName, it.category, it.date.toString(), it.amount.toString()) })
-                    "MARRIAGE" -> Triple("Marriage Register", listOf("Reg #", "Bride", "Groom", "Nikah Date"),
+                    "FINANCE" -> Triple(context.getString(R.string.reports_finance_report),
+                        listOf(context.getString(R.string.reports_header_type), context.getString(R.string.reports_header_category), context.getString(R.string.reports_header_date), context.getString(R.string.reports_header_amount), context.getString(R.string.reports_header_method), context.getString(R.string.reports_header_description)),
+                        runBlockingFinanceRows())
+                    "MARRIAGE" -> Triple(context.getString(R.string.reports_marriage_register),
+                        listOf(context.getString(R.string.reports_header_reg_no), context.getString(R.string.reports_header_bride), context.getString(R.string.reports_header_groom), context.getString(R.string.reports_header_nikah_date)),
                         marriageRepo.all().map { arrayOf(it.registrationNumber, it.brideName, it.groomName, it.nikahDate.toString()) })
-                    "DEATH" -> Triple("Death Register", listOf("Reg #", "Name", "Father", "Date of Death"),
+                    "DEATH" -> Triple(context.getString(R.string.reports_death_register),
+                        listOf(context.getString(R.string.reports_header_reg_no), context.getString(R.string.reports_header_name), context.getString(R.string.reports_header_father), context.getString(R.string.reports_header_date_of_death)),
                         deathRepo.all().map { arrayOf(it.registrationNumber, it.name, it.fatherName ?: "", it.dateOfDeath.toString()) })
-                    else -> Triple("Report", listOf("Col 1"), listOf(arrayOf("")))
+                    else -> Triple(context.getString(R.string.reports_report_fallback), listOf(context.getString(R.string.reports_header_fallback)), listOf(arrayOf("")))
                 }
 
                 val file = pdfGenerator.generate(
                     fileName = "${reportType.lowercase()}_report_${System.currentTimeMillis()}.pdf",
                     spec = com.mahallu.manager.feature.reports.pdf.PdfDocumentSpec(
                         title = title,
-                        subtitle = "Generated ${java.text.SimpleDateFormat("dd MMM yyyy").format(java.util.Date())}",
-                        lines = listOf(PdfTextLine("Mahallu Management Report", sizeSp = 18f)),
+                        subtitle = context.getString(R.string.reports_generated_subtitle, java.text.SimpleDateFormat("dd MMM yyyy").format(java.util.Date())),
+                        lines = listOf(PdfTextLine(context.getString(R.string.reports_mahallu_management_report), sizeSp = 18f)),
                         table = PdfTable(headers, rows.map { it.toList() }),
-                        footer = "Mahallu Manager • Confidential"
+                        footer = context.getString(R.string.reports_footer_confidential)
                     )
                 )
-                _state.update { it.copy(isGenerating = false, lastGeneratedPath = file.absolutePath, message = "Generated ${file.name}") }
+                _state.update { it.copy(isGenerating = false, lastGeneratedPath = file.absolutePath, message = context.getString(R.string.reports_generated_message, file.name)) }
             } catch (t: Throwable) {
-                _state.update { it.copy(isGenerating = false, message = "Failed: ${t.message}") }
+                _state.update { it.copy(isGenerating = false, message = context.getString(R.string.reports_failed_message, t.message)) }
             }
         }
     }
@@ -103,6 +113,19 @@ class ReportsViewModel @Inject constructor(
                 families[m.familyId]?.houseName ?: "",
                 m.gender,
                 ((System.currentTimeMillis() - m.dateOfBirth) / (365L * 24 * 60 * 60 * 1000)).toString()
+            )
+        }
+    }
+
+    private suspend fun runBlockingFinanceRows(): List<Array<String>> {
+        return financeRepo.all().map {
+            arrayOf(
+                it.type,
+                it.category,
+                it.date.toString(),
+                it.amount.toString(),
+                it.paymentMethod,
+                it.description
             )
         }
     }

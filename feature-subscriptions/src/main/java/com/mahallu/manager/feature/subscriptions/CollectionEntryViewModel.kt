@@ -14,6 +14,7 @@ import com.mahallu.manager.core.util.IdGenerator
 import com.mahallu.manager.feature.certificates.pdf.Align
 import com.mahallu.manager.feature.certificates.pdf.PdfGenerator
 import com.mahallu.manager.feature.certificates.pdf.PdfTextLine
+import feature.subscriptions.feature.subscriptions.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -125,11 +126,11 @@ class CollectionEntryViewModel @Inject constructor(
         val s = _state.value
         val amount = s.amount.toDoubleOrNull()
         if (s.selectedFamilyId.isBlank() && s.selectedMemberId.isBlank()) {
-            _state.update { it.copy(error = "Select a family or member first") }
+            _state.update { it.copy(error = context.getString(R.string.collection_error_no_selection)) }
             return
         }
         if (amount == null || amount <= 0) {
-            _state.update { it.copy(error = "Enter a valid amount") }
+            _state.update { it.copy(error = context.getString(R.string.collection_error_invalid_amount)) }
             return
         }
         _state.update { it.copy(isSaving = true, error = null) }
@@ -157,37 +158,37 @@ class CollectionEntryViewModel @Inject constructor(
                 val formattedDate = java.text.SimpleDateFormat("dd MMM yyyy", java.util.Locale.getDefault()).format(s.date)
                 val lines = mutableListOf<PdfTextLine>()
                 lines += PdfTextLine(mahalluName, sizeSp = 22f, bold = true, align = Align.CENTER)
-                lines += PdfTextLine("Subscription Receipt", sizeSp = 16f, bold = true, align = Align.CENTER)
+                lines += PdfTextLine(context.getString(R.string.pdf_subscription_receipt), sizeSp = 16f, bold = true, align = Align.CENTER)
                 lines += PdfTextLine(" ", sizeSp = 8f)
-                lines += PdfTextLine("Receipt No: ${s.receiptNumber}", sizeSp = 12f, bold = true)
-                lines += PdfTextLine("Date: $formattedDate", sizeSp = 11f)
+                lines += PdfTextLine(context.getString(R.string.pdf_receipt_no, s.receiptNumber), sizeSp = 12f, bold = true)
+                lines += PdfTextLine(context.getString(R.string.pdf_date, formattedDate), sizeSp = 11f)
                 lines += PdfTextLine(" ", sizeSp = 6f)
-                lines += PdfTextLine("Received from:", sizeSp = 11f, color = android.graphics.Color.DKGRAY)
+                lines += PdfTextLine(context.getString(R.string.pdf_received_from), sizeSp = 11f, color = android.graphics.Color.DKGRAY)
                 val family = s.selectedFamilyName.ifBlank { s.selectedMemberName }
-                lines += PdfTextLine(family.ifBlank { "[Family / Member]" }, sizeSp = 14f, bold = true)
+                lines += PdfTextLine(family.ifBlank { context.getString(R.string.pdf_family_member_placeholder) }, sizeSp = 14f, bold = true)
                 if (s.selectedMemberName.isNotBlank() && s.selectedMemberName != s.selectedFamilyName) {
-                    lines += PdfTextLine("Member: ${s.selectedMemberName}", sizeSp = 11f)
+                    lines += PdfTextLine(context.getString(R.string.pdf_member, s.selectedMemberName), sizeSp = 11f)
                 }
                 lines += PdfTextLine(" ", sizeSp = 6f)
-                lines += PdfTextLine("Subscription Type: ${s.type}", sizeSp = 11f)
-                lines += PdfTextLine("The sum of", sizeSp = 11f)
+                lines += PdfTextLine(context.getString(R.string.pdf_subscription_type, s.type), sizeSp = 11f)
+                lines += PdfTextLine(context.getString(R.string.pdf_the_sum_of), sizeSp = 11f)
                 lines += PdfTextLine("Rs. ${"%,.2f".format(amount)}", sizeSp = 22f, bold = true, color = android.graphics.Color.parseColor("#3B4FB8"))
                 lines += PdfTextLine("(", sizeSp = 10f, color = android.graphics.Color.DKGRAY)
-                lines += PdfTextLine("Payment: ${s.paymentMethod}", sizeSp = 11f)
+                lines += PdfTextLine(context.getString(R.string.pdf_payment, s.paymentMethod), sizeSp = 11f)
                 if (s.remarks.isNotBlank()) {
-                    lines += PdfTextLine("Remarks: ${s.remarks.trim()}", sizeSp = 11f)
+                    lines += PdfTextLine(context.getString(R.string.pdf_remarks, s.remarks.trim()), sizeSp = 11f)
                 }
                 lines += PdfTextLine(" ", sizeSp = 14f)
-                lines += PdfTextLine("Issued on: ${java.text.SimpleDateFormat("dd MMM yyyy", java.util.Locale.getDefault()).format(java.util.Date())}", sizeSp = 11f, align = Align.RIGHT)
-                lines += PdfTextLine("Authorised Signatory", sizeSp = 11f, bold = true, align = Align.RIGHT)
+                lines += PdfTextLine(context.getString(R.string.pdf_issued_on, java.text.SimpleDateFormat("dd MMM yyyy", java.util.Locale.getDefault()).format(java.util.Date())), sizeSp = 11f, align = Align.RIGHT)
+                lines += PdfTextLine(context.getString(R.string.pdf_authorised_signatory), sizeSp = 11f, bold = true, align = Align.RIGHT)
 
                 val file = pdfGenerator.generate(
                     fileName = "subscription_${s.receiptNumber}.pdf",
                     spec = com.mahallu.manager.feature.certificates.pdf.PdfDocumentSpec(
-                        title = "Subscription Receipt",
+                        title = context.getString(R.string.pdf_subscription_receipt),
                         subtitle = mahalluName,
                         lines = lines,
-                        footer = "$mahalluName • Generated by Mahallu Manager"
+                        footer = context.getString(R.string.pdf_footer, mahalluName)
                     )
                 )
                 file.absolutePath

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="welfare_title">Welfare Management</string>
+    <string name="welfare_total_disbursed">Total Disbursed</string>
+
+    <string name="welfare_edit_new">New Welfare Request</string>
+    <string name="welfare_edit_title">Edit Welfare</string>
+    <string name="welfare_cd_save">Save</string>
+
+    <string name="welfare_field_family">Family</string>
+    <string name="welfare_field_applicant_name">Applicant Name</string>
+    <string name="welfare_field_category">Category</string>
+    <string name="welfare_field_amount">Amount</string>
+    <string name="welfare_field_reason">Reason</string>
+    <string name="welfare_field_date">Date</string>
+    <string name="welfare_field_status">Status</string>
+    <string name="welfare_field_remarks">Remarks</string>
+
+    <string name="welfare_family_selector">%1$s • %2$s</string>
+    <string name="welfare_family_select">Select family</string>
+
+    <string name="welfare_saving">Saving…</string>
+    <string name="welfare_save">Save</string>
+
+    <string name="welfare_error_required">Applicant and family required</string>
+    <string name="welfare_error_invalid_amount">Enter a valid amount</string>
+</resources>

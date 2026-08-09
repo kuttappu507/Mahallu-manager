@@ -30,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -41,6 +42,7 @@ import com.mahallu.manager.core.ui.components.AppTextField
 import com.mahallu.manager.core.ui.components.TopAppBar
 import com.mahallu.manager.core.ui.theme.LocalMahalluColors
 import com.mahallu.manager.core.ui.util.PdfShare
+import feature.certificates.feature.certificates.R
 import java.io.File
 
 /**
@@ -80,11 +82,11 @@ fun CertificateFormScreen(
     }
 
     val title = when (type) {
-        "MEMBERSHIP" -> "Membership Certificate"
-        "RESIDENCE" -> "Residence Certificate"
-        "MARRIAGE" -> "Marriage Certificate"
-        "DEATH" -> "Death Certificate"
-        else -> "Certificate"
+        "MEMBERSHIP" -> stringResource(R.string.cert_membership_title)
+        "RESIDENCE" -> stringResource(R.string.cert_residence_title)
+        "MARRIAGE" -> stringResource(R.string.cert_marriage_title)
+        "DEATH" -> stringResource(R.string.cert_death_title)
+        else -> stringResource(R.string.cert_generic_title)
     }
 
     Box(modifier = Modifier.fillMaxSize().background(colors.background)) {
@@ -95,7 +97,7 @@ fun CertificateFormScreen(
                 onBackClick = onBack,
                 trailingActions = {
                     IconButton(onClick = { viewModel.generate(type) }, enabled = !state.isGenerating) {
-                        Icon(Icons.Rounded.PictureAsPdf, contentDescription = "Generate PDF", tint = colors.primaryIndigo)
+                        Icon(Icons.Rounded.PictureAsPdf, contentDescription = stringResource(R.string.cd_generate_pdf), tint = colors.primaryIndigo)
                     }
                 }
             )
@@ -130,7 +132,7 @@ fun CertificateFormScreen(
                     ) {
                         Column {
                             Text(
-                                text = "PDF ready: ${File(state.pdfPath!!).name}",
+                                text = stringResource(R.string.cert_pdf_ready_path, File(state.pdfPath!!).name),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = colors.textPrimary,
                                 fontWeight = FontWeight.SemiBold
@@ -147,13 +149,13 @@ fun CertificateFormScreen(
                     Spacer(Modifier.height(12.dp))
                     Row(horizontalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.fillMaxWidth()) {
                         AppButton(
-                            text = "View PDF",
+                            text = stringResource(R.string.cert_view_pdf),
                             onClick = { PdfShare.open(context, File(state.pdfPath!!)) },
                             modifier = Modifier.weight(1f),
                             leadingIcon = Icons.Rounded.PictureAsPdf
                         )
                         AppButton(
-                            text = "Share",
+                            text = stringResource(R.string.cert_share),
                             onClick = { PdfShare.share(context, File(state.pdfPath!!)) },
                             modifier = Modifier.weight(1f),
                             leadingIcon = Icons.Rounded.Share
@@ -162,7 +164,7 @@ fun CertificateFormScreen(
                 }
                 Spacer(Modifier.height(16.dp))
                 AppButton(
-                    text = if (state.isGenerating) "Generating PDF..." else "Generate PDF",
+                    text = if (state.isGenerating) stringResource(R.string.cert_generating_pdf) else stringResource(R.string.cert_generate_pdf),
                     onClick = { viewModel.generate(type) },
                     isLoading = state.isGenerating
                 )
@@ -177,20 +179,20 @@ private fun MembershipFields(state: CertificateFormState, vm: CertificateFormVie
     AppTextField(
         value = state.memberName,
         onValueChange = { v -> vm.update { it.copy(memberName = v) } },
-        label = "Member Name",
+        label = stringResource(R.string.cert_field_member_name),
         isRequired = true
     )
     Spacer(Modifier.height(10.dp))
     AppTextField(
         value = state.fatherName,
         onValueChange = { v -> vm.update { it.copy(fatherName = v) } },
-        label = "Father / Spouse Name"
+        label = stringResource(R.string.cert_field_father_spouse)
     )
     Spacer(Modifier.height(10.dp))
     AppTextField(
         value = state.address,
         onValueChange = { v -> vm.update { it.copy(address = v) } },
-        label = "Address",
+        label = stringResource(R.string.cert_field_address),
         singleLine = false,
         maxLines = 3
     )
@@ -198,7 +200,7 @@ private fun MembershipFields(state: CertificateFormState, vm: CertificateFormVie
     AppTextField(
         value = state.memberNumber,
         onValueChange = { v -> vm.update { it.copy(memberNumber = v) } },
-        label = "Member ID / Number"
+        label = stringResource(R.string.cert_field_member_number)
     )
 }
 
@@ -207,20 +209,20 @@ private fun ResidenceFields(state: CertificateFormState, vm: CertificateFormView
     AppTextField(
         value = state.memberName,
         onValueChange = { v -> vm.update { it.copy(memberName = v) } },
-        label = "Resident Name",
+        label = stringResource(R.string.cert_field_resident_name),
         isRequired = true
     )
     Spacer(Modifier.height(10.dp))
     AppTextField(
         value = state.fatherName,
         onValueChange = { v -> vm.update { it.copy(fatherName = v) } },
-        label = "Father / Spouse Name"
+        label = stringResource(R.string.cert_field_father_spouse)
     )
     Spacer(Modifier.height(10.dp))
     AppTextField(
         value = state.address,
         onValueChange = { v -> vm.update { it.copy(address = v) } },
-        label = "Address",
+        label = stringResource(R.string.cert_field_address),
         singleLine = false,
         maxLines = 3
     )
@@ -230,14 +232,14 @@ private fun ResidenceFields(state: CertificateFormState, vm: CertificateFormView
             AppTextField(
                 value = state.ward,
                 onValueChange = { v -> vm.update { it.copy(ward = v) } },
-                label = "Ward"
+                label = stringResource(R.string.cert_field_ward)
             )
         }
         Box(modifier = Modifier.weight(1f)) {
             AppTextField(
                 value = state.pincode,
                 onValueChange = { v -> vm.update { it.copy(pincode = v) } },
-                label = "Pincode",
+                label = stringResource(R.string.cert_field_pincode),
                 keyboardType = KeyboardType.Number
             )
         }
@@ -249,27 +251,27 @@ private fun MarriageFields(state: CertificateFormState, vm: CertificateFormViewM
     AppTextField(
         value = state.brideName,
         onValueChange = { v -> vm.update { it.copy(brideName = v) } },
-        label = "Bride Name",
+        label = stringResource(R.string.cert_field_bride_name),
         isRequired = true
     )
     Spacer(Modifier.height(10.dp))
     AppTextField(
         value = state.groomName,
         onValueChange = { v -> vm.update { it.copy(groomName = v) } },
-        label = "Groom Name",
+        label = stringResource(R.string.cert_field_groom_name),
         isRequired = true
     )
     Spacer(Modifier.height(10.dp))
     AppTextField(
         value = state.date,
         onValueChange = { v -> vm.update { it.copy(date = v) } },
-        label = "Nikah Date (e.g. 25 Dec 2024)"
+        label = stringResource(R.string.cert_field_nikah_date)
     )
     Spacer(Modifier.height(10.dp))
     AppTextField(
         value = state.witnesses,
         onValueChange = { v -> vm.update { it.copy(witnesses = v) } },
-        label = "Witnesses (comma-separated)",
+        label = stringResource(R.string.cert_field_witnesses),
         singleLine = false,
         maxLines = 2
     )
@@ -277,13 +279,13 @@ private fun MarriageFields(state: CertificateFormState, vm: CertificateFormViewM
     AppTextField(
         value = state.registrationNumber,
         onValueChange = { v -> vm.update { it.copy(registrationNumber = v) } },
-        label = "Registration Number"
+        label = stringResource(R.string.cert_field_registration_number)
     )
     Spacer(Modifier.height(10.dp))
     AppTextField(
         value = state.address,
         onValueChange = { v -> vm.update { it.copy(address = v) } },
-        label = "Nikah Location / Address",
+        label = stringResource(R.string.cert_field_nikah_location),
         singleLine = false,
         maxLines = 2
     )
@@ -294,32 +296,32 @@ private fun DeathFields(state: CertificateFormState, vm: CertificateFormViewMode
     AppTextField(
         value = state.deceasedName,
         onValueChange = { v -> vm.update { it.copy(deceasedName = v) } },
-        label = "Deceased Name",
+        label = stringResource(R.string.cert_field_deceased_name),
         isRequired = true
     )
     Spacer(Modifier.height(10.dp))
     AppTextField(
         value = state.fatherName,
         onValueChange = { v -> vm.update { it.copy(fatherName = v) } },
-        label = "Father / Spouse Name"
+        label = stringResource(R.string.cert_field_father_spouse)
     )
     Spacer(Modifier.height(10.dp))
     AppTextField(
         value = state.date,
         onValueChange = { v -> vm.update { it.copy(date = v) } },
-        label = "Date of Death (e.g. 25 Dec 2024)"
+        label = stringResource(R.string.cert_field_death_date)
     )
     Spacer(Modifier.height(10.dp))
     AppTextField(
         value = state.registrationNumber,
         onValueChange = { v -> vm.update { it.copy(registrationNumber = v) } },
-        label = "Registration Number"
+        label = stringResource(R.string.cert_field_registration_number)
     )
     Spacer(Modifier.height(10.dp))
     AppTextField(
         value = state.address,
         onValueChange = { v -> vm.update { it.copy(address = v) } },
-        label = "Address (where death occurred)",
+        label = stringResource(R.string.cert_field_death_address),
         singleLine = false,
         maxLines = 2
     )

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="dashboard_greeting">അസ്സലാമു അലൈക്കും</string>
+    <string name="dashboard_user_fallback">ഉപയോക്താവ്</string>
+    <string name="dashboard_stat_members">അംഗങ്ങൾ</string>
+    <string name="dashboard_stat_families">കുടുംബങ്ങൾ</string>
+    <string name="dashboard_stat_this_month">ഈ മാസം</string>
+    <string name="dashboard_stat_certificates">സർട്ടിഫിക്കറ്റുകൾ</string>
+    <string name="dashboard_action_add_member">അംഗം ചേർക്കുക</string>
+    <string name="dashboard_action_record_donation">സംഭാവന ചേർക്കുക</string>
+    <string name="dashboard_action_add_collection">പിരിവ് ചേർക്കുക</string>
+    <string name="dashboard_action_new_certificate">സർട്ടിഫിക്കറ്റ്</string>
+    <string name="dashboard_action_announcement">അറിയിപ്പ്</string>
+    <string name="dashboard_donations_last_6">സംഭാവനകൾ — കഴിഞ്ഞ 6 മാസം</string>
+    <string name="dashboard_donation_trends">സംഭാവന പ്രവണതകൾ</string>
+    <string name="dashboard_income_vs_expense">വരുമാനവും ചെലവും</string>
+    <string name="dashboard_income">വരുമാനം</string>
+    <string name="dashboard_expense">ചെലവ്</string>
+    <string name="dashboard_this_year">ഈ വർഷം</string>
+    <string name="dashboard_monthly_net">പ്രതിമാസ ആകെ</string>
+    <string name="dashboard_recent_activity">സമീപകാല പ്രവർത്തനങ്ങൾ</string>
+    <string name="dashboard_last_7_days">കഴിഞ്ഞ 7 ദിവസം</string>
+    <string name="dashboard_see_all">എല്ലാം കാണുക</string>
+    <string name="dashboard_no_recent">സമീപകാല പ്രവർത്തനങ്ങളൊന്നുമില്ല</string>
+    <string name="announcement_title">പുതിയ അറിയിപ്പ്</string>
+    <string name="announcement_sent_to">%1$d അംഗങ്ങൾക്കും പുഷ്, വാട്സ്ആപ്പ് വഴി അയച്ചു.</string>
+    <string name="announcement_message_label">സന്ദേശം</string>
+    <string name="announcement_message_placeholder">ഉദാ. ഇന്ന് രാത്രി 9:30-ന് തറാവീഹ് ആരംഭിക്കുന്നു, ഇൻഷാ അല്ലാഹ്…</string>
+    <string name="announcement_error_empty">ആദ്യം ഒരു സന്ദേശം എഴുതുക</string>
+    <string name="announcement_preview">പ്രിവ്യൂ</string>
+    <string name="announcement_preview_placeholder">നിങ്ങളുടെ അറിയിപ്പ് ഇവിടെ കാണും…</string>
+    <string name="announcement_send">അറിയിപ്പ് അയയ്ക്കുക</string>
+</resources>

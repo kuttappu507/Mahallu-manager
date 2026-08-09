@@ -56,16 +56,16 @@ class MahalluApplication : Application(), Configuration.Provider {
         nm.createNotificationChannel(
             NotificationChannel(
                 CHANNEL_BACKUP,
-                "Backups",
+                getString(R.string.notification_channel_backup),
                 NotificationManager.IMPORTANCE_LOW
-            ).apply { description = "Database backup notifications" }
+            ).apply { description = getString(R.string.notification_channel_backup_desc) }
         )
         nm.createNotificationChannel(
             NotificationChannel(
                 CHANNEL_GENERAL,
-                "General",
+                getString(R.string.notification_channel_general),
                 NotificationManager.IMPORTANCE_DEFAULT
-            ).apply { description = "General notifications" }
+            ).apply { description = getString(R.string.notification_channel_general_desc) }
         )
     }
 

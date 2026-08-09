@@ -33,8 +33,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.mahallu.manager.core.ui.R
 import com.mahallu.manager.core.ui.theme.LocalMahalluColors
 import com.mahallu.manager.core.ui.theme.RadiusFull
 import com.mahallu.manager.core.ui.theme.RadiusLg
@@ -47,7 +50,7 @@ import androidx.compose.ui.text.TextStyle
 fun AppSearchBar(
     query: String,
     onQueryChange: (String) -> Unit,
-    placeholder: String = "Search...",
+    placeholder: String = stringResource(R.string.search_placeholder),
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
     count: Int? = null
@@ -153,6 +156,8 @@ fun TopAppBar(
             style = MaterialTheme.typography.headlineSmall,
             color = colors.textPrimary,
             fontWeight = FontWeight.Bold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
             modifier = Modifier.weight(1f)
         )
         if (onSearchClick != null) {

@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -40,6 +41,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -55,6 +57,7 @@ import com.mahallu.manager.core.ui.components.TopAppBar
 import com.mahallu.manager.core.ui.theme.LocalMahalluColors
 import com.mahallu.manager.core.ui.theme.PrimaryIndigo
 import com.mahallu.manager.core.ui.util.Formatters
+import feature.families.feature.families.R
 
 @Composable
 fun FamilyDetailScreen(
@@ -72,12 +75,12 @@ fun FamilyDetailScreen(
         LazyColumn(modifier = Modifier.fillMaxSize(), contentPadding = PaddingValues(bottom = 24.dp)) {
             item {
                 TopAppBar(
-                    title = "Family Details",
+                    title = stringResource(R.string.family_detail_title),
                     showBack = true,
                     onBackClick = onBack,
                     trailingActions = {
                         IconButton(onClick = { state.family?.let { onEdit(it.id) } }) {
-                            Icon(Icons.Rounded.Edit, contentDescription = "Edit", tint = colors.primaryIndigo)
+                            Icon(Icons.Rounded.Edit, contentDescription = stringResource(R.string.family_detail_cd_edit), tint = colors.primaryIndigo)
                         }
                     }
                 )
@@ -91,17 +94,17 @@ fun FamilyDetailScreen(
                             actions = listOf(
                                 {
                                     DetailAction(
-                                        "Call", Icons.Rounded.Call, colors.primaryIndigo,
+                                        stringResource(R.string.family_detail_action_call), Icons.Rounded.Call, colors.primaryIndigo,
                                         onClick = { fam.primaryMobile?.takeIf { it.isNotBlank() }?.let { dial(context, it) } }
                                     )
                                 },
                                 {
                                     DetailAction(
-                                        "WhatsApp", Icons.Rounded.Chat, Color(0xFF16A34A),
+                                        stringResource(R.string.family_detail_action_whatsapp), Icons.Rounded.Chat, Color(0xFF16A34A),
                                         onClick = { fam.primaryMobile?.takeIf { it.isNotBlank() }?.let { whatsapp(context, it) } }
                                     )
                                 },
-                                { DetailAction("Statement", Icons.Rounded.Receipt, colors.accentCoral, onClick = { onStatement?.invoke() }) }
+                                { DetailAction(stringResource(R.string.family_detail_action_statement), Icons.Rounded.Receipt, colors.accentCoral, onClick = { onStatement?.invoke() }) }
                             )
                         )
                     }
@@ -111,26 +114,26 @@ fun FamilyDetailScreen(
                     AnimatedReveal {
                         InfoGridCard(
                             modifier = Modifier.padding(horizontal = 18.dp).fillMaxWidth(),
-                            title = "Contact Information",
+                            title = stringResource(R.string.family_detail_contact_title),
                             items = listOf(
-                                "Family Number" to fam.familyNumber,
-                                "House Name" to fam.houseName,
-                                "House Number" to (fam.houseNumber ?: "—"),
-                                "Ward" to (fam.ward ?: "—"),
-                                "Area" to (fam.area ?: "—"),
-                                "Pincode" to (fam.pincode ?: "—"),
-                                "Primary Mobile" to (fam.primaryMobile ?: "—"),
-                                "Secondary Mobile" to (fam.secondaryMobile ?: "—"),
-                                "Email" to (fam.email ?: "—"),
-                                "Status" to fam.status,
-                                "Created" to Formatters.date(fam.createdAt)
+                                stringResource(R.string.family_detail_field_number) to fam.familyNumber,
+                                stringResource(R.string.family_detail_field_house_name) to fam.houseName,
+                                stringResource(R.string.family_detail_field_house_number) to (fam.houseNumber ?: stringResource(R.string.family_detail_not_available)),
+                                stringResource(R.string.family_detail_field_ward) to (fam.ward ?: stringResource(R.string.family_detail_not_available)),
+                                stringResource(R.string.family_detail_field_area) to (fam.area ?: stringResource(R.string.family_detail_not_available)),
+                                stringResource(R.string.family_detail_field_pincode) to (fam.pincode ?: stringResource(R.string.family_detail_not_available)),
+                                stringResource(R.string.family_detail_field_primary_mobile) to (fam.primaryMobile ?: stringResource(R.string.family_detail_not_available)),
+                                stringResource(R.string.family_detail_field_secondary_mobile) to (fam.secondaryMobile ?: stringResource(R.string.family_detail_not_available)),
+                                stringResource(R.string.family_detail_field_email) to (fam.email ?: stringResource(R.string.family_detail_not_available)),
+                                stringResource(R.string.family_detail_field_status) to fam.status,
+                                stringResource(R.string.family_detail_field_created) to Formatters.date(fam.createdAt)
                             )
                         )
                     }
                 }
                 item {
                     Spacer(Modifier.height(14.dp))
-                    DetailSectionTitle("Members (${state.members.size})")
+                    DetailSectionTitle(stringResource(R.string.family_detail_members, state.members.size))
                 }
                 item {
                     Column(
@@ -138,7 +141,7 @@ fun FamilyDetailScreen(
                             .fillMaxWidth()
                             .padding(horizontal = 18.dp)
                             .clip(RoundedCornerShape(17.dp))
-                            .background(Color.White)
+                            .background(colors.surface)
                             .border(1.dp, colors.border, RoundedCornerShape(17.dp))
                             .padding(vertical = 2.dp)
                     ) {
@@ -193,10 +196,12 @@ private fun FamilyHeroCard(family: com.mahallu.manager.core.database.entity.Fami
                 style = MaterialTheme.typography.headlineSmall,
                 color = Color.White,
                 fontWeight = FontWeight.ExtraBold,
-                maxLines = 1
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
             Spacer(Modifier.height(10.dp))
             Row(
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -225,7 +230,9 @@ private fun FamilyHeroChip(text: String) {
             color = Color.White,
             style = MaterialTheme.typography.labelSmall,
             fontWeight = FontWeight.ExtraBold,
-            maxLines = 1
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.widthIn(max = 200.dp)
         )
     }
 }
@@ -269,7 +276,7 @@ private fun FamilyMemberRow(member: MemberEntity, onClick: () -> Unit) {
             )
             Spacer(Modifier.height(2.dp))
             Text(
-                text = "${member.relationToHead ?: "Member"} • ${member.occupation ?: "—"}",
+                text = stringResource(R.string.family_member_relation, member.relationToHead ?: stringResource(R.string.family_member_default_relation), member.occupation ?: stringResource(R.string.family_detail_not_available)),
                 style = MaterialTheme.typography.labelSmall,
                 color = colors.textSecondary,
                 maxLines = 1,
@@ -278,7 +285,7 @@ private fun FamilyMemberRow(member: MemberEntity, onClick: () -> Unit) {
         }
         Spacer(Modifier.width(8.dp))
         Text(
-            text = "${Formatters.calculateAge(member.dateOfBirth)}y",
+            text = stringResource(R.string.family_member_age_suffix, Formatters.calculateAge(member.dateOfBirth)),
             style = MaterialTheme.typography.labelMedium,
             color = colors.textSecondary,
             fontWeight = FontWeight.Bold

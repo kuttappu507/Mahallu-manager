@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Backup & Restore screen -->
+    <string name="backup_title">Backup &amp; Restore</string>
+    <string name="backup_cloud_title">Cloud Backup</string>
+    <string name="backup_cloud_desc">Encrypted backup to Google Drive (AES-256-GCM)</string>
+    <string name="backup_last_label">Last: %1$s</string>
+    <string name="backup_never">Never</string>
+    <string name="backup_backing_up">Backing up...</string>
+    <string name="backup_now">Backup Now</string>
+    <string name="backup_auto">Auto Backup</string>
+    <string name="backup_history">Backup History</string>
+    <string name="backup_row_info">%1$s • %2$.1f KB • %3$s</string>
+    <string name="backup_completed">Backup completed (%1$d KB)</string>
+    <string name="backup_unknown_error">Unknown error</string>
+    <string name="backup_not_found">Backup not found</string>
+    <string name="backup_file_missing">Local backup file missing</string>
+    <string name="backup_restored_at">Restored at %1$d</string>
+    <string name="backup_auto_enabled">Auto backup enabled</string>
+    <string name="backup_auto_disabled">Auto backup disabled</string>
+    <string name="backup_restore_success">Restored successfully. Please relaunch the app.</string>
+    <string name="backup_restore_failed">Restore failed: %1$s</string>
+
+    <!-- More screen -->
+    <string name="more_title">More</string>
+    <string name="more_group_records">Records</string>
+    <string name="more_group_data_tools">Data &amp; Tools</string>
+    <string name="more_menu_subscriptions">Subscriptions</string>
+    <string name="more_menu_subscriptions_sub">Monthly collections</string>
+    <string name="more_menu_donations">Donations</string>
+    <string name="more_menu_donations_sub">Funds &amp; contributions</string>
+    <string name="more_menu_marriages">Marriages</string>
+    <string name="more_menu_marriages_sub">Nikah records</string>
+    <string name="more_menu_deaths">Deaths</string>
+    <string name="more_menu_deaths_sub">Funeral records</string>
+    <string name="more_menu_welfare">Welfare</string>
+    <string name="more_menu_welfare_sub">Beneficiary support</string>
+    <string name="more_menu_certificates">Certificates</string>
+    <string name="more_menu_certificates_sub">Membership &amp; more</string>
+    <string name="more_menu_reports">Reports</string>
+    <string name="more_menu_reports_sub">Statements &amp; analytics</string>
+    <string name="more_menu_backup">Backup &amp; Restore</string>
+    <string name="more_menu_backup_sub">Cloud · last backup today</string>
+    <string name="more_menu_settings">Settings</string>
+    <string name="more_menu_settings_sub">App preferences</string>
+    <string name="more_mahallu_badge">MAHALLU</string>
+    <string name="more_profile_attendance">Attendance</string>
+    <string name="more_profile_contributed">Contributed</string>
+    <string name="more_profile_certificates">Certificates</string>
+    <string name="more_logout">Log out</string>
+    <string name="more_logout_subtitle">See you at Fajr, in shāʾ Allāh</string>
+    <string name="more_version_footer">MAHALLU MANAGER v1.0.0 · %1$s</string>
+
+    <!-- Settings screen -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_mahallu_info">Mahallu Information</string>
+    <string name="settings_mahallu_name">Mahallu Name</string>
+    <string name="settings_address">Address</string>
+    <string name="settings_phone">Phone</string>
+    <string name="settings_email">Email</string>
+    <string name="settings_save_mahallu">Save Mahallu Info</string>
+    <string name="settings_theme">Theme</string>
+    <string name="settings_theme_system">System</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_theme_dark">Dark</string>
+    <string name="settings_language">Language</string>
+    <string name="settings_language_english">English</string>
+    <string name="settings_language_malayalam">മലയാളം</string>
+    <string name="settings_language_restart">Relaunching app to apply language…</string>
+    <string name="settings_backup">Backup</string>
+    <string name="settings_auto_daily_backup">Auto daily backup</string>
+    <string name="settings_last_backup">Last backup: %1$s</string>
+    <string name="settings_account">Account</string>
+    <string name="settings_about">About</string>
+    <string name="settings_about_text">Mahallu Manager v1.0.0\nModern offline-first Mahallu management.\n© 2025 Mahallu Manager.</string>
+    <string name="settings_app_name">Mahallu Manager</string>
+    <string name="settings_default_user">User</string>
+</resources>

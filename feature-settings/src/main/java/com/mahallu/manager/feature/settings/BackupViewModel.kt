@@ -1,5 +1,6 @@
 package com.mahallu.manager.feature.settings
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mahallu.manager.feature.settings.backup.BackupManager
@@ -8,6 +9,8 @@ import com.mahallu.manager.core.database.repository.BackupRepository
 import com.mahallu.manager.core.database.repository.SettingsRepository
 import com.mahallu.manager.feature.settings.worker.BackupScheduler
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import feature.settings.feature.settings.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -27,6 +30,7 @@ data class BackupUiState(
 
 @HiltViewModel
 class BackupViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val backupManager: BackupManager,
     private val backupRepo: BackupRepository,
     private val settingsRepo: SettingsRepository,
@@ -77,7 +81,7 @@ class BackupViewModel @Inject constructor(
             settingsRepo.putBool("backup.auto_enabled", newVal)
             autoEnabled.value = newVal
             if (newVal) scheduler.scheduleIfEnabled() else scheduler.cancel()
-            message.value = if (newVal) "Auto backup enabled" else "Auto backup disabled"
+            message.value = if (newVal) context.getString(R.string.backup_auto_enabled) else context.getString(R.string.backup_auto_disabled)
         }
     }
 
@@ -87,8 +91,8 @@ class BackupViewModel @Inject constructor(
             val result = backupManager.restoreBackup(backupId)
             isBackingUp.value = false
             message.value = result.fold(
-                onSuccess = { "Restored successfully. Please relaunch the app." },
-                onFailure = { "Restore failed: ${it.message}" }
+                onSuccess = { context.getString(R.string.backup_restore_success) },
+                onFailure = { context.getString(R.string.backup_restore_failed, it.message) }
             )
         }
     }

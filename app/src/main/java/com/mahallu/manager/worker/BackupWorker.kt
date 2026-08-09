@@ -6,6 +6,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.WorkerParameters
 import com.mahallu.manager.backup.BackupManager
+import com.mahallu.manager.R
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
@@ -31,7 +32,7 @@ class BackupWorker @AssistedInject constructor(
             }
         } catch (t: Throwable) {
             Timber.e(t, "BackupWorker failed")
-            Result.failure(Data.Builder().putString("error", t.message ?: "Unknown").build())
+            Result.failure(Data.Builder().putString("error", t.message ?: applicationContext.getString(R.string.backup_unknown)).build())
         }
     }
 

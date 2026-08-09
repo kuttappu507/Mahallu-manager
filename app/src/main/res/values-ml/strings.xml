@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">മഹല്ല് മാനേജർ</string>
+    <string name="notification_channel_backup">ബാക്കപ്പുകൾ</string>
+    <string name="notification_channel_backup_desc">ഡാറ്റാബേസ് ബാക്കപ്പ് അറിയിപ്പുകൾ</string>
+    <string name="notification_channel_general">പൊതുവായത്</string>
+    <string name="notification_channel_general_desc">പൊതുവായ അറിയിപ്പുകൾ</string>
+    <string name="backup_payload_name">മഹല്ല് മാനേജർ ബാക്കപ്പ്</string>
+    <string name="backup_completed_kb">ബാക്കപ്പ് പൂർത്തിയായി (%1$d KB)</string>
+    <string name="backup_unknown_error">അജ്ഞാത പിശക്</string>
+    <string name="backup_not_found">ബാക്കപ്പ് കണ്ടെത്താനായില്ല</string>
+    <string name="backup_local_file_missing">ലോക്കൽ ബാക്കപ്പ് ഫയൽ കാണുന്നില്ല</string>
+    <string name="backup_invalid">അസാധുവായ ബാക്കപ്പ്</string>
+    <string name="backup_restored_at">%1$d-ൽ പുനഃസ്ഥാപിച്ചു</string>
+    <string name="backup_unknown">അജ്ഞാതം</string>
+    <string name="pdf_generated_on">മഹല്ല് മാനേജർ • %1$s-ൽ സൃഷ്ടിച്ചത്</string>
+</resources>

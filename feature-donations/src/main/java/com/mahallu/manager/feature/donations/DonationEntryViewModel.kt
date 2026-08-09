@@ -10,6 +10,7 @@ import com.mahallu.manager.core.util.IdGenerator
 import com.mahallu.manager.feature.certificates.pdf.Align
 import com.mahallu.manager.feature.certificates.pdf.PdfGenerator
 import com.mahallu.manager.feature.certificates.pdf.PdfTextLine
+import feature.donations.feature.donations.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -53,11 +54,11 @@ class DonationEntryViewModel @Inject constructor(
         val s = _state.value
         val amount = s.amount.toDoubleOrNull()
         if (s.donorName.isBlank()) {
-            _state.update { it.copy(error = "Donor name is required") }
+            _state.update { it.copy(error = context.getString(R.string.donations_error_donor_name)) }
             return
         }
         if (amount == null || amount <= 0) {
-            _state.update { it.copy(error = "Enter a valid amount") }
+            _state.update { it.copy(error = context.getString(R.string.donations_error_amount)) }
             return
         }
         _state.update { it.copy(isSaving = true, error = null) }
@@ -82,40 +83,40 @@ class DonationEntryViewModel @Inject constructor(
                 val formattedDate = java.text.SimpleDateFormat("dd MMM yyyy", java.util.Locale.getDefault()).format(s.date)
                 val lines = mutableListOf<PdfTextLine>()
                 lines += PdfTextLine(mahalluName, sizeSp = 22f, bold = true, align = Align.CENTER)
-                lines += PdfTextLine("Donation Receipt", sizeSp = 16f, bold = true, align = Align.CENTER)
+                lines += PdfTextLine(context.getString(R.string.donations_pdf_receipt_title), sizeSp = 16f, bold = true, align = Align.CENTER)
                 lines += PdfTextLine(" ", sizeSp = 8f)
-                lines += PdfTextLine("Receipt No: ${s.receiptNumber}", sizeSp = 12f, bold = true)
-                lines += PdfTextLine("Date: $formattedDate", sizeSp = 11f)
+                lines += PdfTextLine(context.getString(R.string.donations_pdf_receipt_no, s.receiptNumber), sizeSp = 12f, bold = true)
+                lines += PdfTextLine(context.getString(R.string.donations_pdf_date, formattedDate), sizeSp = 11f)
                 lines += PdfTextLine(" ", sizeSp = 6f)
-                lines += PdfTextLine("Received from:", sizeSp = 11f, color = android.graphics.Color.DKGRAY)
+                lines += PdfTextLine(context.getString(R.string.donations_pdf_received_from), sizeSp = 11f, color = android.graphics.Color.DKGRAY)
                 lines += PdfTextLine(s.donorName.trim(), sizeSp = 14f, bold = true)
                 if (s.donorMobile.isNotBlank()) {
-                    lines += PdfTextLine("Mobile: ${s.donorMobile.trim()}", sizeSp = 11f)
+                    lines += PdfTextLine(context.getString(R.string.donations_pdf_mobile, s.donorMobile.trim()), sizeSp = 11f)
                 }
                 lines += PdfTextLine(" ", sizeSp = 6f)
-                lines += PdfTextLine("The sum of", sizeSp = 11f)
+                lines += PdfTextLine(context.getString(R.string.donations_pdf_sum_of), sizeSp = 11f)
                 lines += PdfTextLine("Rs. ${"%,.2f".format(amount)}", sizeSp = 22f, bold = true, color = android.graphics.Color.parseColor("#FF6B6B"))
-                lines += PdfTextLine("(${numberToWordsInr(amount)} rupees only)", sizeSp = 10f, color = android.graphics.Color.DKGRAY)
+                lines += PdfTextLine(context.getString(R.string.donations_pdf_rupees_only, numberToWordsInr(amount)), sizeSp = 10f, color = android.graphics.Color.DKGRAY)
                 lines += PdfTextLine(" ", sizeSp = 8f)
-                lines += PdfTextLine("Category: ${s.category}", sizeSp = 11f)
-                lines += PdfTextLine("Payment: ${s.paymentMethod}", sizeSp = 11f)
+                lines += PdfTextLine(context.getString(R.string.donations_pdf_category, context.getString(donationCategoryLabelRes(s.category))), sizeSp = 11f)
+                lines += PdfTextLine(context.getString(R.string.donations_pdf_payment, context.getString(donationPaymentLabelRes(s.paymentMethod))), sizeSp = 11f)
                 if (s.purpose.isNotBlank()) {
-                    lines += PdfTextLine("Purpose: ${s.purpose.trim()}", sizeSp = 11f)
+                    lines += PdfTextLine(context.getString(R.string.donations_pdf_purpose, s.purpose.trim()), sizeSp = 11f)
                 }
                 if (s.remarks.isNotBlank()) {
-                    lines += PdfTextLine("Remarks: ${s.remarks.trim()}", sizeSp = 11f)
+                    lines += PdfTextLine(context.getString(R.string.donations_pdf_remarks, s.remarks.trim()), sizeSp = 11f)
                 }
                 lines += PdfTextLine(" ", sizeSp = 14f)
-                lines += PdfTextLine("Issued on: ${java.text.SimpleDateFormat("dd MMM yyyy", java.util.Locale.getDefault()).format(java.util.Date())}", sizeSp = 11f, align = Align.RIGHT)
-                lines += PdfTextLine("Authorised Signatory", sizeSp = 11f, bold = true, align = Align.RIGHT)
+                lines += PdfTextLine(context.getString(R.string.donations_pdf_issued_on, java.text.SimpleDateFormat("dd MMM yyyy", java.util.Locale.getDefault()).format(java.util.Date())), sizeSp = 11f, align = Align.RIGHT)
+                lines += PdfTextLine(context.getString(R.string.donations_pdf_authorised_signatory), sizeSp = 11f, bold = true, align = Align.RIGHT)
 
                 val file = pdfGenerator.generate(
                     fileName = "donation_${s.receiptNumber}.pdf",
                     spec = com.mahallu.manager.feature.certificates.pdf.PdfDocumentSpec(
-                        title = "Donation Receipt",
+                        title = context.getString(R.string.donations_pdf_receipt_title),
                         subtitle = mahalluName,
                         lines = lines,
-                        footer = "$mahalluName • Generated by Mahallu Manager"
+                        footer = context.getString(R.string.donations_pdf_footer, mahalluName)
                     )
                 )
                 file.absolutePath

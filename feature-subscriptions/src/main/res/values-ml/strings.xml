@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="subscriptions_title">ചന്ദ്രക്കുറി</string>
+    <string name="subscriptions_total_this_month">ഈ മാസം ആകെ</string>
+    <string name="subscriptions_search_placeholder">രസീത് നമ്പർ അല്ലെങ്കിൽ കുറിപ്പുകൾ ഉപയോഗിച്ച് തിരയുക…</string>
+    <string name="subscriptions_row_detail">%1$s • %2$s</string>
+    <string name="collection_title">പിരിവ് എൻട്രി</string>
+    <string name="collection_cd_save">സേവ് ചെയ്യുക</string>
+    <string name="collection_field_receipt_number">രസീത് നമ്പർ</string>
+    <string name="collection_field_select_family">കുടുംബം തിരഞ്ഞെടുക്കുക</string>
+    <string name="collection_field_select_member">അംഗത്തെ തിരഞ്ഞെടുക്കുക</string>
+    <string name="collection_field_collection_type">പിരിവ് തരം</string>
+    <string name="collection_field_amount">തുക</string>
+    <string name="collection_field_payment_date">പേയ്മെന്റ് തീയതി</string>
+    <string name="collection_field_payment_method">പേയ്മെന്റ് രീതി</string>
+    <string name="collection_field_remarks">കുറിപ്പുകൾ</string>
+    <string name="collection_placeholder_amount">0.00</string>
+    <string name="collection_placeholder_remarks">നിർബന്ധമല്ല</string>
+    <string name="collection_total_amount">ആകെ തുക</string>
+    <string name="collection_saving">സേവ് ചെയ്യുന്നു…</string>
+    <string name="collection_save_print">രസീത് സേവ് &amp; പ്രിന്റ് ചെയ്യുക</string>
+    <string name="collection_receipt_saved">✓ സേവ് ചെയ്തു. രസീത് സൃഷ്ടിച്ചു: %1$s</string>
+    <string name="collection_view_receipt">രസീത് കാണുക</string>
+    <string name="collection_share">പങ്കിടുക</string>
+    <string name="collection_done">പൂർത്തിയായി</string>
+    <string name="collection_family_selector">%1$s • %2$s</string>
+    <string name="collection_error_no_selection">ആദ്യം കുടുംബം അല്ലെങ്കിൽ അംഗത്തെ തിരഞ്ഞെടുക്കുക</string>
+    <string name="collection_error_invalid_amount">സാധുവായ തുക നൽകുക</string>
+    <string name="pdf_subscription_receipt">ചന്ദ്രക്കുറി രസീത്</string>
+    <string name="pdf_receipt_no">രസീത് നമ്പർ: %1$s</string>
+    <string name="pdf_date">തീയതി: %1$s</string>
+    <string name="pdf_received_from">ലഭിച്ചത്:</string>
+    <string name="pdf_family_member_placeholder">[കുടുംബം / അംഗം]</string>
+    <string name="pdf_member">അംഗം: %1$s</string>
+    <string name="pdf_subscription_type">ചന്ദ്രക്കുറി തരം: %1$s</string>
+    <string name="pdf_the_sum_of">തുക</string>
+    <string name="pdf_payment">പേയ്മെന്റ്: %1$s</string>
+    <string name="pdf_remarks">കുറിപ്പുകൾ: %1$s</string>
+    <string name="pdf_issued_on">ഇഷ്യൂ ചെയ്തത്: %1$s</string>
+    <string name="pdf_authorised_signatory">അംഗീകൃത ഒപ്പിട്ടയാൾ</string>
+    <string name="pdf_footer">%1$s • മഹല്ല് മാനേജർ സൃഷ്ടിച്ചത്</string>
+</resources>

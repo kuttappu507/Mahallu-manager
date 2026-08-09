@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Death list screen -->
+    <string name="death_list_title">Death Register</string>
+    <string name="death_search_placeholder">Search by name or father name</string>
+    <string name="death_son_of">S/o %1$s</string>
+    <string name="death_died_on">Died: %1$s</string>
+    <string name="death_burial_on">Burial: %1$s</string>
+
+    <!-- Death edit screen -->
+    <string name="death_edit_record_title">Record Death</string>
+    <string name="death_edit_title">Edit Death</string>
+    <string name="death_edit_reg_number">Registration Number</string>
+    <string name="death_edit_select_member">Select from members</string>
+    <string name="death_edit_pick_deceased">Pick deceased from members</string>
+    <string name="death_edit_name">Name</string>
+    <string name="death_edit_father_name">Father Name</string>
+    <string name="death_edit_age">Age</string>
+    <string name="death_edit_gender">Gender</string>
+    <string name="death_edit_date_of_death">Date of Death</string>
+    <string name="death_edit_burial_location">Burial Location</string>
+    <string name="death_edit_cause_of_death">Cause of Death</string>
+    <string name="death_edit_remarks">Remarks</string>
+    <string name="death_save">Save</string>
+    <string name="death_saving">Saving...</string>
+    <string name="death_generate_certificate">Generate Death Certificate</string>
+    <string name="death_edit_error_name_required">Name is required</string>
+
+    <!-- Content descriptions -->
+    <string name="cd_save">Save</string>
+</resources>

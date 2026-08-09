@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.pdf.PdfDocument
+import com.mahallu.manager.R
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -183,7 +184,7 @@ class PdfGenerator @Inject constructor(
     }
 
     private fun drawFooter(canvas: android.graphics.Canvas, pageWidth: Int, pageHeight: Int, margin: Int, footer: String?, paint: Paint) {
-        val txt = footer ?: "Mahallu Manager • Generated on ${java.util.Date()}"
+        val txt = footer ?: context.getString(R.string.pdf_generated_on, java.util.Date())
         canvas.drawText(txt, margin.toFloat(), (pageHeight - margin / 2).toFloat(), paint)
     }
 

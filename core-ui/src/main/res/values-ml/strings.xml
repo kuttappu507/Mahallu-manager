@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cd_add">ചേർക്കുക</string>
+    <string name="cd_search">തിരയുക</string>
+    <string name="cd_notifications">അറിയിപ്പുകൾ</string>
+    <string name="nav_home">ഹോം</string>
+    <string name="nav_families">കുടുംബങ്ങൾ</string>
+    <string name="nav_members">അംഗങ്ങൾ</string>
+    <string name="nav_finance">ധനകാര്യം</string>
+    <string name="nav_more">കൂടുതൽ</string>
+    <string name="no_data">വിവരങ്ങളൊന്നുമില്ല</string>
+    <string name="search">തിരയുക</string>
+    <string name="no_results">ഫലങ്ങളൊന്നുമില്ല</string>
+    <string name="cancel">റദ്ദാക്കുക</string>
+    <string name="search_placeholder">തിരയുക…</string>
+    <string name="see_all">എല്ലാം കാണുക</string>
+    <string name="pdf_not_found_path">PDF കണ്ടെത്താനായില്ല: %1$s</string>
+    <string name="pdf_cannot_share_path">PDF പങ്കിടാൻ കഴിഞ്ഞില്ല: %1$s</string>
+    <string name="pdf_open_with">PDF ഇതുപയോഗിച്ച് തുറക്കുക</string>
+    <string name="pdf_no_viewer">PDF വ്യൂവർ ഇൻസ്റ്റാൾ ചെയ്തിട്ടില്ല</string>
+    <string name="pdf_not_found">PDF കണ്ടെത്താനായില്ല</string>
+    <string name="pdf_cannot_share">പങ്കിടാൻ കഴിഞ്ഞില്ല: %1$s</string>
+    <string name="pdf_share">PDF പങ്കിടുക</string>
+    <string name="time_just_now">ഇപ്പോൾ തന്നെ</string>
+    <string name="time_ago_minutes">%1$d മിനിറ്റ് മുമ്പ്</string>
+    <string name="time_ago_hours">%1$d മണിക്കൂർ മുമ്പ്</string>
+    <string name="time_ago_days">%1$d ദിവസം മുമ്പ്</string>
+    <string name="suffix_thousand">കെ</string>
+    <string name="suffix_lakh">ലക്ഷം</string>
+    <string name="suffix_crore">കോടി</string>
+    <string name="greeting_morning">അസ്സലാമു അലൈക്കും</string>
+    <string name="greeting_afternoon">ഗുഡ് ആഫ്റ്റർനൂൺ</string>
+    <string name="greeting_evening">ഗുഡ് ഈവനിംഗ്</string>
+    <string name="greeting_night">ഗുഡ് നൈറ്റ്</string>
+</resources>

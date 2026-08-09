@@ -31,6 +31,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -44,6 +45,7 @@ import com.mahallu.manager.core.ui.components.EmptyState
 import com.mahallu.manager.core.ui.components.IconCircleButton
 import com.mahallu.manager.core.ui.theme.LocalMahalluColors
 import com.mahallu.manager.core.ui.util.Formatters
+import feature.families.feature.families.R
 
 @Composable
 fun FamiliesScreen(
@@ -63,7 +65,7 @@ fun FamiliesScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Families",
+                    text = stringResource(R.string.families_title),
                     style = MaterialTheme.typography.headlineMedium,
                     color = colors.textPrimary,
                     fontWeight = FontWeight.Bold
@@ -91,7 +93,7 @@ fun FamiliesScreen(
             AppSearchBar(
                 query = state.query,
                 onQueryChange = viewModel::setQuery,
-                placeholder = "Search families...",
+                placeholder = stringResource(R.string.families_search_placeholder),
                 count = state.families.size
             )
 
@@ -117,9 +119,9 @@ fun FamiliesScreen(
             if (state.families.isEmpty()) {
                 EmptyState(
                     icon = Icons.Rounded.FamilyRestroom,
-                    title = "No families found",
-                    message = "Add your first family to get started.",
-                    actionLabel = "Add Family",
+                    title = stringResource(R.string.families_empty_title),
+                    message = stringResource(R.string.families_empty_message),
+                    actionLabel = stringResource(R.string.families_empty_action),
                     onAction = onAddFamily
                 )
             } else {
@@ -133,7 +135,7 @@ fun FamiliesScreen(
                     }
                     item {
                         Text(
-                            text = "Showing ${state.families.size} of ${state.totalCount} families",
+                            text = stringResource(R.string.families_showing, state.families.size, state.totalCount),
                             style = MaterialTheme.typography.labelSmall,
                             color = colors.textTertiary,
                             fontWeight = FontWeight.Bold,
@@ -186,7 +188,7 @@ private fun FamilyRow(family: FamilyEntity, onClick: () -> Unit) {
                 }
                 Spacer(Modifier.height(2.dp))
                 Text(
-                    text = listOfNotNull(family.familyNumber, family.primaryMobile?.let { "Tel: $it" })
+                    text = listOfNotNull(family.familyNumber, family.primaryMobile?.let { stringResource(R.string.families_tel_prefix, it) })
                         .joinToString(" • "),
                     style = MaterialTheme.typography.labelSmall,
                     color = colors.textSecondary,

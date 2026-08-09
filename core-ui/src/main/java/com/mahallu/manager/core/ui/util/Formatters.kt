@@ -1,5 +1,7 @@
 package com.mahallu.manager.core.ui.util
 
+import android.content.Context
+import com.mahallu.manager.core.ui.R
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -16,12 +18,16 @@ object Formatters {
 
     fun currency(amount: Double): String = "₹" + indianRupeeFormat.format(amount)
 
-    fun currencyShort(amount: Double): String {
+    fun currencyShort(amount: Double, context: Context? = null): String {
+        val rupee = "₹"
         return when {
-            amount >= 1_00_00_000 -> "₹" + String.format(Locale.getDefault(), "%.1fCr", amount / 1_00_00_000)
-            amount >= 1_00_000 -> "₹" + String.format(Locale.getDefault(), "%.1fL", amount / 1_00_000)
-            amount >= 1_000 -> "₹" + String.format(Locale.getDefault(), "%.1fK", amount / 1_000)
-            else -> "₹" + indianRupeeFormat.format(amount)
+            amount >= 1_00_00_000 -> rupee + String.format(Locale.getDefault(), "%.1f", amount / 1_00_00_000) +
+                (context?.getString(R.string.suffix_crore) ?: "Cr")
+            amount >= 1_00_000 -> rupee + String.format(Locale.getDefault(), "%.1f", amount / 1_00_000) +
+                (context?.getString(R.string.suffix_lakh) ?: "L")
+            amount >= 1_000 -> rupee + String.format(Locale.getDefault(), "%.1f", amount / 1_000) +
+                (context?.getString(R.string.suffix_thousand) ?: "K")
+            else -> rupee + indianRupeeFormat.format(amount)
         }
     }
 
@@ -31,14 +37,14 @@ object Formatters {
     fun isoDate(timestamp: Long): String = isoDateFormat.format(Date(timestamp))
     fun displayDate(timestamp: Long): String = displayDateFormat.format(Date(timestamp))
 
-    fun relativeDate(timestamp: Long): String {
+    fun relativeDate(timestamp: Long, context: Context? = null): String {
         val now = System.currentTimeMillis()
         val diff = now - timestamp
         return when {
-            diff < 60_000 -> "Just now"
-            diff < 3_600_000 -> "${diff / 60_000}m ago"
-            diff < 86_400_000 -> "${diff / 3_600_000}h ago"
-            diff < 604_800_000 -> "${diff / 86_400_000}d ago"
+            diff < 60_000 -> context?.getString(R.string.time_just_now) ?: "Just now"
+            diff < 3_600_000 -> context?.getString(R.string.time_ago_minutes, diff / 60_000) ?: "${diff / 60_000}m ago"
+            diff < 86_400_000 -> context?.getString(R.string.time_ago_hours, diff / 3_600_000) ?: "${diff / 3_600_000}h ago"
+            diff < 604_800_000 -> context?.getString(R.string.time_ago_days, diff / 86_400_000) ?: "${diff / 86_400_000}d ago"
             else -> date(timestamp)
         }
     }
@@ -60,13 +66,13 @@ object Formatters {
         }
     }
 
-    fun greeting(): String {
+    fun greeting(context: Context? = null): String {
         val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
         return when (hour) {
-            in 5..11 -> "Assalamu Alaikum"
-            in 12..16 -> "Good Afternoon"
-            in 17..20 -> "Good Evening"
-            else -> "Good Night"
+            in 5..11 -> context?.getString(R.string.greeting_morning) ?: "Assalamu Alaikum"
+            in 12..16 -> context?.getString(R.string.greeting_afternoon) ?: "Good Afternoon"
+            in 17..20 -> context?.getString(R.string.greeting_evening) ?: "Good Evening"
+            else -> context?.getString(R.string.greeting_night) ?: "Good Night"
         }
     }
 }

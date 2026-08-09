@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="login_greeting">As-salamu alaykum</string>
+    <string name="login_subtitle">Sign in to Mahallu to manage your masjid.</string>
+    <string name="login_email_member_label">Email or member ID</string>
+    <string name="login_email_member_placeholder">Enter username or member ID</string>
+    <string name="login_password">Password</string>
+    <string name="login_forgot_password">Forgot password?</string>
+    <string name="login_signing_in">Signing in...</string>
+    <string name="login_sign_in">Sign In</string>
+    <string name="login_or">OR</string>
+    <string name="login_continue_as_guest">Continue as Guest</string>
+    <string name="login_version_tagline">MAHALLU v1.0 · MASJID AN-NOOR</string>
+
+    <string name="login_error_enter_username">Enter username or mobile</string>
+    <string name="login_error_enter_password">Enter password</string>
+    <string name="login_error_failed">Login failed</string>
+    <string name="login_default_user_name">User</string>
+</resources>

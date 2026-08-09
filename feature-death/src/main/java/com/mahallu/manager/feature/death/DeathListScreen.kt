@@ -27,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -38,6 +39,7 @@ import com.mahallu.manager.core.ui.components.FabAdd
 import com.mahallu.manager.core.ui.components.IconCircleButton
 import com.mahallu.manager.core.ui.theme.LocalMahalluColors
 import com.mahallu.manager.core.ui.util.Formatters
+import feature.death.feature.death.R
 
 @Composable
 fun DeathListScreen(
@@ -59,10 +61,10 @@ fun DeathListScreen(
             ) {
                 IconCircleButton(icon = Icons.AutoMirrored.Rounded.ArrowBack, onClick = onBack, backgroundColor = colors.background, tint = colors.textPrimary)
                 Spacer(Modifier.width(8.dp))
-                Text("Death Register", style = MaterialTheme.typography.headlineSmall, color = colors.textPrimary, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
+                Text(stringResource(R.string.death_list_title), style = MaterialTheme.typography.headlineSmall, color = colors.textPrimary, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
                 FabAdd(onClick = onAdd)
             }
-            AppSearchBar(query = state.query, onQueryChange = viewModel::setQuery, placeholder = "Search by name or father name")
+            AppSearchBar(query = state.query, onQueryChange = viewModel::setQuery, placeholder = stringResource(R.string.death_search_placeholder))
             Spacer(Modifier.height(8.dp))
             LazyColumn(
                 contentPadding = PaddingValues(horizontal = 14.dp, vertical = 8.dp),
@@ -96,9 +98,9 @@ private fun DeathRow(d: DeathEntity, onClick: () -> Unit) {
             Spacer(Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(d.name, style = MaterialTheme.typography.titleSmall, color = colors.textPrimary, fontWeight = FontWeight.SemiBold)
-                Text("S/o ${d.fatherName ?: "—"}", style = MaterialTheme.typography.bodySmall, color = colors.textSecondary)
+                Text(stringResource(R.string.death_son_of, d.fatherName ?: "—"), style = MaterialTheme.typography.bodySmall, color = colors.textSecondary)
                 Text(
-                    text = "Died: ${Formatters.date(d.dateOfDeath)}" + (d.burialDate?.let { " • Burial: ${Formatters.date(it)}" } ?: ""),
+                    text = stringResource(R.string.death_died_on, Formatters.date(d.dateOfDeath)) + (d.burialDate?.let { " • " + stringResource(R.string.death_burial_on, Formatters.date(it)) } ?: ""),
                     style = MaterialTheme.typography.labelSmall,
                     color = colors.textTertiary
                 )

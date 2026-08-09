@@ -31,11 +31,32 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import com.mahallu.manager.core.ui.R
 import com.mahallu.manager.core.ui.theme.LocalMahalluColors
 import com.mahallu.manager.core.ui.theme.PrimaryIndigo
+
+/**
+ * Reads the true status-bar height in dp. Unlike [WindowInsets.statusBars],
+ * this is not affected by insets already consumed by a parent Scaffold, so it
+ * works inside screens that draw edge-to-edge behind the status bar.
+ */
+@Composable
+fun statusBarInsetDp(): Dp {
+    val view = LocalView.current
+    val density = LocalDensity.current
+    val top = ViewCompat.getRootWindowInsets(view)
+        ?.getInsets(WindowInsetsCompat.Type.statusBars())
+        ?.top ?: 0
+    return with(density) { top.toDp() }
+}
 
 /**
  * Full-bleed gradient hero header for the dashboard — spans edge to edge with
@@ -52,11 +73,10 @@ fun DashboardHeader(
     notificationCount: Int = 0
 ) {
     val colors = LocalMahalluColors.current
-    val statusBarInset = WindowInsets.statusBars.getTop(LocalDensity.current)
+    val statusBarInset = statusBarInsetDp()
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .offset(y = (-statusBarInset).dp)
             .clip(RoundedCornerShape(bottomStart = 28.dp, bottomEnd = 28.dp))
             .background(
                 Brush.linearGradient(
@@ -68,7 +88,7 @@ fun DashboardHeader(
                 )
             )
             .padding(horizontal = 18.dp)
-            .padding(top = (statusBarInset + 20).dp, bottom = 44.dp)
+            .padding(top = statusBarInset + 20.dp, bottom = 72.dp)
     ) {
         Column {
             Row(
@@ -102,7 +122,7 @@ fun DashboardHeader(
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Search,
-                            contentDescription = "Search",
+                            contentDescription = stringResource(R.string.cd_search),
                             tint = colors.primaryIndigo,
                             modifier = Modifier.size(20.dp)
                         )
@@ -117,7 +137,7 @@ fun DashboardHeader(
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Notifications,
-                            contentDescription = "Notifications",
+                            contentDescription = stringResource(R.string.cd_notifications),
                             tint = colors.primaryIndigo,
                             modifier = Modifier.size(20.dp)
                         )

@@ -6,10 +6,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -22,12 +24,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mahallu.manager.core.ui.R
 import com.mahallu.manager.core.ui.theme.LocalMahalluColors
 
 /**
@@ -48,7 +53,8 @@ fun InfoCell(
             color = colors.textTertiary,
             fontWeight = FontWeight.ExtraBold,
             letterSpacing = 0.6.sp,
-            maxLines = 1
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
         Spacer(Modifier.height(3.dp))
         Text(
@@ -138,7 +144,7 @@ fun DetailSectionTitle(
     modifier: Modifier = Modifier,
     subtitle: String? = null,
     onSeeAll: (() -> Unit)? = null,
-    seeAllText: String = "See all"
+    seeAllText: String = stringResource(R.string.see_all)
 ) {
     val colors = LocalMahalluColors.current
     Row(
@@ -215,8 +221,10 @@ fun DetailAction(
     val colors = LocalMahalluColors.current
     Column(
         modifier = modifier
+            .fillMaxWidth()
             .clip(RoundedCornerShape(17.dp))
-            .background(Color.White)
+            .background(colors.surface)
+            .shadow(2.dp, RoundedCornerShape(17.dp), ambientColor = Color.Black.copy(alpha = 0.06f), spotColor = Color.Black.copy(alpha = 0.04f))
             .border(1.dp, colors.border, RoundedCornerShape(17.dp))
             .clickable { onClick() }
             .padding(horizontal = 4.dp, vertical = 13.dp),
@@ -240,8 +248,10 @@ fun DetailAction(
         Text(
             text = label,
             style = MaterialTheme.typography.labelSmall,
-            color = Color(0xFF475569),
-            fontWeight = FontWeight.ExtraBold
+            color = colors.textPrimary,
+            fontWeight = FontWeight.ExtraBold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }
@@ -257,11 +267,16 @@ fun DetailActionsRow(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 18.dp),
+            .padding(horizontal = 18.dp)
+            .height(IntrinsicSize.Min),
         horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         actions.forEach { action ->
-            Box(modifier = Modifier.weight(1f)) { action() }
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+            ) { action() }
         }
     }
 }

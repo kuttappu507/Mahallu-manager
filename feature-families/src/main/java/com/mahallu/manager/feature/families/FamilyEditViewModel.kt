@@ -1,11 +1,14 @@
 package com.mahallu.manager.feature.families
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mahallu.manager.core.database.entity.FamilyEntity
 import com.mahallu.manager.core.database.repository.FamilyRepository
 import com.mahallu.manager.core.util.IdGenerator
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import feature.families.feature.families.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -37,6 +40,7 @@ data class FamilyEditState(
 @HiltViewModel
 class FamilyEditViewModel @Inject constructor(
     private val repo: FamilyRepository,
+    @ApplicationContext private val context: Context,
     savedStateHandle: androidx.lifecycle.SavedStateHandle
 ) : ViewModel() {
 
@@ -89,7 +93,7 @@ class FamilyEditViewModel @Inject constructor(
     fun save() {
         val s = _state.value
         if (s.houseName.isBlank() || s.address.isBlank()) {
-            _state.update { it.copy(error = "House name and address are required") }
+            _state.update { it.copy(error = context.getString(R.string.family_error_required)) }
             return
         }
         _state.update { it.copy(isSaving = true, error = null) }

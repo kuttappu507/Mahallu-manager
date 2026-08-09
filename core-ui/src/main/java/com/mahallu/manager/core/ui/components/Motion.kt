@@ -28,10 +28,10 @@ fun AnimatedReveal(
 ) {
     val progress = remember { Animatable(0f) }
     LaunchedEffect(Unit) {
-        delay((index * 55).coerceAtMost(400).toLong())
+        delay((index * 35).coerceAtMost(180).toLong())
         progress.animateTo(
             targetValue = 1f,
-            animationSpec = tween(350, easing = FastOutSlowInEasing)
+            animationSpec = tween(300, easing = FastOutSlowInEasing)
         )
     }
     val p = progress.value

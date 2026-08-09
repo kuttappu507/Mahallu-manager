@@ -69,6 +69,8 @@ cd MahalluManager
 
 ## Modules
 
+> Agents / AI contributors: see [`AGENTS.md`](AGENTS.md) for the codebase index (module map, nav routes, key files, design system, conventions) — read that instead of scanning source files.
+
 ```
 MahalluManager/
 ├── app/                     # Application, MainActivity, navigation host, backup manager

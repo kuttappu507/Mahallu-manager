@@ -8,6 +8,7 @@ import com.mahallu.manager.core.database.repository.BackupRepository
 import com.mahallu.manager.core.database.repository.SettingsRepository
 import com.mahallu.manager.core.security.AesGcmCipher
 import com.mahallu.manager.core.util.IdGenerator
+import com.mahallu.manager.R
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -64,7 +65,7 @@ class BackupManager @Inject constructor(
             val payload = buildJsonObject {
                 put("version", JsonPrimitive(1))
                 put("exportedAt", JsonPrimitive(System.currentTimeMillis()))
-                put("mahalluName", JsonPrimitive("Mahallu Manager Backup"))
+                put("mahalluName", JsonPrimitive(context.getString(R.string.backup_payload_name)))
                 put("users", jsonArrayFromTable(db.openHelper.readableDatabase, "users"))
                 put("families", jsonArrayFromTable(db.openHelper.readableDatabase, "families"))
                 put("members", jsonArrayFromTable(db.openHelper.readableDatabase, "members"))
@@ -110,11 +111,11 @@ class BackupManager @Inject constructor(
             settingsRepo.putLong("backup.last_at", System.currentTimeMillis())
             enforceRetention(30)
 
-            BackupOutcome(true, backupId, "Backup completed (${size / 1024} KB)", size)
+            BackupOutcome(true, backupId, context.getString(R.string.backup_completed_kb, size / 1024), size)
         } catch (t: Throwable) {
             Timber.e(t, "Backup failed")
             backupRepo.save(pending.copy(status = "FAILED", message = t.message))
-            BackupOutcome(false, backupId, t.message ?: "Unknown error")
+            BackupOutcome(false, backupId, t.message ?: context.getString(R.string.backup_unknown_error))
         }
     }
 
@@ -122,21 +123,21 @@ class BackupManager @Inject constructor(
         try {
             val backups = backupRepo.allSuccessful()
             val backup = backups.firstOrNull { it.id == backupId }
-                ?: return@withContext Result.failure(IllegalStateException("Backup not found"))
+                ?: return@withContext Result.failure(IllegalStateException(context.getString(R.string.backup_not_found)))
 
             val local = backup.localPath?.let { File(it) }
-                ?: return@withContext Result.failure(IllegalStateException("Local backup file missing"))
+                ?: return@withContext Result.failure(IllegalStateException(context.getString(R.string.backup_local_file_missing)))
 
             val encrypted = FileInputStream(local).use { it.readBytes() }
             val masterKey = ensureMasterKey()
             val decrypted = AesGcmCipher.decrypt(encrypted, masterKey)
             val (name, content) = unzipFirst(decrypted)
-            if (name != "backup.json") return@withContext Result.failure(IllegalStateException("Invalid backup"))
+            if (name != "backup.json") return@withContext Result.failure(IllegalStateException(context.getString(R.string.backup_invalid)))
 
             val payload = json.parseToJsonElement(String(content, Charsets.UTF_8)).jsonObject
             restorePayload(payload)
 
-            backupRepo.save(backup.copy(status = "RESTORED", message = "Restored at ${System.currentTimeMillis()}"))
+            backupRepo.save(backup.copy(status = "RESTORED", message = context.getString(R.string.backup_restored_at, System.currentTimeMillis())))
             Result.success(Unit)
         } catch (t: Throwable) {
             Timber.e(t, "Restore failed")

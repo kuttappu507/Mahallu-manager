@@ -16,6 +16,7 @@ import com.mahallu.manager.feature.certificates.pdf.Align
 import com.mahallu.manager.feature.certificates.pdf.PdfGenerator
 import com.mahallu.manager.feature.certificates.pdf.PdfTable
 import com.mahallu.manager.feature.certificates.pdf.PdfTextLine
+import feature.certificates.feature.certificates.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -115,13 +116,13 @@ class CertificateFormViewModel @Inject constructor(
                     CertificateRecordOption(
                         id = it.id,
                         title = it.name,
-                        subtitle = "${it.memberNumber} • ${it.relationToHead ?: "Member"}"
+                        subtitle = context.getString(R.string.cert_record_option_membership, it.memberNumber, it.relationToHead ?: context.getString(R.string.cert_relation_member))
                     )
                 }
                 "MARRIAGE" -> marriageRepo.search(query).map {
                     CertificateRecordOption(
                         id = it.id,
-                        title = "${it.brideName} & ${it.groomName}",
+                        title = context.getString(R.string.cert_record_option_marriage, it.brideName, it.groomName),
                         subtitle = it.registrationNumber
                     )
                 }
@@ -207,51 +208,53 @@ class CertificateFormViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val mahalluName = settingsRepo.getString("mahallu.name", "Mahallu Manager")
-                val title = when (type) {
-                    "MEMBERSHIP" -> "Membership Certificate"
-                    "RESIDENCE" -> "Residence Certificate"
-                    "MARRIAGE" -> "Marriage Certificate"
-                    "DEATH" -> "Death Certificate"
-                    else -> "Certificate"
-                }
+                val title = context.getString(
+                    when (type) {
+                        "MEMBERSHIP" -> R.string.cert_membership_title
+                        "RESIDENCE" -> R.string.cert_residence_title
+                        "MARRIAGE" -> R.string.cert_marriage_title
+                        "DEATH" -> R.string.cert_death_title
+                        else -> R.string.cert_generic_title
+                    }
+                )
                 val s = _state.value
                 val lines = mutableListOf<PdfTextLine>()
                 lines += PdfTextLine(mahalluName, sizeSp = 22f, bold = true, align = Align.CENTER)
                 lines += PdfTextLine(title, sizeSp = 16f, bold = true, align = Align.CENTER)
                 lines += PdfTextLine(" ", sizeSp = 8f)
-                lines += PdfTextLine("This is to certify that:", sizeSp = 12f)
+                lines += PdfTextLine(context.getString(R.string.cert_pdf_this_is_to_certify), sizeSp = 12f)
                 when (type) {
                     "MEMBERSHIP" -> {
-                        lines += PdfTextLine("Name: ${s.memberName.ifBlank { "[Name]" }}", sizeSp = 12f)
-                        lines += PdfTextLine("Father / Spouse: ${s.fatherName.ifBlank { "[Father / Spouse Name]" }}", sizeSp = 12f)
-                        lines += PdfTextLine("Address: ${s.address.ifBlank { "[Address]" }}", sizeSp = 12f)
-                        lines += PdfTextLine("Member ID: ${s.memberNumber.ifBlank { "[Member ID]" }}", sizeSp = 12f)
+                        lines += PdfTextLine(context.getString(R.string.cert_pdf_label_value, context.getString(R.string.cert_pdf_label_name), s.memberName.ifBlank { context.getString(R.string.cert_pdf_placeholder_name) }), sizeSp = 12f)
+                        lines += PdfTextLine(context.getString(R.string.cert_pdf_label_value, context.getString(R.string.cert_pdf_label_father_spouse), s.fatherName.ifBlank { context.getString(R.string.cert_pdf_placeholder_father_spouse) }), sizeSp = 12f)
+                        lines += PdfTextLine(context.getString(R.string.cert_pdf_label_value, context.getString(R.string.cert_pdf_label_address), s.address.ifBlank { context.getString(R.string.cert_pdf_placeholder_address) }), sizeSp = 12f)
+                        lines += PdfTextLine(context.getString(R.string.cert_pdf_label_value, context.getString(R.string.cert_pdf_label_member_id), s.memberNumber.ifBlank { context.getString(R.string.cert_pdf_placeholder_member_id) }), sizeSp = 12f)
                     }
                     "RESIDENCE" -> {
-                        lines += PdfTextLine("Name: ${s.memberName.ifBlank { "[Name]" }}", sizeSp = 12f)
-                        lines += PdfTextLine("Father / Spouse: ${s.fatherName.ifBlank { "[Father / Spouse Name]" }}", sizeSp = 12f)
-                        lines += PdfTextLine("Address: ${s.address.ifBlank { "[Address]" }}", sizeSp = 12f)
-                        lines += PdfTextLine("Ward: ${s.ward.ifBlank { "[Ward]" }}    Pincode: ${s.pincode.ifBlank { "[Pincode]" }}", sizeSp = 12f)
+                        lines += PdfTextLine(context.getString(R.string.cert_pdf_label_value, context.getString(R.string.cert_pdf_label_name), s.memberName.ifBlank { context.getString(R.string.cert_pdf_placeholder_name) }), sizeSp = 12f)
+                        lines += PdfTextLine(context.getString(R.string.cert_pdf_label_value, context.getString(R.string.cert_pdf_label_father_spouse), s.fatherName.ifBlank { context.getString(R.string.cert_pdf_placeholder_father_spouse) }), sizeSp = 12f)
+                        lines += PdfTextLine(context.getString(R.string.cert_pdf_label_value, context.getString(R.string.cert_pdf_label_address), s.address.ifBlank { context.getString(R.string.cert_pdf_placeholder_address) }), sizeSp = 12f)
+                        lines += PdfTextLine(context.getString(R.string.cert_pdf_ward_pincode, s.ward.ifBlank { context.getString(R.string.cert_pdf_placeholder_ward) }, s.pincode.ifBlank { context.getString(R.string.cert_pdf_placeholder_pincode) }), sizeSp = 12f)
                     }
                     "MARRIAGE" -> {
-                        lines += PdfTextLine("Bride: ${s.brideName.ifBlank { "[Bride Name]" }}", sizeSp = 12f)
-                        lines += PdfTextLine("Groom: ${s.groomName.ifBlank { "[Groom Name]" }}", sizeSp = 12f)
-                        lines += PdfTextLine("Nikah Date: ${s.date.ifBlank { "[Date]" }}", sizeSp = 12f)
-                        lines += PdfTextLine("Location: ${s.address.ifBlank { "[Location]" }}", sizeSp = 12f)
-                        lines += PdfTextLine("Witnesses: ${s.witnesses.ifBlank { "[Witnesses]" }}", sizeSp = 12f)
-                        lines += PdfTextLine("Registration #: ${s.registrationNumber.ifBlank { "[Reg #]" }}", sizeSp = 12f)
+                        lines += PdfTextLine(context.getString(R.string.cert_pdf_label_value, context.getString(R.string.cert_pdf_label_bride), s.brideName.ifBlank { context.getString(R.string.cert_pdf_placeholder_bride) }), sizeSp = 12f)
+                        lines += PdfTextLine(context.getString(R.string.cert_pdf_label_value, context.getString(R.string.cert_pdf_label_groom), s.groomName.ifBlank { context.getString(R.string.cert_pdf_placeholder_groom) }), sizeSp = 12f)
+                        lines += PdfTextLine(context.getString(R.string.cert_pdf_label_value, context.getString(R.string.cert_pdf_label_nikah_date), s.date.ifBlank { context.getString(R.string.cert_pdf_placeholder_date) }), sizeSp = 12f)
+                        lines += PdfTextLine(context.getString(R.string.cert_pdf_label_value, context.getString(R.string.cert_pdf_label_location), s.address.ifBlank { context.getString(R.string.cert_pdf_placeholder_location) }), sizeSp = 12f)
+                        lines += PdfTextLine(context.getString(R.string.cert_pdf_label_value, context.getString(R.string.cert_pdf_label_witnesses), s.witnesses.ifBlank { context.getString(R.string.cert_pdf_placeholder_witnesses) }), sizeSp = 12f)
+                        lines += PdfTextLine(context.getString(R.string.cert_pdf_label_value, context.getString(R.string.cert_pdf_label_registration), s.registrationNumber.ifBlank { context.getString(R.string.cert_pdf_placeholder_registration) }), sizeSp = 12f)
                     }
                     "DEATH" -> {
-                        lines += PdfTextLine("Name: ${s.deceasedName.ifBlank { "[Name]" }}", sizeSp = 12f)
-                        lines += PdfTextLine("Father / Spouse: ${s.fatherName.ifBlank { "[Father / Spouse Name]" }}", sizeSp = 12f)
-                        lines += PdfTextLine("Date of Death: ${s.date.ifBlank { "[Date]" }}", sizeSp = 12f)
-                        lines += PdfTextLine("Place: ${s.address.ifBlank { "[Place]" }}", sizeSp = 12f)
-                        lines += PdfTextLine("Registration #: ${s.registrationNumber.ifBlank { "[Reg #]" }}", sizeSp = 12f)
+                        lines += PdfTextLine(context.getString(R.string.cert_pdf_label_value, context.getString(R.string.cert_pdf_label_name), s.deceasedName.ifBlank { context.getString(R.string.cert_pdf_placeholder_name) }), sizeSp = 12f)
+                        lines += PdfTextLine(context.getString(R.string.cert_pdf_label_value, context.getString(R.string.cert_pdf_label_father_spouse), s.fatherName.ifBlank { context.getString(R.string.cert_pdf_placeholder_father_spouse) }), sizeSp = 12f)
+                        lines += PdfTextLine(context.getString(R.string.cert_pdf_label_value, context.getString(R.string.cert_pdf_label_date_of_death), s.date.ifBlank { context.getString(R.string.cert_pdf_placeholder_date) }), sizeSp = 12f)
+                        lines += PdfTextLine(context.getString(R.string.cert_pdf_label_value, context.getString(R.string.cert_pdf_label_place), s.address.ifBlank { context.getString(R.string.cert_pdf_placeholder_place) }), sizeSp = 12f)
+                        lines += PdfTextLine(context.getString(R.string.cert_pdf_label_value, context.getString(R.string.cert_pdf_label_registration), s.registrationNumber.ifBlank { context.getString(R.string.cert_pdf_placeholder_registration) }), sizeSp = 12f)
                     }
                 }
                 lines += PdfTextLine(" ", sizeSp = 8f)
-                lines += PdfTextLine("Issued on: ${java.text.SimpleDateFormat("dd MMM yyyy", java.util.Locale.getDefault()).format(java.util.Date())}", sizeSp = 11f, align = Align.RIGHT)
-                lines += PdfTextLine("Authorised Signatory", sizeSp = 11f, bold = true, align = Align.RIGHT)
+                lines += PdfTextLine(context.getString(R.string.cert_pdf_issued_on, java.text.SimpleDateFormat("dd MMM yyyy", java.util.Locale.getDefault()).format(java.util.Date())), sizeSp = 11f, align = Align.RIGHT)
+                lines += PdfTextLine(context.getString(R.string.cert_pdf_authorised_signatory), sizeSp = 11f, bold = true, align = Align.RIGHT)
 
                 val file = pdfGenerator.generate(
                     fileName = "${type.lowercase()}_${System.currentTimeMillis()}.pdf",
@@ -259,7 +262,7 @@ class CertificateFormViewModel @Inject constructor(
                         title = title,
                         subtitle = mahalluName,
                         lines = lines,
-                        footer = "$mahalluName • Generated by Mahallu Manager"
+                        footer = context.getString(R.string.cert_pdf_footer_generated_by, mahalluName)
                     )
                 )
                 val subjectName = when (type) {
@@ -278,9 +281,9 @@ class CertificateFormViewModel @Inject constructor(
                     pdfPath = file.absolutePath
                 )
                 certificateRepo.save(certEntity)
-                _state.update { it.copy(pdfPath = file.absolutePath, isGenerating = false, message = "PDF generated: ${file.name}") }
+                _state.update { it.copy(pdfPath = file.absolutePath, isGenerating = false, message = context.getString(R.string.cert_pdf_generated_name, file.name)) }
             } catch (t: Throwable) {
-                _state.update { it.copy(isGenerating = false, message = "Failed: ${t.message ?: t::class.java.simpleName}") }
+                _state.update { it.copy(isGenerating = false, message = context.getString(R.string.cert_pdf_failed_error, t.message ?: t::class.java.simpleName)) }
             }
         }
     }

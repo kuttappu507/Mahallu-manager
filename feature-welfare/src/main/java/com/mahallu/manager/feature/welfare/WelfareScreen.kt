@@ -29,6 +29,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -40,6 +41,7 @@ import com.mahallu.manager.core.ui.components.FabAdd
 import com.mahallu.manager.core.ui.components.IconCircleButton
 import com.mahallu.manager.core.ui.theme.LocalMahalluColors
 import com.mahallu.manager.core.ui.util.Formatters
+import feature.welfare.feature.welfare.R
 
 @Composable
 fun WelfareScreen(
@@ -59,7 +61,7 @@ fun WelfareScreen(
             ) {
                 IconCircleButton(icon = Icons.AutoMirrored.Rounded.ArrowBack, onClick = onBack, backgroundColor = colors.background, tint = colors.textPrimary)
                 Spacer(Modifier.width(8.dp))
-                Text("Welfare Management", style = MaterialTheme.typography.headlineSmall, color = colors.textPrimary, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
+                Text(stringResource(R.string.welfare_title), style = MaterialTheme.typography.headlineSmall, color = colors.textPrimary, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
                 FabAdd(onClick = onAdd)
             }
 
@@ -69,7 +71,7 @@ fun WelfareScreen(
                 contentPadding = PaddingValues(16.dp)
             ) {
                 Column {
-                    Text("Total Disbursed", style = MaterialTheme.typography.labelLarge, color = colors.textSecondary)
+                    Text(stringResource(R.string.welfare_total_disbursed), style = MaterialTheme.typography.labelLarge, color = colors.textSecondary)
                     Text(
                         text = Formatters.currency(state.totalDisbursed),
                         style = MaterialTheme.typography.headlineMedium,

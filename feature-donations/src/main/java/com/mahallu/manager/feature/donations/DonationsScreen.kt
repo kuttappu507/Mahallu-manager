@@ -28,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -40,6 +41,7 @@ import com.mahallu.manager.core.ui.components.FabAdd
 import com.mahallu.manager.core.ui.components.TopAppBar
 import com.mahallu.manager.core.ui.theme.LocalMahalluColors
 import com.mahallu.manager.core.ui.util.Formatters
+import feature.donations.feature.donations.R
 
 @Composable
 fun DonationsScreen(
@@ -53,7 +55,7 @@ fun DonationsScreen(
     Box(modifier = Modifier.fillMaxSize().background(colors.background)) {
         Column(modifier = Modifier.fillMaxSize()) {
             TopAppBar(
-                title = "Donations",
+                title = stringResource(R.string.donations_title),
                 showBack = true,
                 onBackClick = onBack,
                 trailingActions = { FabAdd(onClick = onAdd) }
@@ -65,7 +67,7 @@ fun DonationsScreen(
                 contentPadding = PaddingValues(16.dp)
             ) {
                 Column {
-                    Text("Total Donations This Month", style = MaterialTheme.typography.labelLarge, color = colors.textSecondary)
+                    Text(stringResource(R.string.donations_total_month), style = MaterialTheme.typography.labelLarge, color = colors.textSecondary)
                     Text(
                         text = Formatters.currency(state.totalThisMonth),
                         style = MaterialTheme.typography.headlineMedium,
@@ -78,7 +80,7 @@ fun DonationsScreen(
             AppSearchBar(
                 query = state.query,
                 onQueryChange = viewModel::setQuery,
-                placeholder = "Search donor or receipt..."
+                placeholder = stringResource(R.string.donations_search_placeholder)
             )
 
             Spacer(Modifier.height(10.dp))
@@ -87,7 +89,7 @@ fun DonationsScreen(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(listOf("ALL", "GENERAL", "MASJID", "BUILDING", "EDUCATION", "MEDICAL", "WELFARE", "OTHER")) { c ->
-                    ChipPill(text = c, selected = state.categoryFilter == c, onClick = { viewModel.setCategory(c) })
+                    ChipPill(text = if (c == "ALL") stringResource(R.string.donations_filter_all) else stringResource(donationCategoryLabelRes(c)), selected = state.categoryFilter == c, onClick = { viewModel.setCategory(c) })
                 }
             }
             Spacer(Modifier.height(8.dp))
@@ -129,12 +131,12 @@ private fun DonationRow(d: DonationEntity) {
                     fontWeight = FontWeight.SemiBold
                 )
                 Text(
-                    text = "${d.category} • ${d.paymentMethod}",
+                    text = stringResource(R.string.donations_row_detail, stringResource(donationCategoryLabelRes(d.category)), stringResource(donationPaymentLabelRes(d.paymentMethod))),
                     style = MaterialTheme.typography.bodySmall,
                     color = colors.textSecondary
                 )
                 Text(
-                    text = "${Formatters.date(d.date)} • ${d.receiptNumber}",
+                    text = stringResource(R.string.donations_row_meta, Formatters.date(d.date), d.receiptNumber),
                     style = MaterialTheme.typography.labelSmall,
                     color = colors.textTertiary
                 )

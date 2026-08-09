@@ -6,8 +6,11 @@ import com.mahallu.manager.core.database.entity.FamilyEntity
 import com.mahallu.manager.core.database.entity.WelfareEntity
 import com.mahallu.manager.core.database.repository.FamilyRepository
 import com.mahallu.manager.core.database.repository.WelfareRepository
+import android.content.Context
 import com.mahallu.manager.core.util.IdGenerator
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import feature.welfare.feature.welfare.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -35,6 +38,7 @@ data class WelfareEditState(
 class WelfareEditViewModel @Inject constructor(
     private val repo: WelfareRepository,
     private val familyRepo: FamilyRepository,
+    @ApplicationContext private val context: Context,
     savedStateHandle: androidx.lifecycle.SavedStateHandle
 ) : ViewModel() {
     private val _state = MutableStateFlow(WelfareEditState())
@@ -78,11 +82,11 @@ class WelfareEditViewModel @Inject constructor(
         val s = _state.value
         val amount = s.amount.toDoubleOrNull()
         if (s.applicantName.isBlank() || s.familyId.isBlank()) {
-            _state.update { it.copy(error = "Applicant and family required") }
+            _state.update { it.copy(error = context.getString(R.string.welfare_error_required)) }
             return
         }
         if (amount == null || amount <= 0) {
-            _state.update { it.copy(error = "Enter a valid amount") }
+            _state.update { it.copy(error = context.getString(R.string.welfare_error_invalid_amount)) }
             return
         }
         _state.update { it.copy(isSaving = true, error = null) }

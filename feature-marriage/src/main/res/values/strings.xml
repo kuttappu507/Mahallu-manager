@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cd_save">Save</string>
+
+    <string name="marriage_list_title">Marriage Register</string>
+    <string name="marriage_search_placeholder">Search by name or registration #</string>
+
+    <string name="marriage_register_new">Register Marriage</string>
+    <string name="marriage_edit_title">Edit Marriage</string>
+
+    <string name="marriage_registration_number">Registration Number</string>
+    <string name="marriage_bride">Bride</string>
+    <string name="marriage_bride_name">Bride Name</string>
+    <string name="marriage_select_member">Select from members</string>
+    <string name="marriage_pick_bride">Pick bride from members</string>
+    <string name="marriage_pick_groom">Pick groom from members</string>
+    <string name="marriage_groom">Groom</string>
+    <string name="marriage_groom_name">Groom Name</string>
+    <string name="marriage_father_name">Father Name</string>
+    <string name="marriage_age">Age</string>
+    <string name="marriage_witnesses">Witnesses</string>
+    <string name="marriage_witness_1">Witness 1</string>
+    <string name="marriage_witness_2">Witness 2</string>
+    <string name="marriage_mahar_amount">Mahar Amount</string>
+    <string name="marriage_nikah_date">Nikah Date</string>
+    <string name="marriage_nikah_location">Nikah Location</string>
+    <string name="marriage_remarks">Remarks</string>
+
+    <string name="marriage_saving">Saving…</string>
+    <string name="marriage_save">Save Marriage</string>
+    <string name="marriage_generate_certificate">Generate Marriage Certificate</string>
+
+    <string name="marriage_error_names_required">Bride and groom names required</string>
+
+    <string name="marriage_row_names">%1$s &amp; %2$s</string>
+    <string name="marriage_row_nikah">Nikah: %1$s</string>
+</resources>

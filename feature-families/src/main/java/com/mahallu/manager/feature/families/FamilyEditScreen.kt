@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -27,6 +28,7 @@ import com.mahallu.manager.core.ui.components.AppTextField
 import com.mahallu.manager.core.ui.components.ChipPill
 import com.mahallu.manager.core.ui.components.TopAppBar
 import com.mahallu.manager.core.ui.theme.LocalMahalluColors
+import feature.families.feature.families.R
 
 @Composable
 fun FamilyEditScreen(
@@ -41,14 +43,14 @@ fun FamilyEditScreen(
     Box(modifier = Modifier.fillMaxSize().background(colors.background)) {
         Column(modifier = Modifier.fillMaxSize()) {
             TopAppBar(
-                title = if (state.id.isBlank()) "Add Family" else "Edit Family",
+                title = if (state.id.isBlank()) stringResource(R.string.family_add_title) else stringResource(R.string.family_edit_title),
                 showBack = true,
                 onBackClick = onDone,
                 trailingActions = {
                     androidx.compose.material3.IconButton(onClick = { viewModel.save() }) {
                         androidx.compose.material3.Icon(
                             Icons.Rounded.Check,
-                            contentDescription = "Save",
+                            contentDescription = stringResource(R.string.family_cd_save),
                             tint = colors.primaryIndigo
                         )
                     }
@@ -64,45 +66,45 @@ fun FamilyEditScreen(
                 AppTextField(
                     value = state.familyNumber,
                     onValueChange = { v -> viewModel.update { it.copy(familyNumber = v) } },
-                    label = "Family Number",
-                    placeholder = "Auto-generated",
-                    helperText = "Auto-generated if left blank"
+                    label = stringResource(R.string.family_field_number),
+                    placeholder = stringResource(R.string.family_placeholder_autogen),
+                    helperText = stringResource(R.string.family_helper_autogen)
                 )
                 Spacer(Modifier.height(12.dp))
                 AppTextField(
                     value = state.houseName,
                     onValueChange = { v -> viewModel.update { it.copy(houseName = v) } },
-                    label = "House Name",
-                    placeholder = "e.g. Abdul Rahman House",
+                    label = stringResource(R.string.family_field_house_name),
+                    placeholder = stringResource(R.string.family_placeholder_house_name),
                     isRequired = true
                 )
                 Spacer(Modifier.height(12.dp))
                 AppTextField(
                     value = state.houseNumber,
                     onValueChange = { v -> viewModel.update { it.copy(houseNumber = v) } },
-                    label = "House Number",
-                    placeholder = "12"
+                    label = stringResource(R.string.family_field_house_number),
+                    placeholder = stringResource(R.string.family_placeholder_house_number)
                 )
                 Spacer(Modifier.height(12.dp))
                 AppTextField(
                     value = state.ward,
                     onValueChange = { v -> viewModel.update { it.copy(ward = v) } },
-                    label = "Ward",
-                    placeholder = "Ward 3"
+                    label = stringResource(R.string.family_field_ward),
+                    placeholder = stringResource(R.string.family_placeholder_ward)
                 )
                 Spacer(Modifier.height(12.dp))
                 AppTextField(
                     value = state.area,
                     onValueChange = { v -> viewModel.update { it.copy(area = v) } },
-                    label = "Area",
-                    placeholder = "North Area"
+                    label = stringResource(R.string.family_field_area),
+                    placeholder = stringResource(R.string.family_placeholder_area)
                 )
                 Spacer(Modifier.height(12.dp))
                 AppTextField(
                     value = state.address,
                     onValueChange = { v -> viewModel.update { it.copy(address = v) } },
-                    label = "Address",
-                    placeholder = "Full address",
+                    label = stringResource(R.string.family_field_address),
+                    placeholder = stringResource(R.string.family_placeholder_address),
                     isRequired = true,
                     maxLines = 3,
                     singleLine = false
@@ -111,47 +113,47 @@ fun FamilyEditScreen(
                 AppTextField(
                     value = state.pincode,
                     onValueChange = { v -> viewModel.update { it.copy(pincode = v) } },
-                    label = "Pincode",
-                    placeholder = "676505",
+                    label = stringResource(R.string.family_field_pincode),
+                    placeholder = stringResource(R.string.family_placeholder_pincode),
                     keyboardType = KeyboardType.Number
                 )
                 Spacer(Modifier.height(12.dp))
                 AppTextField(
                     value = state.primaryMobile,
                     onValueChange = { v -> viewModel.update { it.copy(primaryMobile = v) } },
-                    label = "Primary Mobile",
-                    placeholder = "+91 9876543210",
+                    label = stringResource(R.string.family_field_primary_mobile),
+                    placeholder = stringResource(R.string.family_placeholder_primary_mobile),
                     keyboardType = KeyboardType.Phone
                 )
                 Spacer(Modifier.height(12.dp))
                 AppTextField(
                     value = state.secondaryMobile,
                     onValueChange = { v -> viewModel.update { it.copy(secondaryMobile = v) } },
-                    label = "Secondary Mobile",
-                    placeholder = "+91 9876543211",
+                    label = stringResource(R.string.family_field_secondary_mobile),
+                    placeholder = stringResource(R.string.family_placeholder_secondary_mobile),
                     keyboardType = KeyboardType.Phone
                 )
                 Spacer(Modifier.height(12.dp))
                 AppTextField(
                     value = state.email,
                     onValueChange = { v -> viewModel.update { it.copy(email = v) } },
-                    label = "Email",
-                    placeholder = "email@example.com",
+                    label = stringResource(R.string.family_field_email),
+                    placeholder = stringResource(R.string.family_placeholder_email),
                     keyboardType = KeyboardType.Email
                 )
                 Spacer(Modifier.height(12.dp))
                 AppTextField(
                     value = state.notes,
                     onValueChange = { v -> viewModel.update { it.copy(notes = v) } },
-                    label = "Notes",
-                    placeholder = "Any additional information",
+                    label = stringResource(R.string.family_field_notes),
+                    placeholder = stringResource(R.string.family_placeholder_notes),
                     maxLines = 4,
                     singleLine = false
                 )
                 Spacer(Modifier.height(16.dp))
 
                 androidx.compose.material3.Text(
-                    text = "Status",
+                    text = stringResource(R.string.family_field_status),
                     style = MaterialTheme.typography.labelLarge,
                     color = colors.textSecondary
                 )
@@ -179,7 +181,7 @@ fun FamilyEditScreen(
 
                 Spacer(Modifier.height(24.dp))
                 AppButton(
-                    text = if (state.isSaving) "Saving..." else "Save Family",
+                    text = if (state.isSaving) stringResource(R.string.family_saving) else stringResource(R.string.family_save),
                     onClick = { viewModel.save() },
                     isLoading = state.isSaving
                 )

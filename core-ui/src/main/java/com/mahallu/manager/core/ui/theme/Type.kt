@@ -10,15 +10,22 @@ import com.mahallu.manager.core.ui.R
 
 private val Sora = FontFamily(
     Font(R.font.sora_600, FontWeight.SemiBold),
-    Font(R.font.sora_700, FontWeight.Bold)
+    Font(R.font.gayathri_400, FontWeight.SemiBold),
+    Font(R.font.sora_700, FontWeight.Bold),
+    Font(R.font.gayathri_700, FontWeight.Bold)
 )
 
 private val Manrope = FontFamily(
     Font(R.font.manrope_400, FontWeight.Normal),
+    Font(R.font.gayathri_400, FontWeight.Normal),
     Font(R.font.manrope_500, FontWeight.Medium),
+    Font(R.font.gayathri_400, FontWeight.Medium),
     Font(R.font.manrope_600, FontWeight.SemiBold),
+    Font(R.font.gayathri_400, FontWeight.SemiBold),
     Font(R.font.manrope_700, FontWeight.Bold),
-    Font(R.font.manrope_800, FontWeight.ExtraBold)
+    Font(R.font.gayathri_700, FontWeight.Bold),
+    Font(R.font.manrope_800, FontWeight.ExtraBold),
+    Font(R.font.gayathri_700, FontWeight.ExtraBold)
 )
 
 val AppTypography = Typography(

@@ -21,6 +21,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -32,6 +33,7 @@ import com.mahallu.manager.core.ui.components.ChipPill
 import com.mahallu.manager.core.ui.components.TopAppBar
 import com.mahallu.manager.core.ui.theme.LocalMahalluColors
 import com.mahallu.manager.core.ui.util.Formatters
+import feature.settings.feature.settings.R
 
 @Composable
 fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewModel()) {
@@ -45,53 +47,62 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewMo
 
     Box(modifier = Modifier.fillMaxSize().background(colors.background)) {
         Column(modifier = Modifier.fillMaxSize()) {
-            TopAppBar(title = "Settings", showBack = true, onBackClick = onBack)
+            TopAppBar(title = stringResource(R.string.settings_title), showBack = true, onBackClick = onBack)
             Column(
                 modifier = Modifier
                     .weight(1f)
                     .verticalScroll(rememberScrollState())
                     .padding(horizontal = 16.dp, vertical = 12.dp)
             ) {
-                Text("Mahallu Information", style = MaterialTheme.typography.titleMedium, color = colors.textPrimary)
+                Text(stringResource(R.string.settings_mahallu_info), style = MaterialTheme.typography.titleMedium, color = colors.textPrimary)
                 Spacer(Modifier.height(8.dp))
-                AppTextField(value = name, onValueChange = { name = it }, label = "Mahallu Name")
+                AppTextField(value = name, onValueChange = { name = it }, label = stringResource(R.string.settings_mahallu_name))
                 Spacer(Modifier.height(8.dp))
-                AppTextField(value = address, onValueChange = { address = it }, label = "Address", maxLines = 3, singleLine = false)
+                AppTextField(value = address, onValueChange = { address = it }, label = stringResource(R.string.settings_address), maxLines = 3, singleLine = false)
                 Spacer(Modifier.height(8.dp))
-                AppTextField(value = phone, onValueChange = { phone = it }, label = "Phone", keyboardType = KeyboardType.Phone)
+                AppTextField(value = phone, onValueChange = { phone = it }, label = stringResource(R.string.settings_phone), keyboardType = KeyboardType.Phone)
                 Spacer(Modifier.height(8.dp))
-                AppTextField(value = email, onValueChange = { email = it }, label = "Email", keyboardType = KeyboardType.Email)
+                AppTextField(value = email, onValueChange = { email = it }, label = stringResource(R.string.settings_email), keyboardType = KeyboardType.Email)
                 Spacer(Modifier.height(12.dp))
-                AppButton(text = "Save Mahallu Info", onClick = { viewModel.updateMahallu(name, address, phone, email) })
+                AppButton(text = stringResource(R.string.settings_save_mahallu), onClick = { viewModel.updateMahallu(name, address, phone, email) })
                 Spacer(Modifier.height(24.dp))
 
-                Text("Theme", style = MaterialTheme.typography.titleMedium, color = colors.textPrimary)
+                Text(stringResource(R.string.settings_theme), style = MaterialTheme.typography.titleMedium, color = colors.textPrimary)
                 Spacer(Modifier.height(8.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     listOf("system", "light", "dark").forEach { t ->
-                        ChipPill(text = t.replaceFirstChar { it.uppercase() }, selected = state.themeMode == t, onClick = { viewModel.setTheme(t) })
+                        ChipPill(text = themeLabel(t), selected = state.themeMode == t, onClick = { viewModel.setTheme(t) })
                     }
                 }
                 Spacer(Modifier.height(24.dp))
 
-                Text("Backup", style = MaterialTheme.typography.titleMedium, color = colors.textPrimary)
+                Text(stringResource(R.string.settings_language), style = MaterialTheme.typography.titleMedium, color = colors.textPrimary)
+                Spacer(Modifier.height(8.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    listOf("en", "ml").forEach { l ->
+                        ChipPill(text = languageLabel(l), selected = state.language == l, onClick = { viewModel.setLanguage(l) })
+                    }
+                }
+                Spacer(Modifier.height(24.dp))
+
+                Text(stringResource(R.string.settings_backup), style = MaterialTheme.typography.titleMedium, color = colors.textPrimary)
                 Spacer(Modifier.height(8.dp))
                 AppCard(modifier = Modifier.fillMaxWidth(), contentPadding = androidx.compose.foundation.layout.PaddingValues(14.dp)) {
                     Column {
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Text("Auto daily backup", style = MaterialTheme.typography.bodyMedium, color = colors.textPrimary)
+                            Text(stringResource(R.string.settings_auto_daily_backup), style = MaterialTheme.typography.bodyMedium, color = colors.textPrimary)
                             androidx.compose.material3.Switch(checked = state.backupAutoEnabled, onCheckedChange = { viewModel.setAutoBackup(it) })
                         }
                         Spacer(Modifier.height(8.dp))
                         Text(
-                            text = "Last backup: " + if (state.lastBackupAt > 0) Formatters.date(state.lastBackupAt) else "Never",
+                            text = stringResource(R.string.settings_last_backup, if (state.lastBackupAt > 0) Formatters.date(state.lastBackupAt) else stringResource(R.string.backup_never)),
                             style = MaterialTheme.typography.bodySmall,
                             color = colors.textSecondary
                         )
                     }
                 }
                 Spacer(Modifier.height(24.dp))
-                Text("Account", style = MaterialTheme.typography.titleMedium, color = colors.textPrimary)
+                Text(stringResource(R.string.settings_account), style = MaterialTheme.typography.titleMedium, color = colors.textPrimary)
                 Spacer(Modifier.height(8.dp))
                 AppCard(modifier = Modifier.fillMaxWidth(), contentPadding = androidx.compose.foundation.layout.PaddingValues(14.dp)) {
                     Column {
@@ -100,10 +111,10 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewMo
                     }
                 }
                 Spacer(Modifier.height(24.dp))
-                Text("About", style = MaterialTheme.typography.titleMedium, color = colors.textPrimary)
+                Text(stringResource(R.string.settings_about), style = MaterialTheme.typography.titleMedium, color = colors.textPrimary)
                 Spacer(Modifier.height(8.dp))
                 Text(
-                    text = "Mahallu Manager v1.0.0\nModern offline-first Mahallu management.\n© 2025 Mahallu Manager.",
+                    text = stringResource(R.string.settings_about_text),
                     style = MaterialTheme.typography.bodySmall,
                     color = colors.textSecondary
                 )
@@ -111,4 +122,17 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewMo
             }
         }
     }
+}
+@Composable
+private fun themeLabel(mode: String): String = when (mode) {
+    "system" -> stringResource(R.string.settings_theme_system)
+    "light" -> stringResource(R.string.settings_theme_light)
+    "dark" -> stringResource(R.string.settings_theme_dark)
+    else -> mode
+}
+
+@Composable
+private fun languageLabel(lang: String): String = when (lang) {
+    "ml" -> stringResource(R.string.settings_language_malayalam)
+    else -> stringResource(R.string.settings_language_english)
 }

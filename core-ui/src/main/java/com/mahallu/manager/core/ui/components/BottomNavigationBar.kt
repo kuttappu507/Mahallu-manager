@@ -6,10 +6,12 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -29,6 +31,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,23 +39,26 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.mahallu.manager.core.ui.R
 import com.mahallu.manager.core.ui.theme.LocalMahalluColors
 
 data class BottomNavItem(
-    val label: String,
+    @androidx.annotation.StringRes val labelRes: Int,
     val icon: ImageVector,
     val route: String
 )
 
 object BottomNavItems {
-    val Home = BottomNavItem("Home", Icons.Rounded.Dashboard, "dashboard")
-    val Families = BottomNavItem("Families", Icons.Rounded.FamilyRestroom, "families")
-    val Members = BottomNavItem("Members", Icons.Rounded.Groups, "members")
-    val Finance = BottomNavItem("Finance", Icons.Rounded.AccountBalanceWallet, "finance")
-    val More = BottomNavItem("More", Icons.Rounded.MoreHoriz, "more")
+    val Home = BottomNavItem(R.string.nav_home, Icons.Rounded.Dashboard, "dashboard")
+    val Families = BottomNavItem(R.string.nav_families, Icons.Rounded.FamilyRestroom, "families")
+    val Members = BottomNavItem(R.string.nav_members, Icons.Rounded.Groups, "members")
+    val Finance = BottomNavItem(R.string.nav_finance, Icons.Rounded.AccountBalanceWallet, "finance")
+    val More = BottomNavItem(R.string.nav_more, Icons.Rounded.MoreHoriz, "more")
 }
 
 @Composable
@@ -97,7 +103,7 @@ fun AppBottomNavBar(
 }
 
 @Composable
-private fun BottomNavItemView(
+private fun RowScope.BottomNavItemView(
     item: BottomNavItem,
     isSelected: Boolean,
     onClick: () -> Unit
@@ -119,8 +125,12 @@ private fun BottomNavItemView(
 
     Column(
         modifier = Modifier
-            .clickable { onClick() }
-            .padding(horizontal = 4.dp, vertical = 4.dp),
+            .weight(1f)
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) { onClick() }
+            .padding(horizontal = 2.dp, vertical = 4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -134,17 +144,20 @@ private fun BottomNavItemView(
         ) {
             Icon(
                 imageVector = item.icon,
-                contentDescription = item.label,
+                contentDescription = stringResource(item.labelRes),
                 tint = tint,
                 modifier = Modifier.size(21.dp)
             )
         }
         Spacer(Modifier.height(4.dp))
         Text(
-            text = item.label,
+            text = stringResource(item.labelRes),
             style = MaterialTheme.typography.labelSmall,
             color = tint,
-            fontWeight = FontWeight.ExtraBold
+            fontWeight = FontWeight.ExtraBold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.padding(horizontal = 2.dp)
         )
     }
 }

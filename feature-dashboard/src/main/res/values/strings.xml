@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="dashboard_greeting">AS-SALAMU ALAYKUM</string>
+    <string name="dashboard_user_fallback">User</string>
+
+    <string name="dashboard_stat_members">Members</string>
+    <string name="dashboard_stat_families">Families</string>
+    <string name="dashboard_stat_this_month">This Month</string>
+    <string name="dashboard_stat_certificates">Certificates</string>
+
+    <string name="dashboard_action_add_member">Add Member</string>
+    <string name="dashboard_action_record_donation">Record Donation</string>
+    <string name="dashboard_action_add_collection">Add Collection</string>
+    <string name="dashboard_action_new_certificate">New Certificate</string>
+    <string name="dashboard_action_announcement">Announcement</string>
+
+    <string name="dashboard_donations_last_6">Donations — last 6 months</string>
+    <string name="dashboard_donation_trends">Donation trends</string>
+    <string name="dashboard_income_vs_expense">Income vs Expense</string>
+    <string name="dashboard_income">Income</string>
+    <string name="dashboard_expense">Expense</string>
+    <string name="dashboard_this_year">This Year</string>
+    <string name="dashboard_monthly_net">Monthly net</string>
+    <string name="dashboard_recent_activity">Recent activity</string>
+    <string name="dashboard_last_7_days">Last 7 days</string>
+
+    <string name="dashboard_see_all">See all</string>
+    <string name="dashboard_no_recent">No recent activities</string>
+
+    <string name="announcement_title">New announcement</string>
+    <string name="announcement_sent_to">Sent to all %1$d members via push &amp; WhatsApp.</string>
+    <string name="announcement_message_label">Message</string>
+    <string name="announcement_message_placeholder">e.g. Taraweeh starts at 9:30 PM tonight, in sha\' Allah…</string>
+    <string name="announcement_error_empty">Write a message first</string>
+    <string name="announcement_preview">Preview</string>
+    <string name="announcement_preview_placeholder">Your announcement will appear here…</string>
+    <string name="announcement_send">Send announcement</string>
+</resources>

@@ -27,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -39,6 +40,7 @@ import com.mahallu.manager.core.ui.components.FabAdd
 import com.mahallu.manager.core.ui.components.TopAppBar
 import com.mahallu.manager.core.ui.theme.LocalMahalluColors
 import com.mahallu.manager.core.ui.util.Formatters
+import feature.marriage.feature.marriage.R
 
 @Composable
 fun MarriageListScreen(
@@ -55,12 +57,12 @@ fun MarriageListScreen(
     Box(modifier = Modifier.fillMaxSize().background(colors.background)) {
         Column(modifier = Modifier.fillMaxSize()) {
             TopAppBar(
-                title = "Marriage Register",
+                title = stringResource(R.string.marriage_list_title),
                 showBack = true,
                 onBackClick = onBack,
                 trailingActions = { FabAdd(onClick = onAdd) }
             )
-            AppSearchBar(query = state.query, onQueryChange = viewModel::setQuery, placeholder = "Search by name or registration #")
+            AppSearchBar(query = state.query, onQueryChange = viewModel::setQuery, placeholder = stringResource(R.string.marriage_search_placeholder))
             Spacer(Modifier.height(10.dp))
             LazyRow(
                 contentPadding = PaddingValues(horizontal = 14.dp),
@@ -103,13 +105,13 @@ private fun MarriageRow(m: MarriageEntity, onClick: () -> Unit) {
             Spacer(Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "${m.brideName} & ${m.groomName}",
+                    text = stringResource(R.string.marriage_row_names, m.brideName, m.groomName),
                     style = MaterialTheme.typography.titleSmall,
                     color = colors.textPrimary,
                     fontWeight = FontWeight.SemiBold
                 )
                 Text(
-                    text = "Nikah: ${Formatters.date(m.nikahDate)}",
+                    text = stringResource(R.string.marriage_row_nikah, Formatters.date(m.nikahDate)),
                     style = MaterialTheme.typography.bodySmall,
                     color = colors.textSecondary
                 )

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="search_label">Search</string>
+    <string name="search_placeholder">Search families, members, donations…</string>
+    <string name="search_empty_title">Search across everything</string>
+    <string name="search_empty_message">Find families, members, donations, marriages, deaths and more.</string>
+    <string name="search_searching">Searching…</string>
+    <string name="search_no_results">No results</string>
+    <string name="search_no_matches">No matches for &quot;%1$s&quot;</string>
+
+    <string name="search_section_families">Families (%1$d)</string>
+    <string name="search_section_members">Members (%1$d)</string>
+    <string name="search_section_donations">Donations (%1$d)</string>
+    <string name="search_section_subscriptions">Subscriptions (%1$d)</string>
+    <string name="search_section_marriages">Marriages (%1$d)</string>
+    <string name="search_section_deaths">Deaths (%1$d)</string>
+    <string name="search_section_welfare">Welfare (%1$d)</string>
+    <string name="search_section_finance">Finance (%1$d)</string>
+
+    <string name="search_member_fallback">Member</string>
+    <string name="search_nikah">Nikah: %1$s</string>
+    <string name="search_died">Died: %1$s</string>
+</resources>

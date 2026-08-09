@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="families_title">Families</string>
+    <string name="families_search_placeholder">Search families…</string>
+    <string name="families_empty_title">No families found</string>
+    <string name="families_empty_message">Add your first family to get started.</string>
+    <string name="families_empty_action">Add Family</string>
+    <string name="families_showing">Showing %1$d of %2$d families</string>
+    <string name="families_tel_prefix">Tel: %1$s</string>
+
+    <string name="family_add_title">Add Family</string>
+    <string name="family_edit_title">Edit Family</string>
+    <string name="family_cd_save">Save</string>
+
+    <string name="family_field_number">Family Number</string>
+    <string name="family_field_house_name">House Name</string>
+    <string name="family_field_house_number">House Number</string>
+    <string name="family_field_ward">Ward</string>
+    <string name="family_field_area">Area</string>
+    <string name="family_field_address">Address</string>
+    <string name="family_field_pincode">Pincode</string>
+    <string name="family_field_primary_mobile">Primary Mobile</string>
+    <string name="family_field_secondary_mobile">Secondary Mobile</string>
+    <string name="family_field_email">Email</string>
+    <string name="family_field_notes">Notes</string>
+    <string name="family_field_status">Status</string>
+
+    <string name="family_placeholder_autogen">Auto-generated</string>
+    <string name="family_helper_autogen">Auto-generated if left blank</string>
+    <string name="family_placeholder_house_name">e.g. Abdul Rahman House</string>
+    <string name="family_placeholder_house_number">12</string>
+    <string name="family_placeholder_ward">Ward 3</string>
+    <string name="family_placeholder_area">North Area</string>
+    <string name="family_placeholder_address">Full address</string>
+    <string name="family_placeholder_pincode">676505</string>
+    <string name="family_placeholder_primary_mobile">+91 9876543210</string>
+    <string name="family_placeholder_secondary_mobile">+91 9876543211</string>
+    <string name="family_placeholder_email">email@example.com</string>
+    <string name="family_placeholder_notes">Any additional information</string>
+
+    <string name="family_saving">Saving…</string>
+    <string name="family_save">Save Family</string>
+
+    <string name="family_error_required">House name and address are required</string>
+
+    <string name="family_detail_title">Family Details</string>
+    <string name="family_detail_cd_edit">Edit</string>
+    <string name="family_detail_action_call">Call</string>
+    <string name="family_detail_action_whatsapp">WhatsApp</string>
+    <string name="family_detail_action_statement">Statement</string>
+    <string name="family_detail_contact_title">Contact Information</string>
+    <string name="family_detail_members">Members (%1$d)</string>
+
+    <string name="family_detail_field_number">Family Number</string>
+    <string name="family_detail_field_house_name">House Name</string>
+    <string name="family_detail_field_house_number">House Number</string>
+    <string name="family_detail_field_ward">Ward</string>
+    <string name="family_detail_field_area">Area</string>
+    <string name="family_detail_field_pincode">Pincode</string>
+    <string name="family_detail_field_primary_mobile">Primary Mobile</string>
+    <string name="family_detail_field_secondary_mobile">Secondary Mobile</string>
+    <string name="family_detail_field_email">Email</string>
+    <string name="family_detail_field_status">Status</string>
+    <string name="family_detail_field_created">Created</string>
+
+    <string name="family_member_relation">%1$s • %2$s</string>
+    <string name="family_member_default_relation">Member</string>
+    <string name="family_member_age_suffix">%1$dy</string>
+    <string name="family_detail_not_available">—</string>
+</resources>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="search_label">തിരയുക</string>
+    <string name="search_placeholder">കുടുംബങ്ങൾ, അംഗങ്ങൾ, സംഭാവനകൾ തിരയുക…</string>
+    <string name="search_empty_title">എല്ലാം തിരയുക</string>
+    <string name="search_empty_message">കുടുംബങ്ങൾ, അംഗങ്ങൾ, സംഭാവനകൾ, വിവാഹങ്ങൾ, മരണങ്ങൾ എന്നിവ കണ്ടെത്തുക.</string>
+    <string name="search_searching">തിരയുന്നു…</string>
+    <string name="search_no_results">ഫലങ്ങളില്ല</string>
+    <string name="search_no_matches">\"%1$s\"-ന് പൊരുത്തങ്ങളൊന്നുമില്ല</string>
+    <string name="search_section_families">കുടുംബങ്ങൾ (%1$d)</string>
+    <string name="search_section_members">അംഗങ്ങൾ (%1$d)</string>
+    <string name="search_section_donations">സംഭാവനകൾ (%1$d)</string>
+    <string name="search_section_subscriptions">ചന്ദ്രക്കുറി (%1$d)</string>
+    <string name="search_section_marriages">വിവാഹങ്ങൾ (%1$d)</string>
+    <string name="search_section_deaths">മരണങ്ങൾ (%1$d)</string>
+    <string name="search_section_welfare">ക്ഷേമം (%1$d)</string>
+    <string name="search_section_finance">ധനകാര്യം (%1$d)</string>
+    <string name="search_member_fallback">അംഗം</string>
+    <string name="search_nikah">നിക്കാഹ്: %1$s</string>
+    <string name="search_died">മരിച്ചു: %1$s</string>
+</resources>

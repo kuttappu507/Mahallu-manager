@@ -30,6 +30,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
@@ -39,6 +40,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mahallu.manager.core.ui.components.AppCard
 import com.mahallu.manager.core.ui.components.IconCircleButton
 import com.mahallu.manager.core.ui.theme.LocalMahalluColors
+import feature.certificates.feature.certificates.R
 
 private data class CertificateType(
     val type: String,
@@ -55,17 +57,17 @@ fun CertificateListScreen(
 ) {
     val colors = LocalMahalluColors.current
     val certificates = listOf(
-        CertificateType("MEMBERSHIP", "Membership Certificate", "Generate membership certificate", Icons.Rounded.Person),
-        CertificateType("RESIDENCE", "Residence Certificate", "Generate residence certificate", Icons.Rounded.Home),
-        CertificateType("MARRIAGE", "Marriage Certificate", "Generate marriage certificate", Icons.Rounded.Favorite),
-        CertificateType("DEATH", "Death Certificate", "Generate death certificate", Icons.Rounded.Description)
+        CertificateType("MEMBERSHIP", stringResource(R.string.cert_membership_title), stringResource(R.string.cert_membership_description), Icons.Rounded.Person),
+        CertificateType("RESIDENCE", stringResource(R.string.cert_residence_title), stringResource(R.string.cert_residence_description), Icons.Rounded.Home),
+        CertificateType("MARRIAGE", stringResource(R.string.cert_marriage_title), stringResource(R.string.cert_marriage_description), Icons.Rounded.Favorite),
+        CertificateType("DEATH", stringResource(R.string.cert_death_title), stringResource(R.string.cert_death_description), Icons.Rounded.Description)
     )
 
     androidx.compose.foundation.layout.Box(modifier = Modifier.fillMaxSize().background(colors.background)) {
         Column(modifier = Modifier.fillMaxSize()) {
             CertificatePageHead(
-                title = "Certificates",
-                count = "86 issued",
+                title = stringResource(R.string.cert_certificates_title),
+                count = stringResource(R.string.cert_issued_count, 86),
                 showBack = true,
                 onBack = onBack,
                 showAdd = true,

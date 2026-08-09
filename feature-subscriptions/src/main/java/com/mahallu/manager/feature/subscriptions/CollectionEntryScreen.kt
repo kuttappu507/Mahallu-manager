@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -50,6 +51,7 @@ import com.mahallu.manager.core.ui.components.TopAppBar
 import com.mahallu.manager.core.ui.theme.LocalMahalluColors
 import com.mahallu.manager.core.ui.util.Formatters
 import com.mahallu.manager.core.ui.util.PdfShare
+import feature.subscriptions.feature.subscriptions.R
 import java.io.File
 
 @Composable
@@ -69,12 +71,12 @@ fun CollectionEntryScreen(
     Box(modifier = Modifier.fillMaxSize().background(colors.background)) {
         Column(modifier = Modifier.fillMaxSize()) {
             TopAppBar(
-                title = "Collection Entry",
+                title = stringResource(R.string.collection_title),
                 showBack = true,
                 onBackClick = onDone,
                 trailingActions = {
                     IconButton(onClick = { viewModel.save() }) {
-                        Icon(Icons.Rounded.Check, contentDescription = "Save", tint = colors.primaryIndigo)
+                        Icon(Icons.Rounded.Check, contentDescription = stringResource(R.string.collection_cd_save), tint = colors.primaryIndigo)
                     }
                 }
             )
@@ -88,23 +90,23 @@ fun CollectionEntryScreen(
                 AppTextField(
                     value = state.receiptNumber,
                     onValueChange = { v -> viewModel.update { it.copy(receiptNumber = v) } },
-                    label = "Receipt Number",
+                    label = stringResource(R.string.collection_field_receipt_number),
                     readOnly = true
                 )
                 Spacer(Modifier.height(16.dp))
-                Text("Select Family", style = MaterialTheme.typography.labelLarge, color = colors.textSecondary)
+                Text(stringResource(R.string.collection_field_select_family), style = MaterialTheme.typography.labelLarge, color = colors.textSecondary)
                 Spacer(Modifier.height(6.dp))
                 FamilySelector(state.families, state.selectedFamilyId, onSelect = { viewModel.selectFamily(it) })
 
                 if (state.members.isNotEmpty()) {
                     Spacer(Modifier.height(12.dp))
-                    Text("Select Member", style = MaterialTheme.typography.labelLarge, color = colors.textSecondary)
+                    Text(stringResource(R.string.collection_field_select_member), style = MaterialTheme.typography.labelLarge, color = colors.textSecondary)
                     Spacer(Modifier.height(6.dp))
                     MemberSelector(state.members, state.selectedMemberId, onSelect = { viewModel.selectMember(it) })
                 }
 
                 Spacer(Modifier.height(16.dp))
-                Text("Collection Type", style = MaterialTheme.typography.labelLarge, color = colors.textSecondary)
+                Text(stringResource(R.string.collection_field_collection_type), style = MaterialTheme.typography.labelLarge, color = colors.textSecondary)
                 Spacer(Modifier.height(6.dp))
                 Row(
                     modifier = Modifier.horizontalScroll(rememberScrollState()),
@@ -119,8 +121,8 @@ fun CollectionEntryScreen(
                 AppTextField(
                     value = state.amount,
                     onValueChange = { v -> viewModel.update { it.copy(amount = v) } },
-                    label = "Amount",
-                    placeholder = "0.00",
+                    label = stringResource(R.string.collection_field_amount),
+                    placeholder = stringResource(R.string.collection_placeholder_amount),
                     keyboardType = KeyboardType.Decimal
                 )
 
@@ -128,12 +130,12 @@ fun CollectionEntryScreen(
                 AppTextField(
                     value = Formatters.date(state.date),
                     onValueChange = { },
-                    label = "Payment Date",
+                    label = stringResource(R.string.collection_field_payment_date),
                     readOnly = true
                 )
 
                 Spacer(Modifier.height(16.dp))
-                Text("Payment Method", style = MaterialTheme.typography.labelLarge, color = colors.textSecondary)
+                Text(stringResource(R.string.collection_field_payment_method), style = MaterialTheme.typography.labelLarge, color = colors.textSecondary)
                 Spacer(Modifier.height(6.dp))
                 Row(
                     modifier = Modifier.horizontalScroll(rememberScrollState()),
@@ -148,8 +150,8 @@ fun CollectionEntryScreen(
                 AppTextField(
                     value = state.remarks,
                     onValueChange = { v -> viewModel.update { it.copy(remarks = v) } },
-                    label = "Remarks",
-                    placeholder = "Optional",
+                    label = stringResource(R.string.collection_field_remarks),
+                    placeholder = stringResource(R.string.collection_placeholder_remarks),
                     maxLines = 3,
                     singleLine = false
                 )
@@ -167,7 +169,7 @@ fun CollectionEntryScreen(
                     contentPadding = PaddingValues(16.dp)
                 ) {
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        Text("Total Amount", style = MaterialTheme.typography.titleMedium, color = colors.textPrimary, fontWeight = FontWeight.SemiBold)
+                        Text(stringResource(R.string.collection_total_amount), style = MaterialTheme.typography.titleMedium, color = colors.textPrimary, fontWeight = FontWeight.SemiBold)
                         Text(
                             text = Formatters.currency(state.amount.toDoubleOrNull() ?: 0.0),
                             style = MaterialTheme.typography.headlineSmall,
@@ -185,7 +187,7 @@ fun CollectionEntryScreen(
                         contentPadding = PaddingValues(14.dp)
                     ) {
                         Text(
-                            text = "✓ Saved. Receipt generated: ${File(state.pdfPath).name}",
+                            text = stringResource(R.string.collection_receipt_saved, File(state.pdfPath).name),
                             style = MaterialTheme.typography.bodyMedium,
                             color = colors.textPrimary,
                             fontWeight = FontWeight.SemiBold
@@ -194,13 +196,13 @@ fun CollectionEntryScreen(
                     Spacer(Modifier.height(12.dp))
                     Row(horizontalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.fillMaxWidth()) {
                         AppButton(
-                            text = "View Receipt",
+                            text = stringResource(R.string.collection_view_receipt),
                             onClick = { PdfShare.open(context, File(state.pdfPath!!)) },
                             modifier = Modifier.weight(1f),
                             leadingIcon = Icons.Rounded.PictureAsPdf
                         )
                         AppButton(
-                            text = "Share",
+                            text = stringResource(R.string.collection_share),
                             onClick = { PdfShare.share(context, File(state.pdfPath!!)) },
                             modifier = Modifier.weight(1f),
                             leadingIcon = Icons.Rounded.Share
@@ -208,13 +210,13 @@ fun CollectionEntryScreen(
                     }
                     Spacer(Modifier.height(10.dp))
                     AppButton(
-                        text = "Done",
+                        text = stringResource(R.string.collection_done),
                         onClick = onDone,
                         modifier = Modifier.fillMaxWidth()
                     )
                 } else {
                     AppButton(
-                        text = if (state.isSaving) "Saving..." else "Save & Print Receipt",
+                        text = if (state.isSaving) stringResource(R.string.collection_saving) else stringResource(R.string.collection_save_print),
                         onClick = { viewModel.save() },
                         isLoading = state.isSaving
                     )
@@ -243,7 +245,7 @@ private fun FamilySelector(
                     .padding(horizontal = 12.dp, vertical = 8.dp)
             ) {
                 Text(
-                    text = "${f.familyNumber} • ${f.houseName}",
+                    text = stringResource(R.string.collection_family_selector, f.familyNumber, f.houseName),
                     color = if (selected) Color.White else colors.textPrimary,
                     style = MaterialTheme.typography.labelLarge
                 )

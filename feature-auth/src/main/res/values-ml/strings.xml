@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="login_greeting">അസ്സലാമു അലൈക്കും</string>
+    <string name="login_subtitle">നിങ്ങളുടെ പള്ളി നിയന്ത്രിക്കാൻ മഹല്ലിലേക്ക് സൈൻ ഇൻ ചെയ്യുക.</string>
+    <string name="login_email_member_label">ഇമെയിൽ അല്ലെങ്കിൽ അംഗ ഐഡി</string>
+    <string name="login_email_member_placeholder">യൂസർനെയിം അല്ലെങ്കിൽ അംഗ ഐഡി നൽകുക</string>
+    <string name="login_password">പാസ്വേഡ്</string>
+    <string name="login_forgot_password">പാസ്വേഡ് മറന്നോ?</string>
+    <string name="login_signing_in">സൈൻ ഇൻ ചെയ്യുന്നു...</string>
+    <string name="login_sign_in">സൈൻ ഇൻ</string>
+    <string name="login_or">അഥവാ</string>
+    <string name="login_continue_as_guest">അതിഥിയായി തുടരുക</string>
+    <string name="login_version_tagline">മഹല്ല് v1.0 · മസ്ജിദ് അന്നൂർ</string>
+    <string name="login_error_enter_username">യൂസർനെയിം അല്ലെങ്കിൽ മൊബൈൽ നൽകുക</string>
+    <string name="login_error_enter_password">പാസ്വേഡ് നൽകുക</string>
+    <string name="login_error_failed">ലോഗിൻ പരാജയപ്പെട്ടു</string>
+    <string name="login_default_user_name">ഉപയോക്താവ്</string>
+</resources>

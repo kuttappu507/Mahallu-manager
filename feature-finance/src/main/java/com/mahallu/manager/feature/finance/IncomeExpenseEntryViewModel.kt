@@ -1,11 +1,14 @@
 package com.mahallu.manager.feature.finance
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mahallu.manager.core.database.entity.FinanceEntryEntity
 import com.mahallu.manager.core.database.repository.FinanceRepository
 import com.mahallu.manager.core.util.IdGenerator
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import feature.finance.feature.finance.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -28,7 +31,8 @@ data class IncomeExpenseState(
 
 @HiltViewModel
 class IncomeExpenseEntryViewModel @Inject constructor(
-    private val repo: FinanceRepository
+    private val repo: FinanceRepository,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
     private val _state = MutableStateFlow(IncomeExpenseState())
     val state: StateFlow<IncomeExpenseState> = _state.asStateFlow()
@@ -46,11 +50,11 @@ class IncomeExpenseEntryViewModel @Inject constructor(
         val s = _state.value
         val amount = s.amount.toDoubleOrNull()
         if (s.description.isBlank()) {
-            _state.update { it.copy(error = "Description is required") }
+            _state.update { it.copy(error = context.getString(R.string.finance_error_description_required)) }
             return
         }
         if (amount == null || amount <= 0) {
-            _state.update { it.copy(error = "Enter a valid amount") }
+            _state.update { it.copy(error = context.getString(R.string.finance_error_valid_amount)) }
             return
         }
         _state.update { it.copy(isSaving = true, error = null) }

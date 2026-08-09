@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="death_list_title">മരണ രജിസ്റ്റർ</string>
+    <string name="death_search_placeholder">പേര് അല്ലെങ്കിൽ പിതാവിന്റെ പേര് ഉപയോഗിച്ച് തിരയുക</string>
+    <string name="death_son_of">%1$s യുടെ മകൻ</string>
+    <string name="death_died_on">മരിച്ചു: %1$s</string>
+    <string name="death_burial_on">ഖബറടക്കം: %1$s</string>
+    <string name="death_edit_record_title">മരണം രേഖപ്പെടുത്തുക</string>
+    <string name="death_edit_title">മരണം എഡിറ്റ് ചെയ്യുക</string>
+    <string name="death_edit_reg_number">രജിസ്ട്രേഷൻ നമ്പർ</string>
+    <string name="death_edit_select_member">അംഗങ്ങളിൽ നിന്ന് തിരഞ്ഞെടുക്കുക</string>
+    <string name="death_edit_pick_deceased">അംഗങ്ങളിൽ നിന്ന് മരിച്ചയാളെ തിരഞ്ഞെടുക്കുക</string>
+    <string name="death_edit_name">പേര്</string>
+    <string name="death_edit_father_name">പിതാവിന്റെ പേര്</string>
+    <string name="death_edit_age">പ്രായം</string>
+    <string name="death_edit_gender">ലിംഗം</string>
+    <string name="death_edit_date_of_death">മരണ തീയതി</string>
+    <string name="death_edit_burial_location">ഖബറടക്കം നടന്ന സ്ഥലം</string>
+    <string name="death_edit_cause_of_death">മരണ കാരണം</string>
+    <string name="death_edit_remarks">കുറിപ്പുകൾ</string>
+    <string name="death_save">സേവ് ചെയ്യുക</string>
+    <string name="death_saving">സേവ് ചെയ്യുന്നു...</string>
+    <string name="death_generate_certificate">മരണ സർട്ടിഫിക്കറ്റ് സൃഷ്ടിക്കുക</string>
+    <string name="death_edit_error_name_required">പേര് ആവശ്യമാണ്</string>
+    <string name="cd_save">സേവ് ചെയ്യുക</string>
+</resources>

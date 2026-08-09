@@ -1,5 +1,6 @@
 package com.mahallu.manager.feature.members
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mahallu.manager.core.database.entity.FamilyEntity
@@ -8,6 +9,8 @@ import com.mahallu.manager.core.database.repository.FamilyRepository
 import com.mahallu.manager.core.database.repository.MemberRepository
 import com.mahallu.manager.core.util.IdGenerator
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import feature.members.feature.members.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -45,6 +48,7 @@ data class MemberEditState(
 class MemberEditViewModel @Inject constructor(
     private val memberRepo: MemberRepository,
     private val familyRepo: FamilyRepository,
+    @ApplicationContext private val context: Context,
     savedStateHandle: androidx.lifecycle.SavedStateHandle
 ) : ViewModel() {
 
@@ -116,7 +120,7 @@ class MemberEditViewModel @Inject constructor(
     fun save() {
         val s = _state.value
         if (s.name.isBlank() || s.familyId.isBlank()) {
-            _state.update { it.copy(error = "Name and family are required") }
+            _state.update { it.copy(error = context.getString(R.string.member_edit_error_required)) }
             return
         }
         _state.update { it.copy(isSaving = true, error = null) }

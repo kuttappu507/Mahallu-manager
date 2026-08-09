@@ -32,8 +32,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -43,6 +45,7 @@ import com.mahallu.manager.core.ui.components.EmptyState
 import com.mahallu.manager.core.ui.components.IconCircleButton
 import com.mahallu.manager.core.ui.theme.LocalMahalluColors
 import com.mahallu.manager.core.ui.util.Formatters
+import feature.search.feature.search.R
 
 @Composable
 fun GlobalSearchScreen(
@@ -66,8 +69,8 @@ fun GlobalSearchScreen(
             AppTextField(
                 value = state.query,
                 onValueChange = viewModel::setQuery,
-                label = "Search",
-                placeholder = "Search families, members, donations...",
+                label = stringResource(R.string.search_label),
+                placeholder = stringResource(R.string.search_placeholder),
                 leadingIcon = Icons.Rounded.Search,
                 imeAction = ImeAction.Search,
                 modifier = Modifier.weight(1f).padding(start = 6.dp)
@@ -77,23 +80,23 @@ fun GlobalSearchScreen(
         when {
             state.query.isBlank() -> EmptyState(
                 icon = Icons.Rounded.Search,
-                title = "Search across everything",
-                message = "Find families, members, donations, marriages, deaths and more."
+                title = stringResource(R.string.search_empty_title),
+                message = stringResource(R.string.search_empty_message)
             )
             state.isLoading -> Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("Searching...", color = colors.textSecondary)
+                Text(stringResource(R.string.search_searching), color = colors.textSecondary)
             }
             state.results.isEmpty -> EmptyState(
                 icon = Icons.Rounded.Search,
-                title = "No results",
-                message = "No matches for \"${state.query}\""
+                title = stringResource(R.string.search_no_results),
+                message = stringResource(R.string.search_no_matches, state.query)
             )
             else -> LazyColumn(
                 contentPadding = PaddingValues(horizontal = 14.dp, vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 if (state.results.families.isNotEmpty()) {
-                    item { SectionTitle("Families (${state.results.families.size})") }
+                    item { SectionTitle(stringResource(R.string.search_section_families, state.results.families.size)) }
                     items(state.results.families) { f ->
                         ResultCard(
                             title = "${f.familyNumber} • ${f.houseName}",
@@ -104,18 +107,18 @@ fun GlobalSearchScreen(
                     }
                 }
                 if (state.results.members.isNotEmpty()) {
-                    item { SectionTitle("Members (${state.results.members.size})") }
+                    item { SectionTitle(stringResource(R.string.search_section_members, state.results.members.size)) }
                     items(state.results.members) { m ->
                         ResultCard(
                             title = "${m.memberNumber} • ${m.name}",
-                            subtitle = "${m.relationToHead ?: "Member"} • ${m.mobile ?: "—"}",
+                            subtitle = "${m.relationToHead ?: stringResource(R.string.search_member_fallback)} • ${m.mobile ?: "—"}",
                             icon = Icons.Rounded.Groups,
                             onClick = { onMemberClick(m.id) }
                         )
                     }
                 }
                 if (state.results.donations.isNotEmpty()) {
-                    item { SectionTitle("Donations (${state.results.donations.size})") }
+                    item { SectionTitle(stringResource(R.string.search_section_donations, state.results.donations.size)) }
                     items(state.results.donations) { d ->
                         ResultCard(
                             title = "${d.receiptNumber} • ${d.donorName}",
@@ -125,7 +128,7 @@ fun GlobalSearchScreen(
                     }
                 }
                 if (state.results.subscriptions.isNotEmpty()) {
-                    item { SectionTitle("Subscriptions (${state.results.subscriptions.size})") }
+                    item { SectionTitle(stringResource(R.string.search_section_subscriptions, state.results.subscriptions.size)) }
                     items(state.results.subscriptions) { s ->
                         ResultCard(
                             title = "${s.receiptNumber} • ${s.type}",
@@ -135,29 +138,29 @@ fun GlobalSearchScreen(
                     }
                 }
                 if (state.results.marriages.isNotEmpty()) {
-                    item { SectionTitle("Marriages (${state.results.marriages.size})") }
+                    item { SectionTitle(stringResource(R.string.search_section_marriages, state.results.marriages.size)) }
                     items(state.results.marriages) { m ->
                         ResultCard(
                             title = "${m.registrationNumber} • ${m.brideName} & ${m.groomName}",
-                            subtitle = "Nikah: ${Formatters.date(m.nikahDate)}",
+                            subtitle = stringResource(R.string.search_nikah, Formatters.date(m.nikahDate)),
                             icon = Icons.Rounded.FamilyRestroom,
                             onClick = { onMarriageClick(m.id) }
                         )
                     }
                 }
                 if (state.results.deaths.isNotEmpty()) {
-                    item { SectionTitle("Deaths (${state.results.deaths.size})") }
+                    item { SectionTitle(stringResource(R.string.search_section_deaths, state.results.deaths.size)) }
                     items(state.results.deaths) { d ->
                         ResultCard(
                             title = "${d.registrationNumber} • ${d.name}",
-                            subtitle = "Died: ${Formatters.date(d.dateOfDeath)}",
+                            subtitle = stringResource(R.string.search_died, Formatters.date(d.dateOfDeath)),
                             icon = Icons.Rounded.FamilyRestroom,
                             onClick = { onDeathClick(d.id) }
                         )
                     }
                 }
                 if (state.results.welfare.isNotEmpty()) {
-                    item { SectionTitle("Welfare (${state.results.welfare.size})") }
+                    item { SectionTitle(stringResource(R.string.search_section_welfare, state.results.welfare.size)) }
                     items(state.results.welfare) { w ->
                         ResultCard(
                             title = "${w.applicantName} • ${w.category}",
@@ -168,7 +171,7 @@ fun GlobalSearchScreen(
                     }
                 }
                 if (state.results.finance.isNotEmpty()) {
-                    item { SectionTitle("Finance (${state.results.finance.size})") }
+                    item { SectionTitle(stringResource(R.string.search_section_finance, state.results.finance.size)) }
                     items(state.results.finance) { f ->
                         ResultCard(
                             title = "${f.category} • ${f.type}",
@@ -214,7 +217,7 @@ private fun ResultCard(title: String, subtitle: String, icon: ImageVector, onCli
             Spacer(Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(title, style = MaterialTheme.typography.titleSmall, color = colors.textPrimary, fontWeight = FontWeight.SemiBold)
-                Text(subtitle, style = MaterialTheme.typography.bodySmall, color = colors.textSecondary, maxLines = 1)
+                Text(subtitle, style = MaterialTheme.typography.bodySmall, color = colors.textSecondary, maxLines = 1, overflow = TextOverflow.Ellipsis)
             }
         }
     }

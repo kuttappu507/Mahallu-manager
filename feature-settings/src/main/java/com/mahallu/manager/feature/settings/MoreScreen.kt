@@ -46,7 +46,9 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -55,6 +57,7 @@ import com.mahallu.manager.core.ui.components.AppCard
 import com.mahallu.manager.core.ui.theme.LocalMahalluColors
 import com.mahallu.manager.core.ui.theme.PrimaryIndigo
 import com.mahallu.manager.core.ui.util.Formatters
+import feature.settings.feature.settings.R
 
 private data class MenuItem(
     val label: String,
@@ -81,22 +84,22 @@ fun MoreScreen(
 
     val groups = listOf(
         MenuGroup(
-            "Records",
+            stringResource(R.string.more_group_records),
             listOf(
-                MenuItem("Subscriptions", "Monthly collections", Icons.Rounded.MonetizationOn, "subscriptions", colors.primaryIndigo, colors.indigoTint),
-                MenuItem("Donations", "Funds & contributions", Icons.Rounded.VolunteerActivism, "donations", colors.successDark, colors.successTint),
-                MenuItem("Marriages", "Nikah records", Icons.Rounded.Favorite, "marriages", colors.rose, colors.roseTint),
-                MenuItem("Deaths", "Funeral records", Icons.Rounded.HistoryEdu, "deaths", colors.textSecondary, colors.surfaceVariant),
-                MenuItem("Welfare", "Beneficiary support", Icons.Rounded.HealthAndSafety, "welfare", colors.purple, colors.purpleTint)
+                MenuItem(stringResource(R.string.more_menu_subscriptions), stringResource(R.string.more_menu_subscriptions_sub), Icons.Rounded.MonetizationOn, "subscriptions", colors.primaryIndigo, colors.indigoTint),
+                MenuItem(stringResource(R.string.more_menu_donations), stringResource(R.string.more_menu_donations_sub), Icons.Rounded.VolunteerActivism, "donations", colors.successDark, colors.successTint),
+                MenuItem(stringResource(R.string.more_menu_marriages), stringResource(R.string.more_menu_marriages_sub), Icons.Rounded.Favorite, "marriages", colors.rose, colors.roseTint),
+                MenuItem(stringResource(R.string.more_menu_deaths), stringResource(R.string.more_menu_deaths_sub), Icons.Rounded.HistoryEdu, "deaths", colors.textSecondary, colors.surfaceVariant),
+                MenuItem(stringResource(R.string.more_menu_welfare), stringResource(R.string.more_menu_welfare_sub), Icons.Rounded.HealthAndSafety, "welfare", colors.purple, colors.purpleTint)
             )
         ),
         MenuGroup(
-            "Data & Tools",
+            stringResource(R.string.more_group_data_tools),
             listOf(
-                MenuItem("Certificates", "Membership & more", Icons.Rounded.Description, "certificates", colors.primaryIndigo, colors.indigoTint),
-                MenuItem("Reports", "Statements & analytics", Icons.Rounded.Assessment, "reports", colors.purple, colors.purpleTint),
-                MenuItem("Backup & Restore", "Cloud · last backup today", Icons.Rounded.Backup, "backup", Color(0xFFB45309), colors.warningTint),
-                MenuItem("Settings", "App preferences", Icons.Rounded.Settings, "settings", colors.textSecondary, colors.surfaceVariant)
+                MenuItem(stringResource(R.string.more_menu_certificates), stringResource(R.string.more_menu_certificates_sub), Icons.Rounded.Description, "certificates", colors.primaryIndigo, colors.indigoTint),
+                MenuItem(stringResource(R.string.more_menu_reports), stringResource(R.string.more_menu_reports_sub), Icons.Rounded.Assessment, "reports", colors.purple, colors.purpleTint),
+                MenuItem(stringResource(R.string.more_menu_backup), stringResource(R.string.more_menu_backup_sub), Icons.Rounded.Backup, "backup", Color(0xFFB45309), colors.warningTint),
+                MenuItem(stringResource(R.string.more_menu_settings), stringResource(R.string.more_menu_settings_sub), Icons.Rounded.Settings, "settings", colors.textSecondary, colors.surfaceVariant)
             )
         )
     )
@@ -104,7 +107,7 @@ fun MoreScreen(
     Box(modifier = Modifier.fillMaxSize().background(colors.background)) {
         Column(modifier = Modifier.fillMaxSize()) {
             Text(
-                text = "More",
+                text = stringResource(R.string.more_title),
                 style = MaterialTheme.typography.headlineMedium,
                 color = colors.textPrimary,
                 fontWeight = FontWeight.Bold,
@@ -126,7 +129,7 @@ fun MoreScreen(
 
                 item {
                     Text(
-                        text = "MAHALLU MANAGER v1.0.0 · ${state.mahalluName.uppercase()}",
+                        text = stringResource(R.string.more_version_footer, state.mahalluName.uppercase()),
                         style = MaterialTheme.typography.labelSmall,
                         color = colors.textTertiary,
                         fontWeight = FontWeight.Bold,
@@ -174,16 +177,14 @@ private fun ProfileCard(name: String, role: String, mahallu: String) {
             }
             Spacer(Modifier.width(14.dp))
             Column(modifier = Modifier.weight(1f)) {
-                Text(name, style = MaterialTheme.typography.titleMedium, color = Color.White, fontWeight = FontWeight.ExtraBold, maxLines = 1)
-                Spacer(Modifier.height(2.dp))
-                Text(role, style = MaterialTheme.typography.labelMedium, color = Color.White.copy(alpha = 0.85f), fontWeight = FontWeight.Bold)
+                Text(name, style = MaterialTheme.typography.titleMedium, color = Color.White, fontWeight = FontWeight.ExtraBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 if (mahallu.isNotBlank()) {
-                    Text(mahallu, style = MaterialTheme.typography.labelSmall, color = Color.White.copy(alpha = 0.7f), maxLines = 1)
+                    Text(mahallu, style = MaterialTheme.typography.labelSmall, color = Color.White.copy(alpha = 0.7f), maxLines = 1, overflow = TextOverflow.Ellipsis)
                 }
             }
             Spacer(Modifier.width(8.dp))
             Text(
-                text = "MAHALLU",
+                text = stringResource(R.string.more_mahallu_badge),
                 style = MaterialTheme.typography.labelSmall,
                 color = colors.primaryIndigo,
                 fontWeight = FontWeight.ExtraBold,
@@ -207,11 +208,11 @@ private fun ProfileCard(name: String, role: String, mahallu: String) {
                 }
                 .padding(top = 14.dp)
         ) {
-            ProfileStat(value = "92%", label = "Attendance", modifier = Modifier.weight(1f))
+            ProfileStat(value = "92%", label = stringResource(R.string.more_profile_attendance), modifier = Modifier.weight(1f))
             VerticalDivider(modifier = Modifier.height(32.dp), thickness = 1.dp, color = Color.White.copy(alpha = 0.22f))
-            ProfileStat(value = "$4,120", label = "Contributed", modifier = Modifier.weight(1f))
+            ProfileStat(value = Formatters.currency(4120.0), label = stringResource(R.string.more_profile_contributed), modifier = Modifier.weight(1f))
             VerticalDivider(modifier = Modifier.height(32.dp), thickness = 1.dp, color = Color.White.copy(alpha = 0.22f))
-            ProfileStat(value = "12", label = "Certificates", modifier = Modifier.weight(1f))
+            ProfileStat(value = "12", label = stringResource(R.string.more_profile_certificates), modifier = Modifier.weight(1f))
         }
     }
     }
@@ -294,8 +295,8 @@ private fun MenuCard(groups: List<MenuGroup>, onNavigate: (String) -> Unit, onLo
                 }
                 Spacer(Modifier.width(12.dp))
                 Column(modifier = Modifier.weight(1f)) {
-                    Text("Log out", style = MaterialTheme.typography.bodyMedium, color = colors.rose, fontWeight = FontWeight.ExtraBold)
-                    Text("See you at Fajr, in shāʾ Allāh", style = MaterialTheme.typography.labelSmall, color = colors.textSecondary)
+                    Text(stringResource(R.string.more_logout), style = MaterialTheme.typography.bodyMedium, color = colors.rose, fontWeight = FontWeight.ExtraBold)
+                    Text(stringResource(R.string.more_logout_subtitle), style = MaterialTheme.typography.labelSmall, color = colors.textSecondary)
                 }
             }
         }
@@ -323,8 +324,8 @@ private fun MenuRow(item: MenuItem, onClick: () -> Unit) {
         }
         Spacer(Modifier.width(12.dp))
         Column(modifier = Modifier.weight(1f)) {
-            Text(item.label, style = MaterialTheme.typography.bodyMedium, color = colors.textPrimary, fontWeight = FontWeight.ExtraBold, maxLines = 1)
-            Text(item.subtitle, style = MaterialTheme.typography.labelSmall, color = colors.textSecondary, maxLines = 1)
+            Text(item.label, style = MaterialTheme.typography.bodyMedium, color = colors.textPrimary, fontWeight = FontWeight.ExtraBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            Text(item.subtitle, style = MaterialTheme.typography.labelSmall, color = colors.textSecondary, maxLines = 1, overflow = TextOverflow.Ellipsis)
         }
         Icon(Icons.Rounded.ChevronRight, contentDescription = null, tint = colors.borderStrong, modifier = Modifier.size(17.dp))
     }

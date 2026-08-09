@@ -31,8 +31,10 @@ import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.mahallu.manager.core.ui.R
 import com.mahallu.manager.core.ui.theme.LocalMahalluColors
 import kotlin.math.max
 
@@ -52,7 +54,7 @@ fun LineChart(
 ) {
     if (points.isEmpty()) {
         Box(modifier = modifier.fillMaxWidth().height(160.dp), contentAlignment = Alignment.Center) {
-            Text("No data", style = MaterialTheme.typography.bodyMedium, color = LocalMahalluColors.current.textTertiary)
+            Text(stringResource(R.string.no_data), style = MaterialTheme.typography.bodyMedium, color = LocalMahalluColors.current.textTertiary)
         }
         return
     }
@@ -151,11 +153,12 @@ fun BarChart(
     primaryColor: Color = LocalMahalluColors.current.primaryIndigo,
     secondaryColor: Color = LocalMahalluColors.current.accentCoral,
     showLegend: Boolean = true,
-    seriesLabels: Pair<String, String>? = null
+    seriesLabels: Pair<String, String>? = null,
+    secondaryBars: List<ChartPoint>? = null
 ) {
     if (bars.isEmpty()) {
         Box(modifier = modifier.fillMaxWidth().height(160.dp), contentAlignment = Alignment.Center) {
-            Text("No data", style = MaterialTheme.typography.bodyMedium, color = LocalMahalluColors.current.textTertiary)
+            Text(stringResource(R.string.no_data), style = MaterialTheme.typography.bodyMedium, color = LocalMahalluColors.current.textTertiary)
         }
         return
     }
@@ -201,8 +204,10 @@ fun BarChart(
                         size = Size(barWidth, barHeight),
                         cornerRadius = androidx.compose.ui.geometry.CornerRadius(6f, 6f)
                     )
-                    // secondary (50% of primary height for visual variety)
-                    val sec = barHeight * 0.55f
+                    // secondary (real data when provided, otherwise 50% of primary for visual variety)
+                    val secValue = secondaryBars?.getOrNull(idx)?.value ?: (bar.value * 0.55f)
+                    val secRatio = secValue / max(bars.maxOf { it.value }, 1f)
+                    val sec = chartHeight * secRatio
                     drawRoundRect(
                         color = secondaryColor,
                         topLeft = Offset(x + 4f, padding + chartHeight - sec),

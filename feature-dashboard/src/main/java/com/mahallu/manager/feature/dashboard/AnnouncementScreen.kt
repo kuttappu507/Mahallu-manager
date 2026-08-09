@@ -23,6 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.mahallu.manager.core.ui.components.AppButton
@@ -30,6 +31,7 @@ import com.mahallu.manager.core.ui.components.AppTextField
 import com.mahallu.manager.core.ui.components.TopAppBar
 import com.mahallu.manager.core.ui.theme.LocalMahalluColors
 import com.mahallu.manager.core.ui.theme.RadiusLg
+import feature.dashboard.feature.dashboard.R
 
 /**
  * Announcement composer — mirrors the Masjidi "New announcement" sheet.
@@ -48,7 +50,7 @@ fun AnnouncementScreen(
     Box(modifier = Modifier.fillMaxSize().background(colors.background)) {
         Column(modifier = Modifier.fillMaxSize()) {
             TopAppBar(
-                title = "New announcement",
+                title = stringResource(R.string.announcement_title),
                 showBack = true,
                 onBackClick = onDone
             )
@@ -59,7 +61,7 @@ fun AnnouncementScreen(
                     .padding(horizontal = 16.dp, vertical = 12.dp)
             ) {
                 Text(
-                    text = "Sent to all $memberCount members via push & WhatsApp.",
+                    text = stringResource(R.string.announcement_sent_to, memberCount),
                     style = MaterialTheme.typography.bodySmall,
                     color = colors.textSecondary
                 )
@@ -67,12 +69,12 @@ fun AnnouncementScreen(
                 AppTextField(
                     value = message,
                     onValueChange = { message = it },
-                    label = "Message",
-                    placeholder = "e.g. Taraweeh starts at 9:30 PM tonight, in sha' Allah…",
+                    label = stringResource(R.string.announcement_message_label),
+                    placeholder = stringResource(R.string.announcement_message_placeholder),
                     singleLine = false,
                     maxLines = 6,
                     isError = attempted && empty,
-                    errorMessage = if (attempted && empty) "Write a message first" else null
+                    errorMessage = if (attempted && empty) stringResource(R.string.announcement_error_empty) else null
                 )
                 Spacer(Modifier.height(20.dp))
                 Box(
@@ -84,14 +86,14 @@ fun AnnouncementScreen(
                 ) {
                     Column {
                         Text(
-                            text = "Preview",
+                            text = stringResource(R.string.announcement_preview),
                             style = MaterialTheme.typography.labelSmall,
                             color = colors.primaryIndigo,
                             fontWeight = FontWeight.ExtraBold
                         )
                         Spacer(Modifier.height(4.dp))
                         Text(
-                            text = message.ifBlank { "Your announcement will appear here…" },
+                            text = message.ifBlank { stringResource(R.string.announcement_preview_placeholder) },
                             style = MaterialTheme.typography.bodyMedium,
                             color = if (message.isBlank()) colors.textTertiary else colors.textPrimary
                         )
@@ -99,7 +101,7 @@ fun AnnouncementScreen(
                 }
                 Spacer(Modifier.height(24.dp))
                 AppButton(
-                    text = "Send announcement",
+                    text = stringResource(R.string.announcement_send),
                     onClick = {
                         if (empty) attempted = true else onDone()
                     },

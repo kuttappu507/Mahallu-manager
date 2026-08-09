@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.AccountBalanceWallet
 import androidx.compose.material.icons.rounded.Assessment
 import androidx.compose.material.icons.rounded.ChevronRight
 import androidx.compose.material.icons.rounded.Description
@@ -32,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -41,6 +43,7 @@ import com.mahallu.manager.core.ui.components.AppButton
 import com.mahallu.manager.core.ui.components.TopAppBar
 import com.mahallu.manager.core.ui.theme.LocalMahalluColors
 import com.mahallu.manager.core.ui.util.PdfShare
+import feature.reports.feature.reports.R
 import java.io.File
 
 private data class ReportType(val key: String, val title: String, val description: String, val icon: ImageVector)
@@ -51,17 +54,18 @@ fun ReportsScreen(onBack: () -> Unit, viewModel: ReportsViewModel = hiltViewMode
     val colors = LocalMahalluColors.current
     val context = LocalContext.current
     val reports = listOf(
-        ReportType("FAMILY", "Family Register", "All registered families", Icons.Rounded.Assessment),
-        ReportType("MEMBER", "Member Register", "All registered members", Icons.Rounded.Assessment),
-        ReportType("COLLECTION", "Collection Report", "Subscription collection history", Icons.Rounded.Description),
-        ReportType("DONATION", "Donation Report", "Donation history", Icons.Rounded.Description),
-        ReportType("MARRIAGE", "Marriage Register", "All marriages", Icons.Rounded.Description),
-        ReportType("DEATH", "Death Register", "All deaths", Icons.Rounded.Description)
+        ReportType("FAMILY", stringResource(R.string.reports_family_register), stringResource(R.string.reports_family_register_desc), Icons.Rounded.Assessment),
+        ReportType("MEMBER", stringResource(R.string.reports_member_register), stringResource(R.string.reports_member_register_desc), Icons.Rounded.Assessment),
+        ReportType("COLLECTION", stringResource(R.string.reports_collection_report), stringResource(R.string.reports_collection_report_desc), Icons.Rounded.Description),
+        ReportType("DONATION", stringResource(R.string.reports_donation_report), stringResource(R.string.reports_donation_report_desc), Icons.Rounded.Description),
+        ReportType("FINANCE", stringResource(R.string.reports_finance_report), stringResource(R.string.reports_finance_report_desc), Icons.Rounded.AccountBalanceWallet),
+        ReportType("MARRIAGE", stringResource(R.string.reports_marriage_register), stringResource(R.string.reports_marriage_register_desc), Icons.Rounded.Description),
+        ReportType("DEATH", stringResource(R.string.reports_death_register), stringResource(R.string.reports_death_register_desc), Icons.Rounded.Description)
     )
 
     Box(modifier = Modifier.fillMaxSize().background(colors.background)) {
         Column(modifier = Modifier.fillMaxSize()) {
-            TopAppBar(title = "Reports", showBack = true, onBackClick = onBack)
+            TopAppBar(title = stringResource(R.string.reports_title), showBack = true, onBackClick = onBack)
             if (!state.message.isNullOrBlank()) {
                 Box(
                     modifier = Modifier
@@ -82,7 +86,7 @@ fun ReportsScreen(onBack: () -> Unit, viewModel: ReportsViewModel = hiltViewMode
                 ) {
                     Column {
                         Text(
-                            text = "Last report: ${File(state.lastGeneratedPath!!).name}",
+                            text = stringResource(R.string.reports_last_report, File(state.lastGeneratedPath!!).name),
                             style = MaterialTheme.typography.bodyMedium,
                             color = colors.textPrimary,
                             fontWeight = FontWeight.SemiBold,
@@ -92,13 +96,13 @@ fun ReportsScreen(onBack: () -> Unit, viewModel: ReportsViewModel = hiltViewMode
                         Spacer(Modifier.height(10.dp))
                         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                             AppButton(
-                                text = "View",
+                                text = stringResource(R.string.reports_view),
                                 onClick = { PdfShare.open(context, File(state.lastGeneratedPath!!)) },
                                 leadingIcon = Icons.Rounded.PictureAsPdf,
                                 modifier = Modifier.weight(1f)
                             )
                             AppButton(
-                                text = "Share",
+                                text = stringResource(R.string.reports_share),
                                 onClick = { PdfShare.share(context, File(state.lastGeneratedPath!!)) },
                                 leadingIcon = Icons.Rounded.Share,
                                 modifier = Modifier.weight(1f)

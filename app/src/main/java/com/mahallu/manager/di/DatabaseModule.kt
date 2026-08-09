@@ -1,6 +1,7 @@
 package com.mahallu.manager.core.database.di
 
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.mahallu.manager.core.common.Constants
@@ -19,6 +20,7 @@ import com.mahallu.manager.core.database.dao.SettingsDao
 import com.mahallu.manager.core.database.dao.SubscriptionDao
 import com.mahallu.manager.core.database.dao.UserDao
 import com.mahallu.manager.core.database.dao.WelfareDao
+import com.mahallu.manager.core.database.repository.LanguageController
 import com.mahallu.manager.core.database.repository.SeedData
 import dagger.Module
 import dagger.Provides
@@ -48,6 +50,11 @@ object DatabaseModule {
             // No destructive migrations: explicit migrations required.
             .build()
     }
+
+    @Provides
+    @Singleton
+    fun provideAppLanguagePrefs(@ApplicationContext context: Context): SharedPreferences =
+        context.getSharedPreferences(LanguageController.PREFS_FILE, Context.MODE_PRIVATE)
 
     @Provides fun provideUserDao(db: MahalluDatabase): UserDao = db.userDao()
     @Provides fun provideFamilyDao(db: MahalluDatabase): FamilyDao = db.familyDao()

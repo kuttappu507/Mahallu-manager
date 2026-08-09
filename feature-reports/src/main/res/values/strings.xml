@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Reports screen -->
+    <string name="reports_title">Reports</string>
+    <string name="reports_last_report">Last report: %1$s</string>
+    <string name="reports_view">View</string>
+    <string name="reports_share">Share</string>
+
+    <!-- Report type titles -->
+    <string name="reports_family_register">Family Register</string>
+    <string name="reports_family_register_desc">All registered families</string>
+    <string name="reports_member_register">Member Register</string>
+    <string name="reports_member_register_desc">All registered members</string>
+    <string name="reports_collection_report">Collection Report</string>
+    <string name="reports_collection_report_desc">Subscription collection history</string>
+    <string name="reports_donation_report">Donation Report</string>
+    <string name="reports_donation_report_desc">Donation history</string>
+    <string name="reports_finance_report">Finance Report</string>
+    <string name="reports_finance_report_desc">Income and expense entries</string>
+    <string name="reports_marriage_register">Marriage Register</string>
+    <string name="reports_marriage_register_desc">All marriages</string>
+    <string name="reports_death_register">Death Register</string>
+    <string name="reports_death_register_desc">All deaths</string>
+    <string name="reports_report_fallback">Report</string>
+
+    <!-- Report table headers -->
+    <string name="reports_header_number">Number</string>
+    <string name="reports_header_house_name">House Name</string>
+    <string name="reports_header_address">Address</string>
+    <string name="reports_header_mobile">Mobile</string>
+    <string name="reports_header_status">Status</string>
+    <string name="reports_header_member_id">Member ID</string>
+    <string name="reports_header_name">Name</string>
+    <string name="reports_header_family">Family</string>
+    <string name="reports_header_gender">Gender</string>
+    <string name="reports_header_age">Age</string>
+    <string name="reports_header_receipt">Receipt</string>
+    <string name="reports_header_type">Type</string>
+    <string name="reports_header_date">Date</string>
+    <string name="reports_header_amount">Amount</string>
+    <string name="reports_header_method">Method</string>
+    <string name="reports_header_donor">Donor</string>
+    <string name="reports_header_category">Category</string>
+    <string name="reports_header_description">Description</string>
+    <string name="reports_header_reg_no">Reg #</string>
+    <string name="reports_header_bride">Bride</string>
+    <string name="reports_header_groom">Groom</string>
+    <string name="reports_header_nikah_date">Nikah Date</string>
+    <string name="reports_header_father">Father</string>
+    <string name="reports_header_date_of_death">Date of Death</string>
+    <string name="reports_header_fallback">Col 1</string>
+
+    <!-- PDF labels -->
+    <string name="reports_generated_subtitle">Generated %1$s</string>
+    <string name="reports_mahallu_management_report">Mahallu Management Report</string>
+    <string name="reports_footer_confidential">Mahallu Manager • Confidential</string>
+    <string name="reports_footer_generated">Mahallu Manager • Generated on %1$s</string>
+
+    <!-- ViewModel messages -->
+    <string name="reports_generated_message">Generated %1$s</string>
+    <string name="reports_failed_message">Failed: %1$s</string>
+</resources>

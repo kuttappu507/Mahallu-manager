@@ -46,6 +46,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -59,6 +60,7 @@ import com.mahallu.manager.core.ui.theme.LocalMahalluColors
 import com.mahallu.manager.core.ui.theme.PrimaryIndigo
 import com.mahallu.manager.core.ui.theme.Rose
 import com.mahallu.manager.core.ui.util.Formatters
+import feature.finance.feature.finance.R
 import kotlinx.coroutines.delay
 
 @Composable
@@ -79,14 +81,14 @@ fun FinanceScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Finance",
+                    text = stringResource(R.string.finance_title),
                     style = MaterialTheme.typography.headlineMedium,
                     color = colors.textPrimary,
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(Modifier.width(10.dp))
                 Text(
-                    text = "Masjid An-Noor",
+                    text = stringResource(R.string.finance_masjid_name),
                     style = MaterialTheme.typography.labelSmall,
                     color = colors.textSecondary,
                     fontWeight = FontWeight.ExtraBold,
@@ -127,12 +129,17 @@ fun FinanceScreen(
                 }
                 item {
                     Spacer(Modifier.height(14.dp))
+                    val typeTabs = listOf(
+                        "ALL" to stringResource(R.string.finance_filter_all),
+                        "INCOME" to stringResource(R.string.finance_filter_income),
+                        "EXPENSE" to stringResource(R.string.finance_filter_expense)
+                    )
                     LazyRow(
                         contentPadding = PaddingValues(horizontal = 18.dp),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        items(listOf("ALL", "INCOME", "EXPENSE")) { t ->
-                            ChipPill(text = t, selected = state.typeFilter == t, onClick = { viewModel.setType(t) })
+                        items(typeTabs) { (key, label) ->
+                            ChipPill(text = label, selected = state.typeFilter == key, onClick = { viewModel.setType(key) })
                         }
                     }
                 }
@@ -146,7 +153,7 @@ fun FinanceScreen(
                         horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         SumTile(
-                            label = "Total income",
+                            label = stringResource(R.string.finance_total_income),
                             amount = state.totalIncome,
                             icon = Icons.Rounded.ArrowUpward,
                             accent = colors.successDark,
@@ -154,7 +161,7 @@ fun FinanceScreen(
                             modifier = Modifier.weight(1f)
                         )
                         SumTile(
-                            label = "Total expenses",
+                            label = stringResource(R.string.finance_total_expenses),
                             amount = state.totalExpense,
                             icon = Icons.Rounded.ArrowDownward,
                             accent = colors.rose,
@@ -167,14 +174,14 @@ fun FinanceScreen(
                 item {
                     Spacer(Modifier.height(18.dp))
                     Text(
-                        text = "Recent activity",
+                        text = stringResource(R.string.finance_recent_activity),
                         style = MaterialTheme.typography.titleMedium,
                         color = colors.textPrimary,
                         fontWeight = FontWeight.ExtraBold,
                         modifier = Modifier.padding(horizontal = 18.dp)
                     )
                     Text(
-                        text = "${state.entries.size} transactions · this month",
+                        text = stringResource(R.string.finance_transactions_this_month, state.entries.size),
                         style = MaterialTheme.typography.labelSmall,
                         color = colors.textSecondary,
                         modifier = Modifier.padding(horizontal = 18.dp)
@@ -214,7 +221,8 @@ private fun SumTile(
                 style = MaterialTheme.typography.titleMedium,
                 color = accent,
                 fontWeight = FontWeight.ExtraBold,
-                maxLines = 1
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
             Text(
                 text = label,
@@ -267,7 +275,7 @@ private fun BalanceCard(balance: Double, income: Double, expense: Double) {
         Column {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = "Net balance · $currentMonthLabel",
+                    text = stringResource(R.string.finance_net_balance_month, currentMonthLabel()),
                     style = MaterialTheme.typography.labelMedium,
                     color = Color.White.copy(alpha = 0.8f),
                     fontWeight = FontWeight.Bold
@@ -287,7 +295,7 @@ private fun BalanceCard(balance: Double, income: Double, expense: Double) {
                             modifier = Modifier.size(12.dp)
                         )
                         Text(
-                            text = if (isPositive) "+18.4% vs June" else "−12.4% vs May",
+                            text = if (isPositive) stringResource(R.string.finance_trend_up) else stringResource(R.string.finance_trend_down),
                             style = MaterialTheme.typography.labelSmall,
                             color = if (isPositive) colors.successDark else colors.rose,
                             fontWeight = FontWeight.ExtraBold
@@ -317,14 +325,14 @@ private fun BalanceCard(balance: Double, income: Double, expense: Double) {
                     .padding(top = 14.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                BalanceSub(label = "Income", amount = income, tint = Color.White.copy(alpha = 0.22f), icon = Icons.Rounded.ArrowUpward, modifier = Modifier.weight(1f))
+                BalanceSub(label = stringResource(R.string.finance_income), amount = income, tint = Color.White.copy(alpha = 0.22f), icon = Icons.Rounded.ArrowUpward, modifier = Modifier.weight(1f))
                 VerticalDivider(
                     modifier = Modifier.height(34.dp),
                     thickness = 1.dp,
                     color = Color.White.copy(alpha = 0.22f)
                 )
                 BalanceSub(
-                    label = "Expenses",
+                    label = stringResource(R.string.finance_expenses),
                     amount = expense,
                     tint = Color.White.copy(alpha = 0.22f),
                     icon = Icons.Rounded.ArrowDownward,
@@ -337,11 +345,8 @@ private fun BalanceCard(balance: Double, income: Double, expense: Double) {
     }
 }
 
-private val currentMonthLabel: String
-    get() = listOf(
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
-    ).getOrElse(java.time.LocalDate.now().monthValue - 1) { "July" }
+private fun currentMonthLabel(): String =
+    java.text.SimpleDateFormat("MMMM", java.util.Locale.getDefault()).format(java.util.Date())
 
 @Composable
 private fun BalanceSub(
@@ -405,7 +410,7 @@ private fun FinanceRow(e: FinanceEntryEntity, modifier: Modifier = Modifier) {
                 Text(e.description, style = MaterialTheme.typography.bodyMedium, color = colors.textPrimary, fontWeight = FontWeight.ExtraBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 Spacer(Modifier.height(2.dp))
                 Text(
-                    text = "${e.category} • ${e.paymentMethod} • ${Formatters.date(e.date)}",
+                    text = stringResource(R.string.finance_row_detail, categoryLabel(e.category), paymentLabel(e.paymentMethod), Formatters.date(e.date)),
                     style = MaterialTheme.typography.labelSmall,
                     color = colors.textSecondary,
                     maxLines = 1,
@@ -426,15 +431,15 @@ private fun FinanceRow(e: FinanceEntryEntity, modifier: Modifier = Modifier) {
 private fun shareFinance(context: android.content.Context, state: FinanceUiState) {
     runCatching {
         val text = buildString {
-            append("Masjid An-Noor — Finance Summary\n")
-            append("Balance: ${Formatters.currency(state.balance)}\n")
-            append("Income: ${Formatters.currency(state.totalIncome)}\n")
-            append("Expenses: ${Formatters.currency(state.totalExpense)}")
+            append(context.getString(R.string.finance_share_summary_header, context.getString(R.string.finance_masjid_name)))
+            append(context.getString(R.string.finance_share_balance, Formatters.currency(state.balance)))
+            append(context.getString(R.string.finance_share_income, Formatters.currency(state.totalIncome)))
+            append(context.getString(R.string.finance_share_expenses, Formatters.currency(state.totalExpense)))
         }
         val intent = Intent(Intent.ACTION_SEND).apply {
             type = "text/plain"
             putExtra(Intent.EXTRA_TEXT, text)
         }
-        context.startActivity(Intent.createChooser(intent, "Share finance summary"))
+        context.startActivity(Intent.createChooser(intent, context.getString(R.string.finance_share_chooser)))
     }
 }

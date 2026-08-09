@@ -38,6 +38,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.mahallu.manager.core.ui.theme.LocalMahalluColors
@@ -52,7 +53,7 @@ fun AppCard(
     modifier: Modifier = Modifier,
     backgroundColor: Color = LocalMahalluColors.current.surface,
     cornerRadius: Dp = RadiusLg,
-    elevation: Dp = 2.dp,
+    elevation: Dp = 4.dp,
     contentPadding: PaddingValues = PaddingValues(16.dp),
     onClick: (() -> Unit)? = null,
     borderColor: Color? = null,
@@ -71,8 +72,8 @@ fun AppCard(
         .shadow(
             elevation = elevation,
             shape = shape,
-            ambientColor = Color.Black.copy(alpha = 0.05f),
-            spotColor = Color.Black.copy(alpha = 0.05f)
+            ambientColor = Color.Black.copy(alpha = 0.09f),
+            spotColor = Color.Black.copy(alpha = 0.07f)
         )
         .clip(shape)
         .background(backgroundColor)
@@ -132,7 +133,9 @@ fun ListItemCard(
                     text = title,
                     style = MaterialTheme.typography.titleSmall,
                     color = LocalMahalluColors.current.textPrimary,
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.SemiBold,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
                 )
                 if (!subtitle.isNullOrBlank()) {
                     Spacer(Modifier.height(2.dp))
@@ -140,7 +143,8 @@ fun ListItemCard(
                         text = subtitle,
                         style = MaterialTheme.typography.bodySmall,
                         color = LocalMahalluColors.current.textSecondary,
-                        maxLines = 2
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
             }
@@ -207,14 +211,17 @@ fun StatTile(
                     style = MaterialTheme.typography.titleMedium,
                     color = colors.textPrimary,
                     fontWeight = FontWeight.Bold,
-                    maxLines = 1
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
                 Text(
                     text = label,
                     style = MaterialTheme.typography.labelSmall,
                     color = colors.textSecondary,
                     fontWeight = FontWeight.Bold,
-                    maxLines = 1
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
                 )
             }
         }

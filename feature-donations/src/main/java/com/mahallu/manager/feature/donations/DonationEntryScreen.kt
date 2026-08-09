@@ -28,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -41,6 +42,7 @@ import com.mahallu.manager.core.ui.components.TopAppBar
 import com.mahallu.manager.core.ui.theme.LocalMahalluColors
 import com.mahallu.manager.core.ui.util.Formatters
 import com.mahallu.manager.core.ui.util.PdfShare
+import feature.donations.feature.donations.R
 import java.io.File
 
 @Composable
@@ -60,12 +62,12 @@ fun DonationEntryScreen(
     Box(modifier = Modifier.fillMaxSize().background(colors.background)) {
         Column(modifier = Modifier.fillMaxSize()) {
             TopAppBar(
-                title = "Add Donation",
+                title = stringResource(R.string.donations_add_title),
                 showBack = true,
                 onBackClick = onDone,
                 trailingActions = {
                     IconButton(onClick = { viewModel.save() }) {
-                        Icon(Icons.Rounded.Check, contentDescription = "Save", tint = colors.primaryIndigo)
+                        Icon(Icons.Rounded.Check, contentDescription = stringResource(R.string.cd_save), tint = colors.primaryIndigo)
                     }
                 }
             )
@@ -75,41 +77,41 @@ fun DonationEntryScreen(
                     .verticalScroll(rememberScrollState())
                     .padding(horizontal = 16.dp, vertical = 12.dp)
             ) {
-                AppTextField(value = state.receiptNumber, onValueChange = { v -> viewModel.update { it.copy(receiptNumber = v) } }, label = "Receipt Number", readOnly = true)
+                AppTextField(value = state.receiptNumber, onValueChange = { v -> viewModel.update { it.copy(receiptNumber = v) } }, label = stringResource(R.string.donations_receipt_number), readOnly = true)
                 Spacer(Modifier.height(12.dp))
-                AppTextField(value = state.donorName, onValueChange = { v -> viewModel.update { it.copy(donorName = v) } }, label = "Donor Name", isRequired = true)
+                AppTextField(value = state.donorName, onValueChange = { v -> viewModel.update { it.copy(donorName = v) } }, label = stringResource(R.string.donations_donor_name), isRequired = true)
                 Spacer(Modifier.height(12.dp))
-                AppTextField(value = state.donorMobile, onValueChange = { v -> viewModel.update { it.copy(donorMobile = v) } }, label = "Mobile", keyboardType = KeyboardType.Phone)
+                AppTextField(value = state.donorMobile, onValueChange = { v -> viewModel.update { it.copy(donorMobile = v) } }, label = stringResource(R.string.donations_mobile), keyboardType = KeyboardType.Phone)
                 Spacer(Modifier.height(12.dp))
-                AppTextField(value = state.amount, onValueChange = { v -> viewModel.update { it.copy(amount = v) } }, label = "Amount", placeholder = "0.00", keyboardType = KeyboardType.Decimal, isRequired = true)
+                AppTextField(value = state.amount, onValueChange = { v -> viewModel.update { it.copy(amount = v) } }, label = stringResource(R.string.donations_amount), placeholder = stringResource(R.string.donations_placeholder_amount), keyboardType = KeyboardType.Decimal, isRequired = true)
                 Spacer(Modifier.height(12.dp))
-                Text("Category", style = MaterialTheme.typography.labelLarge, color = colors.textSecondary)
+                Text(stringResource(R.string.donations_category), style = MaterialTheme.typography.labelLarge, color = colors.textSecondary)
                 Spacer(Modifier.height(6.dp))
                 Row(
                     modifier = Modifier.horizontalScroll(rememberScrollState()),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     listOf("GENERAL", "MASJID", "BUILDING", "EDUCATION", "MEDICAL", "WELFARE", "OTHER").forEach { c ->
-                        ChipPill(text = c, selected = state.category == c, onClick = { viewModel.update { it.copy(category = c) } })
+                        ChipPill(text = stringResource(donationCategoryLabelRes(c)), selected = state.category == c, onClick = { viewModel.update { it.copy(category = c) } })
                     }
                 }
                 Spacer(Modifier.height(12.dp))
-                AppTextField(value = state.purpose, onValueChange = { v -> viewModel.update { it.copy(purpose = v) } }, label = "Purpose", maxLines = 2, singleLine = false)
+                AppTextField(value = state.purpose, onValueChange = { v -> viewModel.update { it.copy(purpose = v) } }, label = stringResource(R.string.donations_purpose), maxLines = 2, singleLine = false)
                 Spacer(Modifier.height(12.dp))
-                AppTextField(value = Formatters.date(state.date), onValueChange = { }, label = "Date", readOnly = true)
+                AppTextField(value = Formatters.date(state.date), onValueChange = { }, label = stringResource(R.string.donations_date), readOnly = true)
                 Spacer(Modifier.height(12.dp))
-                Text("Payment Method", style = MaterialTheme.typography.labelLarge, color = colors.textSecondary)
+                Text(stringResource(R.string.donations_payment_method), style = MaterialTheme.typography.labelLarge, color = colors.textSecondary)
                 Spacer(Modifier.height(6.dp))
                 Row(
                     modifier = Modifier.horizontalScroll(rememberScrollState()),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     listOf("CASH", "UPI", "BANK", "CHEQUE", "OTHER").forEach { p ->
-                        ChipPill(text = p, selected = state.paymentMethod == p, onClick = { viewModel.update { it.copy(paymentMethod = p) } })
+                        ChipPill(text = stringResource(donationPaymentLabelRes(p)), selected = state.paymentMethod == p, onClick = { viewModel.update { it.copy(paymentMethod = p) } })
                     }
                 }
                 Spacer(Modifier.height(12.dp))
-                AppTextField(value = state.remarks, onValueChange = { v -> viewModel.update { it.copy(remarks = v) } }, label = "Remarks", maxLines = 3, singleLine = false)
+                AppTextField(value = state.remarks, onValueChange = { v -> viewModel.update { it.copy(remarks = v) } }, label = stringResource(R.string.donations_remarks), maxLines = 3, singleLine = false)
                 if (!state.error.isNullOrBlank()) {
                     Spacer(Modifier.height(8.dp))
                     Text(state.error ?: "", color = colors.error, style = MaterialTheme.typography.bodySmall)
@@ -121,7 +123,7 @@ fun DonationEntryScreen(
                     contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp)
                 ) {
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        Text("Total Amount", style = MaterialTheme.typography.titleMedium, color = colors.textPrimary, fontWeight = FontWeight.SemiBold)
+                        Text(stringResource(R.string.donations_total_amount), style = MaterialTheme.typography.titleMedium, color = colors.textPrimary, fontWeight = FontWeight.SemiBold)
                         Text(
                             text = Formatters.currency(state.amount.toDoubleOrNull() ?: 0.0),
                             style = MaterialTheme.typography.headlineSmall,
@@ -138,7 +140,7 @@ fun DonationEntryScreen(
                         contentPadding = androidx.compose.foundation.layout.PaddingValues(14.dp)
                     ) {
                         Text(
-                            text = "✓ Saved. Receipt generated: ${File(state.pdfPath).name}",
+                            text = stringResource(R.string.donations_receipt_generated, File(state.pdfPath).name),
                             style = MaterialTheme.typography.bodyMedium,
                             color = colors.textPrimary,
                             fontWeight = FontWeight.SemiBold
@@ -147,13 +149,13 @@ fun DonationEntryScreen(
                     Spacer(Modifier.height(12.dp))
                     Row(horizontalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.fillMaxWidth()) {
                         AppButton(
-                            text = "View Receipt",
+                            text = stringResource(R.string.donations_view_receipt),
                             onClick = { PdfShare.open(context, File(state.pdfPath!!)) },
                             modifier = Modifier.weight(1f),
                             leadingIcon = Icons.Rounded.PictureAsPdf
                         )
                         AppButton(
-                            text = "Share",
+                            text = stringResource(R.string.donations_share),
                             onClick = { PdfShare.share(context, File(state.pdfPath!!)) },
                             modifier = Modifier.weight(1f),
                             leadingIcon = Icons.Rounded.Share
@@ -161,13 +163,13 @@ fun DonationEntryScreen(
                     }
                     Spacer(Modifier.height(10.dp))
                     AppButton(
-                        text = "Done",
+                        text = stringResource(R.string.donations_done),
                         onClick = onDone,
                         modifier = Modifier.fillMaxWidth()
                     )
                 } else {
                     AppButton(
-                        text = if (state.isSaving) "Saving..." else "Save & Generate Receipt",
+                        text = if (state.isSaving) stringResource(R.string.donations_saving) else stringResource(R.string.donations_save_generate),
                         onClick = { viewModel.save() },
                         isLoading = state.isSaving
                     )

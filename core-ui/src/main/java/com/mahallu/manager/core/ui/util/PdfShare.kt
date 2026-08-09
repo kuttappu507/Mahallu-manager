@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
 import androidx.core.content.FileProvider
+import com.mahallu.manager.core.ui.R
 import java.io.File
 
 object PdfShare {
@@ -15,14 +16,14 @@ object PdfShare {
      */
     fun open(context: Context, file: File) {
         if (!file.exists()) {
-            Toast.makeText(context, "PDF not found: ${file.absolutePath}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.pdf_not_found_path, file.absolutePath), Toast.LENGTH_SHORT).show()
             return
         }
         val authority = "${context.packageName}.fileprovider"
         val uri: Uri = try {
             FileProvider.getUriForFile(context, authority, file)
         } catch (t: Throwable) {
-            Toast.makeText(context, "Cannot share PDF: ${t.message}", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, context.getString(R.string.pdf_cannot_share_path, t.message ?: ""), Toast.LENGTH_LONG).show()
             return
         }
         val intent = Intent(Intent.ACTION_VIEW).apply {
@@ -31,9 +32,9 @@ object PdfShare {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         try {
-            context.startActivity(Intent.createChooser(intent, "Open PDF with"))
+            context.startActivity(Intent.createChooser(intent, context.getString(R.string.pdf_open_with)))
         } catch (_: ActivityNotFoundException) {
-            Toast.makeText(context, "No PDF viewer installed", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, context.getString(R.string.pdf_no_viewer), Toast.LENGTH_LONG).show()
         }
     }
 
@@ -42,14 +43,14 @@ object PdfShare {
      */
     fun share(context: Context, file: File) {
         if (!file.exists()) {
-            Toast.makeText(context, "PDF not found", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.pdf_not_found), Toast.LENGTH_SHORT).show()
             return
         }
         val authority = "${context.packageName}.fileprovider"
         val uri = try {
             FileProvider.getUriForFile(context, authority, file)
         } catch (t: Throwable) {
-            Toast.makeText(context, "Cannot share: ${t.message}", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, context.getString(R.string.pdf_cannot_share, t.message ?: ""), Toast.LENGTH_LONG).show()
             return
         }
         val intent = Intent(Intent.ACTION_SEND).apply {
@@ -57,6 +58,6 @@ object PdfShare {
             putExtra(Intent.EXTRA_STREAM, uri)
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
-        context.startActivity(Intent.createChooser(intent, "Share PDF"))
+        context.startActivity(Intent.createChooser(intent, context.getString(R.string.pdf_share)))
     }
 }

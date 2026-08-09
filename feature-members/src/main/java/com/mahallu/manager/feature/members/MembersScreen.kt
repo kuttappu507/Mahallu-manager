@@ -30,12 +30,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mahallu.manager.core.database.entity.MemberEntity
+import feature.members.feature.members.R
 import com.mahallu.manager.core.ui.components.AppCard
 import com.mahallu.manager.core.ui.components.AppSearchBar
 import com.mahallu.manager.core.ui.components.ChipPill
@@ -63,7 +65,7 @@ fun MembersScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Members",
+                    text = stringResource(R.string.members_title),
                     style = MaterialTheme.typography.headlineMedium,
                     color = colors.textPrimary,
                     fontWeight = FontWeight.Bold
@@ -91,7 +93,7 @@ fun MembersScreen(
             AppSearchBar(
                 query = state.query,
                 onQueryChange = viewModel::setQuery,
-                placeholder = "Search members...",
+                placeholder = stringResource(R.string.members_search_placeholder),
                 count = state.members.size
             )
 
@@ -117,9 +119,9 @@ fun MembersScreen(
             if (state.members.isEmpty()) {
                 EmptyState(
                     icon = Icons.Rounded.Groups,
-                    title = "No members found",
-                    message = "Add a family first, then add members to it.",
-                    actionLabel = "Add Member",
+                    title = stringResource(R.string.members_empty_title),
+                    message = stringResource(R.string.members_empty_message),
+                    actionLabel = stringResource(R.string.members_add_new),
                     onAction = onAddMember
                 )
             } else {
@@ -133,7 +135,7 @@ fun MembersScreen(
                     }
                     item {
                         Text(
-                            text = "Showing ${state.members.size} of ${state.totalCount} members",
+                            text = stringResource(R.string.members_showing_count, state.members.size, state.totalCount),
                             style = MaterialTheme.typography.labelSmall,
                             color = colors.textTertiary,
                             fontWeight = FontWeight.Bold,
@@ -187,7 +189,7 @@ private fun MemberRow(member: MemberEntity, onClick: () -> Unit) {
                 )
                 Spacer(Modifier.height(2.dp))
                 Text(
-                    text = "${member.memberNumber} • ${member.relationToHead ?: "Member"}",
+                    text = "${member.memberNumber} • ${member.relationToHead ?: stringResource(R.string.member_role)}",
                     style = MaterialTheme.typography.labelSmall,
                     color = colors.textSecondary,
                     maxLines = 1,
@@ -196,7 +198,7 @@ private fun MemberRow(member: MemberEntity, onClick: () -> Unit) {
             }
             Spacer(Modifier.width(8.dp))
             Text(
-                text = (member.gender ?: "MEMBER").uppercase(),
+                text = (member.gender ?: stringResource(R.string.member_role)).uppercase(),
                 style = MaterialTheme.typography.labelSmall,
                 fontWeight = FontWeight.ExtraBold,
                 color = if (member.gender == "MALE") colors.primaryIndigo else colors.purple,

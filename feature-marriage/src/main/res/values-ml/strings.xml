@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cd_save">സേവ് ചെയ്യുക</string>
+    <string name="marriage_list_title">വിവാഹ രജിസ്റ്റർ</string>
+    <string name="marriage_search_placeholder">പേര് അല്ലെങ്കിൽ രജിസ്ട്രേഷൻ നമ്പർ ഉപയോഗിച്ച് തിരയുക</string>
+    <string name="marriage_register_new">വിവാഹം രജിസ്റ്റർ ചെയ്യുക</string>
+    <string name="marriage_edit_title">വിവാഹം എഡിറ്റ് ചെയ്യുക</string>
+    <string name="marriage_registration_number">രജിസ്ട്രേഷൻ നമ്പർ</string>
+    <string name="marriage_bride">വധു</string>
+    <string name="marriage_bride_name">വധുവിന്റെ പേര്</string>
+    <string name="marriage_select_member">അംഗങ്ങളിൽ നിന്ന് തിരഞ്ഞെടുക്കുക</string>
+    <string name="marriage_pick_bride">അംഗങ്ങളിൽ നിന്ന് വധുവിനെ തിരഞ്ഞെടുക്കുക</string>
+    <string name="marriage_pick_groom">അംഗങ്ങളിൽ നിന്ന് വരനെ തിരഞ്ഞെടുക്കുക</string>
+    <string name="marriage_groom">വരൻ</string>
+    <string name="marriage_groom_name">വരന്റെ പേര്</string>
+    <string name="marriage_father_name">പിതാവിന്റെ പേര്</string>
+    <string name="marriage_age">പ്രായം</string>
+    <string name="marriage_witnesses">സാക്ഷികൾ</string>
+    <string name="marriage_witness_1">സാക്ഷി 1</string>
+    <string name="marriage_witness_2">സാക്ഷി 2</string>
+    <string name="marriage_mahar_amount">മഹർ തുക</string>
+    <string name="marriage_nikah_date">നിക്കാഹ് തീയതി</string>
+    <string name="marriage_nikah_location">നിക്കാഹ് സ്ഥലം</string>
+    <string name="marriage_remarks">കുറിപ്പുകൾ</string>
+    <string name="marriage_saving">സേവ് ചെയ്യുന്നു…</string>
+    <string name="marriage_save">വിവാഹം സേവ് ചെയ്യുക</string>
+    <string name="marriage_generate_certificate">വിവാഹ സർട്ടിഫിക്കറ്റ് സൃഷ്ടിക്കുക</string>
+    <string name="marriage_error_names_required">വധുവിന്റെയും വരന്റെയും പേരുകൾ ആവശ്യമാണ്</string>
+    <string name="marriage_row_names">%1$s &amp; %2$s</string>
+    <string name="marriage_row_nikah">നിക്കാഹ്: %1$s</string>
+</resources>

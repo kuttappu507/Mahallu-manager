@@ -32,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -42,6 +43,7 @@ import com.mahallu.manager.core.ui.components.ChipPill
 import com.mahallu.manager.core.ui.components.TopAppBar
 import com.mahallu.manager.core.ui.theme.LocalMahalluColors
 import com.mahallu.manager.core.ui.util.Formatters
+import feature.welfare.feature.welfare.R
 
 @Composable
 fun WelfareEditScreen(
@@ -56,12 +58,12 @@ fun WelfareEditScreen(
     Box(modifier = Modifier.fillMaxSize().background(colors.background)) {
         Column(modifier = Modifier.fillMaxSize()) {
             TopAppBar(
-                title = if (state.id.isBlank()) "New Welfare Request" else "Edit Welfare",
+                title = if (state.id.isBlank()) stringResource(R.string.welfare_edit_new) else stringResource(R.string.welfare_edit_title),
                 showBack = true,
                 onBackClick = onDone,
                 trailingActions = {
                     IconButton(onClick = { viewModel.save() }) {
-                        Icon(Icons.Rounded.Check, contentDescription = "Save", tint = colors.primaryIndigo)
+                        Icon(Icons.Rounded.Check, contentDescription = stringResource(R.string.welfare_cd_save), tint = colors.primaryIndigo)
                     }
                 }
             )
@@ -71,7 +73,7 @@ fun WelfareEditScreen(
                     .verticalScroll(rememberScrollState())
                     .padding(horizontal = 16.dp, vertical = 12.dp)
             ) {
-                Text("Family", style = MaterialTheme.typography.labelLarge, color = colors.textSecondary)
+                Text(stringResource(R.string.welfare_field_family), style = MaterialTheme.typography.labelLarge, color = colors.textSecondary)
                 Spacer(Modifier.height(6.dp))
                 FamilyDropdown(
                     families = state.families,
@@ -79,9 +81,9 @@ fun WelfareEditScreen(
                     onSelect = { id -> viewModel.update { it.copy(familyId = id) } }
                 )
                 Spacer(Modifier.height(12.dp))
-                AppTextField(value = state.applicantName, onValueChange = { v -> viewModel.update { it.copy(applicantName = v) } }, label = "Applicant Name", isRequired = true)
+                AppTextField(value = state.applicantName, onValueChange = { v -> viewModel.update { it.copy(applicantName = v) } }, label = stringResource(R.string.welfare_field_applicant_name), isRequired = true)
                 Spacer(Modifier.height(12.dp))
-                Text("Category", style = MaterialTheme.typography.labelLarge, color = colors.textSecondary)
+                Text(stringResource(R.string.welfare_field_category), style = MaterialTheme.typography.labelLarge, color = colors.textSecondary)
                 Spacer(Modifier.height(6.dp))
                 Row(
                     modifier = Modifier.horizontalScroll(rememberScrollState()),
@@ -92,13 +94,13 @@ fun WelfareEditScreen(
                     }
                 }
                 Spacer(Modifier.height(12.dp))
-                AppTextField(value = state.amount, onValueChange = { v -> viewModel.update { it.copy(amount = v) } }, label = "Amount", keyboardType = KeyboardType.Decimal, isRequired = true)
+                AppTextField(value = state.amount, onValueChange = { v -> viewModel.update { it.copy(amount = v) } }, label = stringResource(R.string.welfare_field_amount), keyboardType = KeyboardType.Decimal, isRequired = true)
                 Spacer(Modifier.height(12.dp))
-                AppTextField(value = state.reason, onValueChange = { v -> viewModel.update { it.copy(reason = v) } }, label = "Reason", maxLines = 3, singleLine = false)
+                AppTextField(value = state.reason, onValueChange = { v -> viewModel.update { it.copy(reason = v) } }, label = stringResource(R.string.welfare_field_reason), maxLines = 3, singleLine = false)
                 Spacer(Modifier.height(12.dp))
-                AppTextField(value = Formatters.date(state.date), onValueChange = { }, label = "Date", readOnly = true)
+                AppTextField(value = Formatters.date(state.date), onValueChange = { }, label = stringResource(R.string.welfare_field_date), readOnly = true)
                 Spacer(Modifier.height(12.dp))
-                Text("Status", style = MaterialTheme.typography.labelLarge, color = colors.textSecondary)
+                Text(stringResource(R.string.welfare_field_status), style = MaterialTheme.typography.labelLarge, color = colors.textSecondary)
                 Spacer(Modifier.height(6.dp))
                 Row(
                     modifier = Modifier.horizontalScroll(rememberScrollState()),
@@ -109,13 +111,13 @@ fun WelfareEditScreen(
                     }
                 }
                 Spacer(Modifier.height(12.dp))
-                AppTextField(value = state.remarks, onValueChange = { v -> viewModel.update { it.copy(remarks = v) } }, label = "Remarks", maxLines = 3, singleLine = false)
+                AppTextField(value = state.remarks, onValueChange = { v -> viewModel.update { it.copy(remarks = v) } }, label = stringResource(R.string.welfare_field_remarks), maxLines = 3, singleLine = false)
                 if (!state.error.isNullOrBlank()) {
                     Spacer(Modifier.height(8.dp))
                     Text(state.error ?: "", color = colors.error, style = MaterialTheme.typography.bodySmall)
                 }
                 Spacer(Modifier.height(20.dp))
-                AppButton(text = if (state.isSaving) "Saving..." else "Save", onClick = { viewModel.save() }, isLoading = state.isSaving)
+                AppButton(text = if (state.isSaving) stringResource(R.string.welfare_saving) else stringResource(R.string.welfare_save), onClick = { viewModel.save() }, isLoading = state.isSaving)
                 Spacer(Modifier.height(24.dp))
             }
         }
@@ -131,7 +133,7 @@ private fun FamilyDropdown(
     val colors = LocalMahalluColors.current
     var expanded by remember { mutableStateOf(false) }
     val selected = families.firstOrNull { it.id == selectedId }
-    val display = selected?.let { "${it.familyNumber} • ${it.houseName}" } ?: "Select family"
+    val display = selected?.let { stringResource(R.string.welfare_family_selector, it.familyNumber, it.houseName) } ?: stringResource(R.string.welfare_family_select)
     Box(modifier = Modifier.fillMaxWidth()) {
         Box(
             modifier = Modifier
@@ -152,7 +154,7 @@ private fun FamilyDropdown(
         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
             families.forEach { f ->
                 DropdownMenuItem(
-                    text = { Text("${f.familyNumber} • ${f.houseName}") },
+                    text = { Text(stringResource(R.string.welfare_family_selector, f.familyNumber, f.houseName)) },
                     onClick = {
                         onSelect(f.id)
                         expanded = false

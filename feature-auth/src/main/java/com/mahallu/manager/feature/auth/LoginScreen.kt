@@ -35,6 +35,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -49,6 +50,7 @@ import com.mahallu.manager.core.ui.components.PasswordTextField
 import com.mahallu.manager.core.ui.theme.LocalMahalluColors
 import com.mahallu.manager.core.ui.theme.PrimaryIndigo
 import com.mahallu.manager.core.ui.theme.RadiusLg
+import com.mahallu.manager.feature.auth.R
 
 @Composable
 fun LoginScreen(
@@ -104,7 +106,7 @@ fun LoginScreen(
             Spacer(Modifier.height(28.dp))
             AnimatedReveal(index = 1) {
                 Text(
-                    text = "As-salamu alaykum",
+                    text = stringResource(R.string.login_greeting),
                     style = MaterialTheme.typography.headlineLarge,
                     color = colors.textPrimary,
                     fontWeight = FontWeight.Bold
@@ -113,7 +115,7 @@ fun LoginScreen(
             AnimatedReveal(index = 1) {
                 Spacer(Modifier.height(6.dp))
                 Text(
-                    text = "Sign in to Mahallu to manage your masjid.",
+                    text = stringResource(R.string.login_subtitle),
                     style = MaterialTheme.typography.bodyMedium,
                     color = colors.textSecondary,
                     fontWeight = FontWeight.SemiBold
@@ -125,8 +127,8 @@ fun LoginScreen(
                 AppTextField(
                     value = username,
                     onValueChange = { username = it; viewModel.clearError() },
-                    label = "Email or member ID",
-                    placeholder = "Enter username or member ID",
+                    label = stringResource(R.string.login_email_member_label),
+                    placeholder = stringResource(R.string.login_email_member_placeholder),
                     leadingIcon = Icons.Rounded.Person,
                     keyboardType = KeyboardType.Text,
                     isRequired = true
@@ -137,7 +139,7 @@ fun LoginScreen(
                 PasswordTextField(
                     value = password,
                     onValueChange = { password = it; viewModel.clearError() },
-                    label = "Password",
+                    label = stringResource(R.string.login_password),
                     isRequired = true
                 )
             }
@@ -145,7 +147,7 @@ fun LoginScreen(
             Spacer(Modifier.height(12.dp))
             AnimatedReveal(index = 2) {
                 Text(
-                    text = "Forgot password?",
+                    text = stringResource(R.string.login_forgot_password),
                     style = MaterialTheme.typography.labelLarge,
                     color = colors.primaryIndigo,
                     fontWeight = FontWeight.Bold,
@@ -174,7 +176,7 @@ fun LoginScreen(
             Spacer(Modifier.height(22.dp))
             AnimatedReveal(index = 3) {
                 AppButton(
-                    text = if (authState.isLoading) "Signing in..." else "Sign In",
+                    text = if (authState.isLoading) stringResource(R.string.login_signing_in) else stringResource(R.string.login_sign_in),
                     onClick = { viewModel.login(username, password, rememberMe) {} },
                     isLoading = authState.isLoading,
                     enabled = !authState.isLoading
@@ -185,7 +187,7 @@ fun LoginScreen(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Box(modifier = Modifier.weight(1f).height(1.dp).background(colors.border))
                 Text(
-                    text = "OR",
+                    text = stringResource(R.string.login_or),
                     style = MaterialTheme.typography.labelSmall,
                     color = colors.textTertiary,
                     fontWeight = FontWeight.ExtraBold,
@@ -197,7 +199,7 @@ fun LoginScreen(
             Spacer(Modifier.height(12.dp))
             AnimatedReveal(index = 4) {
                 AppButton(
-                    text = "Continue as Guest",
+                    text = stringResource(R.string.login_continue_as_guest),
                     onClick = { viewModel.login("secretary", "secretary123", rememberMe) {} },
                     style = AppButtonStyle.Outline
                 )
@@ -206,7 +208,7 @@ fun LoginScreen(
             Spacer(Modifier.height(26.dp))
             AnimatedReveal(index = 4) {
                 Text(
-                    text = "MAHALLU v1.0 · MASJID AN-NOOR",
+                    text = stringResource(R.string.login_version_tagline),
                     style = MaterialTheme.typography.labelSmall,
                     color = colors.textTertiary,
                     fontWeight = FontWeight.Bold,

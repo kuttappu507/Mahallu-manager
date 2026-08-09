@@ -1,5 +1,6 @@
 package com.mahallu.manager.feature.dashboard
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -9,21 +10,18 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AddCard
-import androidx.compose.material.icons.rounded.Campaign
 import androidx.compose.material.icons.automirrored.rounded.TrendingDown
 import androidx.compose.material.icons.automirrored.rounded.TrendingUp
 import androidx.compose.material.icons.rounded.EmojiEvents
@@ -31,6 +29,7 @@ import androidx.compose.material.icons.rounded.FamilyRestroom
 import androidx.compose.material.icons.rounded.Groups
 import androidx.compose.material.icons.rounded.Handshake
 import androidx.compose.material.icons.rounded.MonetizationOn
+import androidx.compose.material.icons.rounded.Payments
 import androidx.compose.material.icons.rounded.PersonAdd
 import androidx.compose.material.icons.rounded.VolunteerActivism
 import androidx.compose.material3.Icon
@@ -39,13 +38,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
@@ -59,8 +64,12 @@ import com.mahallu.manager.core.ui.components.DashboardHeader
 import com.mahallu.manager.core.ui.components.LineChart
 import com.mahallu.manager.core.ui.components.SmallActionButton
 import com.mahallu.manager.core.ui.components.StatTile
+import com.mahallu.manager.core.ui.components.statusBarInsetDp
 import com.mahallu.manager.core.ui.theme.LocalMahalluColors
 import com.mahallu.manager.core.ui.util.Formatters
+import feature.dashboard.feature.dashboard.R
+
+private val STAT_OVERLAP_FALLBACK = 56.dp
 
 @Composable
 fun DashboardScreen(
@@ -69,38 +78,59 @@ fun DashboardScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val colors = LocalMahalluColors.current
+    val context = LocalContext.current
 
     DashboardLightStatusBar()
 
+    val statusBarInset = statusBarInsetDp()
     Box(modifier = Modifier.fillMaxSize().background(colors.background)) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(bottom = 24.dp)
+            modifier = Modifier
+                .fillMaxSize()
+                .offset(y = -statusBarInset),
+            contentPadding = PaddingValues(bottom = 16.dp)
         ) {
             item {
-                DashboardHeader(
-                    greeting = "AS-SALAMU ALAYKUM",
-                    subtitle = Formatters.dateWithWeekday(System.currentTimeMillis()),
-                    userName = state.userName,
-                    onSearchClick = { onNavigate("search") },
-                    onNotificationClick = { onNavigate("announcements") }
-                )
+                Column {
+                    var gridHeightPx by remember { mutableStateOf(0) }
+                    val density = LocalDensity.current
+                    val overlap = if (gridHeightPx > 0) {
+                        with(density) { (gridHeightPx / 2).toDp() }
+                    } else {
+                        STAT_OVERLAP_FALLBACK
+                    }
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        DashboardHeader(
+                            greeting = stringResource(R.string.dashboard_greeting),
+                            subtitle = Formatters.dateWithWeekday(System.currentTimeMillis()),
+                            userName = state.userName,
+                            onSearchClick = { onNavigate("search") },
+                            onNotificationClick = { onNavigate("announcements") }
+                        )
+                        StatsGrid(
+                            state = state,
+                            colors = colors,
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .offset(y = overlap)
+                                .onSizeChanged { gridHeightPx = it.height }
+                        )
+                    }
+                    Spacer(Modifier.height(overlap))
+                }
             }
             item {
-                StatsGrid(state, colors)
-            }
-            item {
-                Spacer(Modifier.height(8.dp))
                 QuickActionsRow(onNavigate)
                 Spacer(Modifier.height(8.dp))
             }
             item {
-                SectionHeader("Donations — last 6 months", onMore = { onNavigate("finance") })
+                SectionHeader(stringResource(R.string.dashboard_donations_last_6), onMore = { onNavigate("donations") })
                 ChartCard(
-                    title = "Donation trends",
+                    title = stringResource(R.string.dashboard_donation_trends),
                     subtitle = trendRangeLabel(state.donationTrend.map { it.label }),
-                    total = Formatters.currencyShort(state.donationTrend.sumOf { it.amount.toDouble() }),
-                    points = state.donationTrend.map { ChartPoint(it.label, it.amount) }
+                    total = Formatters.currencyShort(state.donationTrend.sumOf { it.amount.toDouble() }, context),
+                    points = state.donationTrend.map { ChartPoint(it.label, it.amount) },
+                    onClick = { onNavigate("donations") }
                 ) {
                     LineChart(
                         points = state.donationTrend.map { ChartPoint(it.label, it.amount) },
@@ -112,46 +142,51 @@ fun DashboardScreen(
             }
             item {
                 Spacer(Modifier.height(12.dp))
-                SectionHeader("Income vs Expense", subtitle = "This Year", onMore = { onNavigate("finance") })
+                SectionHeader(stringResource(R.string.dashboard_income_vs_expense), subtitle = stringResource(R.string.dashboard_this_year), onMore = { onNavigate("finance") })
                 ChartCard(
-                    title = "Income vs Expense",
-                    subtitle = "Monthly net",
+                    title = stringResource(R.string.dashboard_income_vs_expense),
+                    subtitle = stringResource(R.string.dashboard_monthly_net),
                     total = Formatters.currencyShort(
-                        state.monthlyTrend.sumOf { it.income - it.expense }
+                        state.monthlyTrend.sumOf { it.income - it.expense },
+                        context
                     ),
-                    points = state.monthlyTrend.map { ChartPoint(it.label, it.income.toFloat()) }
+                    points = state.monthlyTrend.map { ChartPoint(it.label, it.income.toFloat()) },
+                    onClick = { onNavigate("finance") }
                 ) {
                     BarChart(
                         bars = state.monthlyTrend.map { ChartPoint(it.label, it.income.toFloat()) },
                         primaryColor = colors.chartIncome,
                         secondaryColor = colors.chartExpense,
                         showLegend = true,
-                        seriesLabels = "Income" to "Expense"
+                        seriesLabels = stringResource(R.string.dashboard_income) to stringResource(R.string.dashboard_expense),
+                        secondaryBars = state.monthlyTrend.map { ChartPoint(it.label, it.expense.toFloat()) }
                     )
                 }
             }
             item {
                 Spacer(Modifier.height(12.dp))
-                SectionHeader("Recent activity", subtitle = "Last 7 days", onMore = { onNavigate("finance") })
-                RecentActivities(state.summary.recentActivities)
+                SectionHeader(stringResource(R.string.dashboard_recent_activity), subtitle = stringResource(R.string.dashboard_last_7_days), onMore = { onNavigate("finance") })
+                RecentActivities(state.summary.recentActivities, context)
             }
         }
     }
 }
 
 @Composable
-private fun StatsGrid(state: DashboardUiState, colors: com.mahallu.manager.core.ui.theme.MahalluColors) {
-    val statusBarInset = WindowInsets.statusBars.getTop(LocalDensity.current)
+private fun StatsGrid(
+    state: DashboardUiState,
+    colors: com.mahallu.manager.core.ui.theme.MahalluColors,
+    modifier: Modifier = Modifier
+) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 18.dp)
-            .height(IntrinsicSize.Min)
-            .offset(y = -(statusBarInset + 30).dp),
+            .height(IntrinsicSize.Min),
         horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         StatTile(
-            label = "Members",
+            label = stringResource(R.string.dashboard_stat_members),
             value = state.summary.totalMembers.toString(),
             icon = Icons.Rounded.Groups,
             accent = colors.primaryIndigo,
@@ -159,7 +194,7 @@ private fun StatsGrid(state: DashboardUiState, colors: com.mahallu.manager.core.
             modifier = Modifier.weight(1f)
         )
         StatTile(
-            label = "Families",
+            label = stringResource(R.string.dashboard_stat_families),
             value = state.summary.totalFamilies.toString(),
             icon = Icons.Rounded.FamilyRestroom,
             accent = colors.purple,
@@ -167,15 +202,15 @@ private fun StatsGrid(state: DashboardUiState, colors: com.mahallu.manager.core.
             modifier = Modifier.weight(1f)
         )
         StatTile(
-            label = "This Month",
-            value = Formatters.currencyShort(state.summary.collectionThisMonth),
+            label = stringResource(R.string.dashboard_stat_this_month),
+            value = Formatters.currencyShort(state.summary.collectionThisMonth, LocalContext.current),
             icon = Icons.Rounded.MonetizationOn,
             accent = colors.success,
             index = 2,
             modifier = Modifier.weight(1f)
         )
         StatTile(
-            label = "Certificates",
+            label = stringResource(R.string.dashboard_stat_certificates),
             value = state.summary.certificateCount.toString(),
             icon = Icons.Rounded.EmojiEvents,
             accent = colors.warning,
@@ -188,36 +223,41 @@ private fun StatsGrid(state: DashboardUiState, colors: com.mahallu.manager.core.
 @Composable
 private fun QuickActionsRow(onNavigate: (String) -> Unit) {
     val colors = LocalMahalluColors.current
-    Row(
+    AppCard(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 14.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+            .padding(horizontal = 14.dp)
+            .fillMaxWidth(),
+        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 14.dp)
     ) {
-        quickActions().forEach { action ->
-            SmallActionButton(
-                icon = action.icon,
-                label = action.label,
-                onClick = { onNavigate(action.route) },
-                accent = action.accent ?: colors.primaryIndigo,
-                modifier = Modifier.weight(1f)
-            )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            quickActions().forEach { action ->
+                SmallActionButton(
+                    icon = action.icon,
+                    label = stringResource(action.labelRes),
+                    onClick = { onNavigate(action.route) },
+                    accent = action.accent ?: colors.primaryIndigo,
+                    modifier = Modifier.weight(1f)
+                )
+            }
         }
     }
 }
 
 private data class QuickAction(
-    val label: String,
+    val labelRes: Int,
     val icon: ImageVector,
     val route: String,
     val accent: Color? = null
 )
 
 private fun quickActions(): List<QuickAction> = listOf(
-    QuickAction("Add Member", Icons.Rounded.PersonAdd, "member_edit?id=", Color(0xFF4F46E5)),
-    QuickAction("Record Donation", Icons.Rounded.VolunteerActivism, "donation_entry", Color(0xFF059669)),
-    QuickAction("New Certificate", Icons.Rounded.AddCard, "certificates", Color(0xFF7C3AED)),
-    QuickAction("Announcement", Icons.Rounded.Campaign, "announcements", Color(0xFFFF6B6B))
+    QuickAction(R.string.dashboard_action_add_member, Icons.Rounded.PersonAdd, "member_edit?id=", Color(0xFF4F46E5)),
+    QuickAction(R.string.dashboard_action_record_donation, Icons.Rounded.VolunteerActivism, "donation_entry", Color(0xFF059669)),
+    QuickAction(R.string.dashboard_action_add_collection, Icons.Rounded.Payments, "collection_entry?memberId=", Color(0xFF0D9488)),
+    QuickAction(R.string.dashboard_action_new_certificate, Icons.Rounded.AddCard, "certificates", Color(0xFF7C3AED))
 )
 
 @Composable
@@ -226,6 +266,7 @@ private fun ChartCard(
     subtitle: String,
     total: String,
     points: List<ChartPoint>,
+    onClick: (() -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
     val colors = LocalMahalluColors.current
@@ -233,6 +274,7 @@ private fun ChartCard(
         modifier = Modifier
             .padding(horizontal = 14.dp)
             .fillMaxWidth(),
+        onClick = onClick,
         contentPadding = PaddingValues(16.dp)
     ) {
         Column {
@@ -358,7 +400,7 @@ private fun SectionHeader(title: String, subtitle: String? = null, onMore: (() -
         }
         if (onMore != null) {
             Text(
-                text = "See all",
+                text = stringResource(R.string.dashboard_see_all),
                 style = MaterialTheme.typography.labelSmall,
                 color = colors.primaryIndigo,
                 fontWeight = FontWeight.Bold,
@@ -369,7 +411,7 @@ private fun SectionHeader(title: String, subtitle: String? = null, onMore: (() -
 }
 
 @Composable
-private fun RecentActivities(activities: List<ActivityItem>) {
+private fun RecentActivities(activities: List<ActivityItem>, context: Context) {
     val colors = LocalMahalluColors.current
     if (activities.isEmpty()) {
         AppCard(
@@ -379,7 +421,7 @@ private fun RecentActivities(activities: List<ActivityItem>) {
             contentPadding = PaddingValues(20.dp)
         ) {
             Text(
-                text = "No recent activities",
+                text = stringResource(R.string.dashboard_no_recent),
                 color = colors.textTertiary,
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.fillMaxWidth()
@@ -418,17 +460,19 @@ private fun RecentActivities(activities: List<ActivityItem>) {
                             style = MaterialTheme.typography.bodyMedium,
                             color = colors.textPrimary,
                             fontWeight = FontWeight.ExtraBold,
-                            maxLines = 1
+                            maxLines = 1,
+                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                         )
                         Text(
                             text = item.subtitle,
                             style = MaterialTheme.typography.labelSmall,
                             color = colors.textSecondary,
-                            maxLines = 1
+                            maxLines = 1,
+                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                         )
                     }
                     Text(
-                        text = Formatters.relativeDate(item.timestamp),
+                        text = Formatters.relativeDate(item.timestamp, context),
                         style = MaterialTheme.typography.labelSmall,
                         color = colors.textTertiary,
                         fontWeight = FontWeight.Bold

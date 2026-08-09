@@ -31,6 +31,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -42,6 +43,7 @@ import com.mahallu.manager.core.ui.components.IconCircleButton
 import com.mahallu.manager.core.ui.components.TopAppBar
 import com.mahallu.manager.core.ui.theme.LocalMahalluColors
 import com.mahallu.manager.core.ui.util.Formatters
+import feature.settings.feature.settings.R
 
 @Composable
 fun BackupScreen(onBack: () -> Unit, viewModel: BackupViewModel = hiltViewModel()) {
@@ -50,7 +52,7 @@ fun BackupScreen(onBack: () -> Unit, viewModel: BackupViewModel = hiltViewModel(
 
     Box(modifier = Modifier.fillMaxSize().background(colors.background)) {
         Column(modifier = Modifier.fillMaxSize()) {
-            TopAppBar(title = "Backup & Restore", showBack = true, onBackClick = onBack)
+            TopAppBar(title = stringResource(R.string.backup_title), showBack = true, onBackClick = onBack)
             AppCard(
                 modifier = Modifier.padding(14.dp).fillMaxWidth(),
                 backgroundColor = colors.primaryIndigo.copy(alpha = 0.06f),
@@ -68,14 +70,14 @@ fun BackupScreen(onBack: () -> Unit, viewModel: BackupViewModel = hiltViewModel(
                     }
                     Spacer(Modifier.width(12.dp))
                     Column(modifier = Modifier.weight(1f)) {
-                        Text("Cloud Backup", style = MaterialTheme.typography.titleMedium, color = colors.textPrimary, fontWeight = FontWeight.SemiBold)
+                        Text(stringResource(R.string.backup_cloud_title), style = MaterialTheme.typography.titleMedium, color = colors.textPrimary, fontWeight = FontWeight.SemiBold)
                         Text(
-                            text = "Encrypted backup to Google Drive (AES-256-GCM)",
+                            text = stringResource(R.string.backup_cloud_desc),
                             style = MaterialTheme.typography.bodySmall,
                             color = colors.textSecondary
                         )
                         Text(
-                            text = "Last: " + if (state.lastBackupAt > 0) Formatters.date(state.lastBackupAt) else "Never",
+                            text = stringResource(R.string.backup_last_label, if (state.lastBackupAt > 0) Formatters.date(state.lastBackupAt) else stringResource(R.string.backup_never)),
                             style = MaterialTheme.typography.labelMedium,
                             color = colors.textTertiary
                         )
@@ -88,13 +90,13 @@ fun BackupScreen(onBack: () -> Unit, viewModel: BackupViewModel = hiltViewModel(
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 AppButton(
-                    text = if (state.isBackingUp) "Backing up..." else "Backup Now",
+                    text = if (state.isBackingUp) stringResource(R.string.backup_backing_up) else stringResource(R.string.backup_now),
                     onClick = { viewModel.backupNow() },
                     isLoading = state.isBackingUp,
                     modifier = Modifier.weight(1f)
                 )
                 AppButton(
-                    text = "Auto Backup",
+                    text = stringResource(R.string.backup_auto),
                     onClick = { viewModel.toggleAutoBackup() },
                     modifier = Modifier.weight(1f),
                     style = if (state.autoEnabled) com.mahallu.manager.core.ui.components.AppButtonStyle.Outline
@@ -104,7 +106,7 @@ fun BackupScreen(onBack: () -> Unit, viewModel: BackupViewModel = hiltViewModel(
             Spacer(Modifier.height(14.dp))
 
             Text(
-                text = "Backup History",
+                text = stringResource(R.string.backup_history),
                 style = MaterialTheme.typography.titleSmall,
                 color = colors.textPrimary,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
@@ -170,7 +172,7 @@ private fun BackupRow(b: BackupEntity, onRestore: () -> Unit) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(b.fileName, style = MaterialTheme.typography.titleSmall, color = colors.textPrimary, fontWeight = FontWeight.SemiBold)
                 Text(
-                    text = "${Formatters.date(b.createdAt)} • ${"%.1f".format(b.size / 1024.0)} KB • ${b.type}",
+                    text = stringResource(R.string.backup_row_info, Formatters.date(b.createdAt), b.size / 1024.0, b.type),
                     style = MaterialTheme.typography.labelSmall,
                     color = colors.textSecondary
                 )
