@@ -2,6 +2,7 @@ package com.mahallu.manager.core.database.repository
 
 import com.mahallu.manager.core.database.dao.DonationDao
 import com.mahallu.manager.core.database.dao.FamilyDao
+import com.mahallu.manager.core.database.dao.FinanceDao
 import com.mahallu.manager.core.database.dao.MemberDao
 import com.mahallu.manager.core.database.dao.SettingsDao
 import com.mahallu.manager.core.database.dao.SubscriptionDao
@@ -23,6 +24,7 @@ class SeedData @Inject constructor(
     private val familyDao: FamilyDao,
     private val memberDao: MemberDao,
     private val donationDao: DonationDao,
+    private val financeDao: FinanceDao,
     private val subscriptionDao: SubscriptionDao,
     private val settingsDao: SettingsDao
 ) {
@@ -222,6 +224,7 @@ class SeedData @Inject constructor(
                 7500.0, "EDUCATION", "Education fund", now - 45 * day, "BANK", "TXN1111", null, "admin")
         )
         donationDao.upsertAll(donations)
+        financeDao.upsertAll(donations.map { financeEntryFromDonation(it) })
 
         // Subscriptions for current month
         val subs = listOf(
@@ -242,5 +245,6 @@ class SeedData @Inject constructor(
                 cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1)
         )
         subscriptionDao.upsertAll(subs)
+        financeDao.upsertAll(subs.map { financeEntryFromSubscription(it) })
     }
 }

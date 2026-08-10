@@ -1,6 +1,7 @@
 package com.mahallu.manager.core.database.repository
 
 import com.mahallu.manager.core.database.dao.DonationDao
+import com.mahallu.manager.core.database.dao.FinanceDao
 import com.mahallu.manager.core.database.entity.DonationEntity
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -9,6 +10,7 @@ import javax.inject.Singleton
 @Singleton
 class DonationRepository @Inject constructor(
     private val dao: DonationDao,
+    private val financeDao: FinanceDao,
     private val currentActor: CurrentActor,
     private val auditLog: AuditLogRepository
 ) {
@@ -23,6 +25,7 @@ class DonationRepository @Inject constructor(
     suspend fun save(entity: DonationEntity) {
         val existing = dao.getById(entity.id)
         dao.upsert(entity)
+        financeDao.upsert(financeEntryFromDonation(entity))
         auditLog.log(
             userId = currentActor.snapshot()?.userId.orEmpty(),
             userName = currentActor.snapshot()?.userName.orEmpty(),
@@ -32,10 +35,14 @@ class DonationRepository @Inject constructor(
             description = "${if (existing == null) "Recorded" else "Updated"} donation of ${entity.amount} from ${entity.donorName}"
         )
     }
-    suspend fun saveAll(items: List<DonationEntity>) = dao.upsertAll(items)
+    suspend fun saveAll(items: List<DonationEntity>) {
+        dao.upsertAll(items)
+        financeDao.upsertAll(items.map { financeEntryFromDonation(it) })
+    }
     suspend fun delete(id: String) {
         val entity = dao.getById(id)
         dao.delete(id)
+        financeDao.deleteByReceiptId(id)
         auditLog.log(
             userId = currentActor.snapshot()?.userId.orEmpty(),
             userName = currentActor.snapshot()?.userName.orEmpty(),

@@ -74,18 +74,20 @@ fun MainShell(
 
     val showBottomBar = tabs.any { it.route == currentRoute }
 
+    val navigateToTab: (String) -> Unit = { route ->
+        navController.navigate(route) {
+            popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+            launchSingleTop = true
+            restoreState = true
+        }
+    }
+
     Scaffold(
         bottomBar = {
             if (showBottomBar) {
                 AppBottomNavBar(
                     currentRoute = currentRoute,
-                    onItemClick = { item ->
-                        navController.navigate(item.route) {
-                            popUpTo(navController.graph.findStartDestination().id) { saveState = true }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    }
+                    onItemClick = { item -> navigateToTab(item.route) }
                 )
             }
         },
@@ -98,7 +100,9 @@ fun MainShell(
             ) {
                 composable("dashboard") {
                     DashboardScreen(
-                        onNavigate = { route -> navController.navigate(route) }
+                        onNavigate = { route ->
+                            if (tabs.any { it.route == route }) navigateToTab(route) else navController.navigate(route)
+                        }
                     )
                 }
                 composable("families") {

@@ -1,6 +1,7 @@
 package com.mahallu.manager.core.database.repository
 
 import com.mahallu.manager.core.database.dao.FamilyDao
+import com.mahallu.manager.core.database.dao.FinanceDao
 import com.mahallu.manager.core.database.dao.MemberDao
 import com.mahallu.manager.core.database.dao.SubscriptionDao
 import com.mahallu.manager.core.database.entity.SubscriptionEntity
@@ -12,6 +13,7 @@ import javax.inject.Singleton
 @Singleton
 class SubscriptionRepository @Inject constructor(
     private val dao: SubscriptionDao,
+    private val financeDao: FinanceDao,
     private val familyDao: FamilyDao,
     private val memberDao: MemberDao,
     private val currentActor: CurrentActor,
@@ -30,6 +32,7 @@ class SubscriptionRepository @Inject constructor(
     suspend fun save(entity: SubscriptionEntity) {
         val existing = dao.getById(entity.id)
         dao.upsert(entity)
+        financeDao.upsert(financeEntryFromSubscription(entity))
         auditLog.log(
             userId = currentActor.snapshot()?.userId.orEmpty(),
             userName = currentActor.snapshot()?.userName.orEmpty(),
@@ -39,10 +42,14 @@ class SubscriptionRepository @Inject constructor(
             description = "${if (existing == null) "Recorded" else "Updated"} ${entity.type.lowercase()} collection of ${entity.amount} (receipt ${entity.receiptNumber})"
         )
     }
-    suspend fun saveAll(items: List<SubscriptionEntity>) = dao.upsertAll(items)
+    suspend fun saveAll(items: List<SubscriptionEntity>) {
+        dao.upsertAll(items)
+        financeDao.upsertAll(items.map { financeEntryFromSubscription(it) })
+    }
     suspend fun delete(id: String) {
         val entity = dao.getById(id)
         dao.delete(id)
+        financeDao.deleteByReceiptId(id)
         auditLog.log(
             userId = currentActor.snapshot()?.userId.orEmpty(),
             userName = currentActor.snapshot()?.userName.orEmpty(),

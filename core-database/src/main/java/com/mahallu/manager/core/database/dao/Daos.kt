@@ -245,6 +245,9 @@ interface FinanceDao {
     @Query("DELETE FROM finance_entries WHERE id = :id")
     suspend fun delete(id: String)
 
+    @Query("DELETE FROM finance_entries WHERE receiptId = :receiptId")
+    suspend fun deleteByReceiptId(receiptId: String)
+
     @Query("DELETE FROM finance_entries")
     suspend fun clear()
 }
