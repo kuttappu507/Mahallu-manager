@@ -14,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -21,6 +22,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.mahallu.manager.MahalluApplication
 import com.mahallu.manager.core.ui.R as CoreUiR
 import com.mahallu.manager.core.ui.theme.PrimaryIndigo
 import com.mahallu.manager.feature.auth.LoginScreen
@@ -32,9 +34,14 @@ fun MahalluNavGraph() {
     val authViewModel: LoginViewModel = hiltViewModel()
     val authState by authViewModel.authState.collectAsStateWithLifecycle()
 
-    if (authState.isInitializing) {
-        // Branded loading gate: keeps the splash look while the persisted session
-        // is checked, so the login screen never flashes for already signed-in users.
+    val appContext = LocalContext.current.applicationContext as MahalluApplication
+    val appReady by appContext.appReady.collectAsStateWithLifecycle()
+
+    if (authState.isInitializing || !appReady) {
+        // Branded loading gate: keeps the splash look while the persisted
+        // session is checked and the first-run DB seed finishes, so the login
+        // screen never flashes for signed-in users and first-run seeding jank
+        // is hidden behind this screen instead of janking the UI.
         Box(
             modifier = Modifier.fillMaxSize().background(PrimaryIndigo),
             contentAlignment = Alignment.Center
