@@ -96,7 +96,7 @@ fun LoginScreen(
                             .border(1.5.dp, Color.White.copy(alpha = 0.28f), CircleShape)
                     )
                     Image(
-                        painter = painterResource(CoreUiR.drawable.ic_logo_mosque),
+                        painter = painterResource(CoreUiR.drawable.ic_logo),
                         contentDescription = null,
                         modifier = Modifier.size(104.dp)
                     )

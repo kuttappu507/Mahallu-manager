@@ -48,7 +48,7 @@ fun MahalluNavGraph() {
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Image(
-                    painter = painterResource(CoreUiR.drawable.ic_logo_mosque),
+                    painter = painterResource(CoreUiR.drawable.ic_logo),
                     contentDescription = null,
                     modifier = Modifier.size(120.dp)
                 )
