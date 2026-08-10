@@ -27,8 +27,10 @@ import androidx.compose.material.icons.automirrored.rounded.TrendingDown
 import androidx.compose.material.icons.automirrored.rounded.TrendingUp
 import androidx.compose.material.icons.rounded.ArrowDownward
 import androidx.compose.material.icons.rounded.ArrowUpward
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.IosShare
 import androidx.compose.material.icons.rounded.Payments
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -108,7 +110,7 @@ fun FinanceScreen(
 
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(bottom = 24.dp)
+                contentPadding = PaddingValues(bottom = 100.dp)
             ) {
                 item {
                     BalanceCard(balance = state.balance, income = state.totalIncome, expense = state.totalExpense)
@@ -193,6 +195,17 @@ fun FinanceScreen(
                 }
             }
         }
+
+        ExtendedFloatingActionButton(
+            onClick = onAddEntry,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(end = 18.dp, bottom = 18.dp),
+            containerColor = colors.primaryIndigo,
+            contentColor = Color.White,
+            icon = { Icon(Icons.Rounded.Add, contentDescription = null) },
+            text = { Text(stringResource(R.string.finance_add_entry), fontWeight = FontWeight.Bold, maxLines = 1) }
+        )
     }
 }
 

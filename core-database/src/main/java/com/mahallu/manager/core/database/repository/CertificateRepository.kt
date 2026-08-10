@@ -11,6 +11,7 @@ class CertificateRepository @Inject constructor(private val dao: CertificateDao)
     fun observeAll(): Flow<List<CertificateEntity>> = dao.observeAll()
     fun observeByType(type: String): Flow<List<CertificateEntity>> = dao.observeByType(type)
     suspend fun getById(id: String): CertificateEntity? = dao.getById(id)
+    suspend fun findByTypeAndSubject(type: String, subjectName: String): CertificateEntity? = dao.findByTypeAndSubject(type, subjectName)
     suspend fun save(entity: CertificateEntity) = dao.upsert(entity)
     suspend fun saveAll(items: List<CertificateEntity>) = dao.upsertAll(items)
 }

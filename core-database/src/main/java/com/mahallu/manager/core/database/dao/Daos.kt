@@ -373,6 +373,9 @@ interface CertificateDao {
     @Query("SELECT * FROM certificates WHERE id = :id")
     suspend fun getById(id: String): com.mahallu.manager.core.database.entity.CertificateEntity?
 
+    @Query("SELECT * FROM certificates WHERE type = :type AND subjectName = :subjectName COLLATE NOCASE LIMIT 1")
+    suspend fun findByTypeAndSubject(type: String, subjectName: String): com.mahallu.manager.core.database.entity.CertificateEntity?
+
     @Query("SELECT * FROM certificates ORDER BY issuedDate DESC")
     fun observeAll(): Flow<List<com.mahallu.manager.core.database.entity.CertificateEntity>>
 

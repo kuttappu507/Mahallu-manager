@@ -27,6 +27,7 @@
     <!-- Income/Expense entry screen -->
     <string name="finance_add_income">Add Income</string>
     <string name="finance_add_expense">Add Expense</string>
+    <string name="finance_add_entry">Add Entry</string>
     <string name="finance_field_type">Type</string>
     <string name="finance_type_income">Income</string>
     <string name="finance_type_expense">Expense</string>

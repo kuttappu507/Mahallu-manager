@@ -253,7 +253,8 @@ class CertificateFormViewModel @Inject constructor(
                     }
                 }
                 lines += PdfTextLine(" ", sizeSp = 8f)
-                lines += PdfTextLine(context.getString(R.string.cert_pdf_issued_on, java.text.SimpleDateFormat("dd MMM yyyy", java.util.Locale.getDefault()).format(java.util.Date())), sizeSp = 11f, align = Align.RIGHT)
+                val stamp = java.text.SimpleDateFormat("dd MMM yyyy, hh:mm a", java.util.Locale.getDefault()).format(java.util.Date())
+                lines += PdfTextLine(context.getString(R.string.cert_pdf_issued_on, stamp), sizeSp = 11f, align = Align.RIGHT)
                 lines += PdfTextLine(context.getString(R.string.cert_pdf_authorised_signatory), sizeSp = 11f, bold = true, align = Align.RIGHT)
 
                 val file = pdfGenerator.generate(
@@ -262,7 +263,7 @@ class CertificateFormViewModel @Inject constructor(
                         title = title,
                         subtitle = mahalluName,
                         lines = lines,
-                        footer = context.getString(R.string.cert_pdf_footer_generated_by, mahalluName)
+                        footer = context.getString(R.string.cert_pdf_footer_generated_at, mahalluName, stamp)
                     )
                 )
                 val subjectName = when (type) {
@@ -270,16 +271,22 @@ class CertificateFormViewModel @Inject constructor(
                     "DEATH" -> s.deceasedName
                     else -> s.memberName
                 }
-                val certEntity = CertificateEntity(
-                    id = IdGenerator.newId(),
-                    certificateNumber = "CRT-${System.currentTimeMillis().toString().takeLast(7)}",
-                    type = type,
-                    subjectId = "",
-                    subjectName = subjectName,
-                    issuedTo = subjectName,
-                    issuedDate = System.currentTimeMillis(),
-                    pdfPath = file.absolutePath
-                )
+                val now = System.currentTimeMillis()
+                val existing = certificateRepo.findByTypeAndSubject(type, subjectName)
+                val certEntity = if (existing != null) {
+                    existing.copy(issuedDate = now, pdfPath = file.absolutePath)
+                } else {
+                    CertificateEntity(
+                        id = IdGenerator.newId(),
+                        certificateNumber = "CRT-${now.toString().takeLast(7)}",
+                        type = type,
+                        subjectId = "",
+                        subjectName = subjectName,
+                        issuedTo = subjectName,
+                        issuedDate = now,
+                        pdfPath = file.absolutePath
+                    )
+                }
                 certificateRepo.save(certEntity)
                 _state.update { it.copy(pdfPath = file.absolutePath, isGenerating = false, message = context.getString(R.string.cert_pdf_generated_name, file.name)) }
             } catch (t: Throwable) {

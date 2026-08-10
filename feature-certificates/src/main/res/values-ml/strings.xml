@@ -3,6 +3,8 @@
     <string name="cd_generate_pdf">PDF സൃഷ്ടിക്കുക</string>
     <string name="cert_certificates_title">സർട്ടിഫിക്കറ്റുകൾ</string>
     <string name="cert_issued_count">%1$d ഇഷ്യൂ ചെയ്തു</string>
+    <string name="cert_generated_section">സൃഷ്ടിച്ച സർട്ടിഫിക്കറ്റുകൾ</string>
+    <string name="cert_row_detail">%1$s • %2$s</string>
     <string name="cert_membership_title">അംഗത്വ സർട്ടിഫിക്കറ്റ്</string>
     <string name="cert_residence_title">താമസ സർട്ടിഫിക്കറ്റ്</string>
     <string name="cert_marriage_title">വിവാഹ സർട്ടിഫിക്കറ്റ്</string>
@@ -70,6 +72,7 @@
     <string name="cert_pdf_issued_on">ഇഷ്യൂ ചെയ്തത്: %1$s</string>
     <string name="cert_pdf_authorised_signatory">അംഗീകൃത ഒപ്പിട്ടയാൾ</string>
     <string name="cert_pdf_footer_generated_by">%1$s • മഹല്ല് മാനേജർ സൃഷ്ടിച്ചത്</string>
+    <string name="cert_pdf_footer_generated_at">%1$s • %2$s-ൽ സൃഷ്ടിച്ചത്</string>
     <string name="cert_pdf_default_footer">മഹല്ല് മാനേജർ • %1$s-ൽ സൃഷ്ടിച്ചത്</string>
     <string name="cert_pdf_generated_name">PDF സൃഷ്ടിച്ചു: %1$s</string>
     <string name="cert_pdf_failed_error">പരാജയപ്പെട്ടു: %1$s</string>

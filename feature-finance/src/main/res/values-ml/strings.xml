@@ -22,6 +22,7 @@
     <string name="finance_share_chooser">ധനകാര്യ സംഗ്രഹം പങ്കിടുക</string>
     <string name="finance_add_income">വരുമാനം ചേർക്കുക</string>
     <string name="finance_add_expense">ചെലവ് ചേർക്കുക</string>
+    <string name="finance_add_entry">എൻട്രി ചേർക്കുക</string>
     <string name="finance_field_type">തരം</string>
     <string name="finance_type_income">വരുമാനം</string>
     <string name="finance_type_expense">ചെലവ്</string>

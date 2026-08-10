@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -27,20 +28,27 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.mahallu.manager.core.database.entity.CertificateEntity
 import com.mahallu.manager.core.ui.components.AppCard
 import com.mahallu.manager.core.ui.components.IconCircleButton
 import com.mahallu.manager.core.ui.theme.LocalMahalluColors
+import com.mahallu.manager.core.ui.util.Formatters
+import com.mahallu.manager.core.ui.util.PdfShare
 import feature.certificates.feature.certificates.R
+import java.io.File
 
 private data class CertificateType(
     val type: String,
@@ -56,6 +64,8 @@ fun CertificateListScreen(
     viewModel: CertificateListViewModel = hiltViewModel()
 ) {
     val colors = LocalMahalluColors.current
+    val context = LocalContext.current
+    val issued = viewModel.certificates.collectAsStateWithLifecycle().value
     val certificates = listOf(
         CertificateType("MEMBERSHIP", stringResource(R.string.cert_membership_title), stringResource(R.string.cert_membership_description), Icons.Rounded.Person),
         CertificateType("RESIDENCE", stringResource(R.string.cert_residence_title), stringResource(R.string.cert_residence_description), Icons.Rounded.Home),
@@ -63,11 +73,11 @@ fun CertificateListScreen(
         CertificateType("DEATH", stringResource(R.string.cert_death_title), stringResource(R.string.cert_death_description), Icons.Rounded.Description)
     )
 
-    androidx.compose.foundation.layout.Box(modifier = Modifier.fillMaxSize().background(colors.background)) {
+    Box(modifier = Modifier.fillMaxSize().background(colors.background)) {
         Column(modifier = Modifier.fillMaxSize()) {
             CertificatePageHead(
                 title = stringResource(R.string.cert_certificates_title),
-                count = stringResource(R.string.cert_issued_count, 86),
+                count = stringResource(R.string.cert_issued_count, issued.size),
                 showBack = true,
                 onBack = onBack,
                 showAdd = true,
@@ -95,14 +105,93 @@ fun CertificateListScreen(
                             }
                             Spacer(Modifier.width(14.dp))
                             Column(modifier = Modifier.weight(1f)) {
-                                Text(cert.label, style = MaterialTheme.typography.titleSmall, color = colors.textPrimary, fontWeight = FontWeight.SemiBold)
-                                Text(cert.description, style = MaterialTheme.typography.bodySmall, color = colors.textSecondary)
+                                Text(cert.label, style = MaterialTheme.typography.titleSmall, color = colors.textPrimary, fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                Text(cert.description, style = MaterialTheme.typography.bodySmall, color = colors.textSecondary, maxLines = 1, overflow = TextOverflow.Ellipsis)
                             }
                             Icon(Icons.Rounded.ChevronRight, contentDescription = null, tint = colors.textTertiary)
                         }
                     }
                 }
+
+                if (issued.isNotEmpty()) {
+                    item {
+                        Spacer(Modifier.height(6.dp))
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = stringResource(R.string.cert_generated_section),
+                                style = MaterialTheme.typography.titleMedium,
+                                color = colors.textPrimary,
+                                fontWeight = FontWeight.ExtraBold
+                            )
+                            Spacer(Modifier.width(10.dp))
+                            Text(
+                                text = stringResource(R.string.cert_issued_count, issued.size),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = colors.primaryIndigo,
+                                fontWeight = FontWeight.ExtraBold,
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(10.dp))
+                                    .background(colors.indigoTint)
+                                    .padding(horizontal = 10.dp, vertical = 5.dp)
+                            )
+                        }
+                    }
+
+                    items(issued, key = { it.id }) { cert ->
+                        IssuedCertificateRow(
+                            cert = cert,
+                            typeLabel = certificates.firstOrNull { it.type == cert.type }?.label ?: cert.type,
+                            typeIcon = certificates.firstOrNull { it.type == cert.type }?.icon ?: Icons.Rounded.Description,
+                            onClick = {
+                                cert.pdfPath?.let { path ->
+                                    runCatching { PdfShare.open(context, File(path)) }
+                                }
+                            }
+                        )
+                    }
+                }
             }
+        }
+    }
+}
+
+@Composable
+private fun IssuedCertificateRow(
+    cert: CertificateEntity,
+    typeLabel: String,
+    typeIcon: ImageVector,
+    onClick: () -> Unit
+) {
+    val colors = LocalMahalluColors.current
+    AppCard(
+        modifier = Modifier.fillMaxWidth(),
+        onClick = onClick,
+        contentPadding = PaddingValues(16.dp)
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(colors.successTint),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(typeIcon, contentDescription = null, tint = colors.successDark, modifier = Modifier.size(18.dp))
+            }
+            Spacer(Modifier.width(14.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(cert.subjectName, style = MaterialTheme.typography.titleSmall, color = colors.textPrimary, fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                Spacer(Modifier.height(2.dp))
+                Text(
+                    text = stringResource(R.string.cert_row_detail, typeLabel, Formatters.date(cert.issuedDate)),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = colors.textSecondary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+            Spacer(Modifier.width(8.dp))
+            Icon(Icons.Rounded.ChevronRight, contentDescription = null, tint = colors.textTertiary)
         }
     }
 }
