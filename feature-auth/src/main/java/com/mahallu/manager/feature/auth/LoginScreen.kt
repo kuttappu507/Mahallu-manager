@@ -1,5 +1,6 @@
 package com.mahallu.manager.feature.auth
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -18,9 +19,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Mosque
 import androidx.compose.material.icons.rounded.Person
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,6 +34,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -50,6 +50,7 @@ import com.mahallu.manager.core.ui.components.PasswordTextField
 import com.mahallu.manager.core.ui.theme.LocalMahalluColors
 import com.mahallu.manager.core.ui.theme.PrimaryIndigo
 import com.mahallu.manager.core.ui.theme.RadiusLg
+import com.mahallu.manager.core.ui.R as CoreUiR
 import com.mahallu.manager.feature.auth.R
 
 @Composable
@@ -94,10 +95,9 @@ fun LoginScreen(
                             .size(150.dp)
                             .border(1.5.dp, Color.White.copy(alpha = 0.28f), CircleShape)
                     )
-                    Icon(
-                        imageVector = Icons.Rounded.Mosque,
+                    Image(
+                        painter = painterResource(CoreUiR.drawable.ic_logo_mosque),
                         contentDescription = null,
-                        tint = Color.White,
                         modifier = Modifier.size(104.dp)
                     )
                 }

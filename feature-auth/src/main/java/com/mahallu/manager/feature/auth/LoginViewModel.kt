@@ -20,6 +20,7 @@ import javax.inject.Inject
 
 data class AuthState(
     val isLoggedIn: Boolean = false,
+    val isInitializing: Boolean = true,
     val currentUser: UserEntity? = null,
     val isLoading: Boolean = false,
     val error: String? = null
@@ -53,11 +54,14 @@ class LoginViewModel @Inject constructor(
                 val user = userRepository.getById(userId)
                 if (user != null && user.isActive) {
                     currentActor.set(AuditActor(user.id, user.fullName))
-                    _authState.update { it.copy(isLoggedIn = true, currentUser = user) }
+                    _authState.update { it.copy(isLoggedIn = true, isInitializing = false, currentUser = user) }
                 } else {
                     sessionManager.clear()
                     currentActor.set(null)
+                    _authState.update { it.copy(isInitializing = false) }
                 }
+            } else {
+                _authState.update { it.copy(isInitializing = false) }
             }
         }
     }
@@ -87,7 +91,7 @@ class LoginViewModel @Inject constructor(
                     sessionManager.putBoolean(SessionManager.KEY_LOGGED_IN, true)
                     sessionManager.putLong(SessionManager.KEY_LOGIN_TIME, System.currentTimeMillis())
                     currentActor.set(AuditActor(user.id, user.fullName))
-                    _authState.update { AuthState(isLoggedIn = true, currentUser = user) }
+                    _authState.update { AuthState(isInitializing = false, isLoggedIn = true, currentUser = user) }
                     onSuccess()
                 },
                 onFailure = { err ->
@@ -100,7 +104,7 @@ class LoginViewModel @Inject constructor(
     fun logout() {
         sessionManager.clear()
         currentActor.set(null)
-        _authState.value = AuthState()
+        _authState.value = AuthState(isInitializing = false)
     }
 
     fun clearError() {

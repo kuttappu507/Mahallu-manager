@@ -94,11 +94,7 @@ fun MainShell(
         Box(modifier = Modifier.fillMaxSize().padding(padding)) {
             NavHost(
                 navController = navController,
-                startDestination = "dashboard",
-                enterTransition = { androidx.compose.animation.fadeIn(androidx.compose.animation.core.tween(220)) },
-                exitTransition = { androidx.compose.animation.fadeOut(androidx.compose.animation.core.tween(160)) },
-                popEnterTransition = { androidx.compose.animation.fadeIn(androidx.compose.animation.core.tween(220)) },
-                popExitTransition = { androidx.compose.animation.fadeOut(androidx.compose.animation.core.tween(160)) }
+                startDestination = "dashboard"
             ) {
                 composable("dashboard") {
                     DashboardScreen(
