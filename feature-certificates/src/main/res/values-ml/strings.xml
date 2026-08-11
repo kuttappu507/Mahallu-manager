@@ -35,6 +35,14 @@
     <string name="cert_field_deceased_name">മരിച്ച വ്യക്തിയുടെ പേര്</string>
     <string name="cert_field_death_date">മരണ തീയതി (ഉദാ. 25 ഡിസം 2024)</string>
     <string name="cert_field_death_address">വിലാസം (മരണം സംഭവിച്ച സ്ഥലം)</string>
+    <string name="cert_field_groom_father_name">വരന്റെ പിതാവിന്റെ പേര്</string>
+    <string name="cert_field_groom_age">വരന്റെ വയസ്സ്</string>
+    <string name="cert_field_bride_father_name">വധുവിന്റെ പിതാവിന്റെ പേര്</string>
+    <string name="cert_field_bride_age">വധുവിന്റെ വയസ്സ്</string>
+    <string name="cert_field_groom_address">വരന്റെ വിലാസം</string>
+    <string name="cert_field_bride_address">വധുവിന്റെ വിലാസം</string>
+    <string name="cert_field_mahr">മഹർ</string>
+    <string name="cert_field_performed_by">ഖാസി / നിർവഹിച്ചത്</string>
     <string name="cert_mahallu_manager">മഹല്ല് മാനേജർ</string>
     <string name="cert_relation_member">അംഗം</string>
     <string name="cert_record_option_membership">%1$s • %2$s</string>
@@ -74,6 +82,32 @@
     <string name="cert_pdf_footer_generated_by">%1$s • മഹല്ല് മാനേജർ സൃഷ്ടിച്ചത്</string>
     <string name="cert_pdf_footer_generated_at">%1$s • %2$s-ൽ സൃഷ്ടിച്ചത്</string>
     <string name="cert_pdf_default_footer">മഹല്ല് മാനേജർ • %1$s-ൽ സൃഷ്ടിച്ചത്</string>
+
+    <!-- Design C ornamental layout -->
+    <string name="cert_pdf_janab">ജനാബ്</string>
+    <string name="cert_pdf_certify_that">ഇതിനാൽ സാക്ഷ്യപ്പെടുത്തുന്നു:</string>
+    <string name="cert_pdf_body_membership">ഈ മഹല്ലിലെ ബോണാഫൈഡ് അംഗമാണെന്നും അതിന്റെ എല്ലാ അവകാശങ്ങൾക്കും പദവികൾക്കും അർഹനാണെന്നും.</string>
+    <string name="cert_pdf_body_residence">മേൽപ്പറഞ്ഞ വിലാസത്തിൽ താമസിക്കുന്ന ആളാണെന്നും ഈ മഹല്ലിൽ ഉൾപ്പെട്ടയാളാണെന്നും.</string>
+    <string name="cert_pdf_body_death">ഈ മഹല്ലിലെ അംഗമായിരുന്നു, %1$s-ൽ %2$s-ൽ വച്ച് നിര്യാതനായി. അല്ലാഹു അദ്ദേഹത്തിന് സ്വർഗ്ഗം നൽകട്ടെ.</string>
+    <string name="cert_pdf_marriage_intro">താഴെ പറയുന്ന കക്ഷികളുടെ നിക്കാഹ് ഇസ്ലാമിക ചട്ടങ്ങൾക്കനുസൃതമായി താഴെ പറയുന്ന തീയതിയിലും സ്ഥലത്തും നിർവ്വഹിച്ചുവെന്ന് ഇതിനാൽ സാക്ഷ്യപ്പെടുത്തുന്നു.</string>
+    <string name="cert_marriage_groom">വരൻ</string>
+    <string name="cert_marriage_bride">വധു</string>
+    <string name="cert_label_full_name">മുഴുവൻ പേര്</string>
+    <string name="cert_label_fathers_name">പിതാവിന്റെ പേര്</string>
+    <string name="cert_label_age">വയസ്സ്</string>
+    <string name="cert_label_address">വിലാസം</string>
+    <string name="cert_nikah_details">നിക്കാഹ് വിശദാംശങ്ങൾ</string>
+    <string name="cert_nikah_date">നിക്കാഹ് തീയതി</string>
+    <string name="cert_nikah_venue">സ്ഥലം</string>
+    <string name="cert_mahr">മഹർ</string>
+    <string name="cert_witnesses">സാക്ഷികൾ</string>
+    <string name="cert_qazi">ഖാസി / രജിസ്ട്രാർ</string>
+    <string name="cert_registration_no">രജിസ്ട്രേഷൻ നമ്പർ</string>
+    <string name="cert_marriage_registration">രജിസ്ട്രേഷൻ നമ്പർ: %1$s</string>
+    <string name="cert_secretary">സെക്രട്ടറി</string>
+    <string name="cert_president">പ്രസിഡന്റ്</string>
+    <string name="cert_qazi_label">ഖാസി</string>
+    <string name="cert_years">%1$d വയസ്സ്</string>
     <string name="cert_pdf_generated_name">PDF സൃഷ്ടിച്ചു: %1$s</string>
     <string name="cert_pdf_failed_error">പരാജയപ്പെട്ടു: %1$s</string>
 </resources>

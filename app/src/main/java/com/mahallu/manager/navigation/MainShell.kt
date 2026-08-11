@@ -208,7 +208,14 @@ fun MainShell(
                                     address = m.nikahLocation,
                                     witnesses = listOf(m.witnessOneName, m.witnessTwoName).filter { it.isNotBlank() }.joinToString(", "),
                                     registrationNumber = m.registrationNumber,
-                                    date = java.text.SimpleDateFormat("dd MMM yyyy", java.util.Locale.getDefault()).format(m.nikahDate)
+                                    date = java.text.SimpleDateFormat("dd MMM yyyy", java.util.Locale.getDefault()).format(m.nikahDate),
+                                    groomFatherName = m.groomFatherName,
+                                    groomAge = m.groomAge,
+                                    brideFatherName = m.brideFatherName,
+                                    brideAge = m.brideAge,
+                                    mahar = m.maharAmount.toDoubleOrNull()?.takeIf { it > 0 }?.let { "Rs. ${"%,.2f".format(it)}" },
+                                    groomAddress = m.members.firstOrNull { it.id == m.groomId }?.address,
+                                    brideAddress = m.members.firstOrNull { it.id == m.brideId }?.address
                                 )
                             )
                             navController.navigate("certificate/MARRIAGE")

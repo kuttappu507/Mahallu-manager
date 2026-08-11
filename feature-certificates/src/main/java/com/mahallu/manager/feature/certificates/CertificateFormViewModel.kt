@@ -14,6 +14,8 @@ import com.mahallu.manager.core.util.IdGenerator
 import com.mahallu.manager.core.ui.util.Formatters
 import com.mahallu.manager.feature.certificates.pdf.Align
 import com.mahallu.manager.feature.certificates.pdf.PdfGenerator
+import com.mahallu.manager.feature.certificates.pdf.PdfInfoBlock
+import com.mahallu.manager.feature.certificates.pdf.PdfPanel
 import com.mahallu.manager.feature.certificates.pdf.PdfTable
 import com.mahallu.manager.feature.certificates.pdf.PdfTextLine
 import feature.certificates.feature.certificates.R
@@ -45,6 +47,14 @@ data class CertificateFormState(
     val registrationNumber: String = "",
     val date: String = "",
     val deceasedName: String = "",
+    val groomFatherName: String = "",
+    val groomAge: String = "",
+    val brideFatherName: String = "",
+    val brideAge: String = "",
+    val mahar: String = "",
+    val performedBy: String = "",
+    val groomAddress: String = "",
+    val brideAddress: String = "",
     val pdfPath: String? = null,
     val isGenerating: Boolean = false,
     val message: String? = null,
@@ -86,7 +96,15 @@ class CertificateFormViewModel @Inject constructor(
         witnesses: String? = null,
         registrationNumber: String? = null,
         date: String? = null,
-        deceasedName: String? = null
+        deceasedName: String? = null,
+        groomFatherName: String? = null,
+        groomAge: String? = null,
+        brideFatherName: String? = null,
+        brideAge: String? = null,
+        mahar: String? = null,
+        performedBy: String? = null,
+        groomAddress: String? = null,
+        brideAddress: String? = null
     ) {
         _state.update {
             it.copy(
@@ -99,7 +117,15 @@ class CertificateFormViewModel @Inject constructor(
                 witnesses = witnesses ?: it.witnesses,
                 registrationNumber = registrationNumber ?: it.registrationNumber,
                 date = date ?: it.date,
-                deceasedName = deceasedName ?: it.deceasedName
+                deceasedName = deceasedName ?: it.deceasedName,
+                groomFatherName = groomFatherName ?: it.groomFatherName,
+                groomAge = groomAge ?: it.groomAge,
+                brideFatherName = brideFatherName ?: it.brideFatherName,
+                brideAge = brideAge ?: it.brideAge,
+                mahar = mahar ?: it.mahar,
+                performedBy = performedBy ?: it.performedBy,
+                groomAddress = groomAddress ?: it.groomAddress,
+                brideAddress = brideAddress ?: it.brideAddress
             )
         }
     }
@@ -173,6 +199,8 @@ class CertificateFormViewModel @Inject constructor(
                 }
                 "MARRIAGE" -> {
                     val mar = marriageRepo.getById(option.id) ?: return@launch
+                    val groom = mar.groomId?.let { memberRepo.getById(it) }
+                    val bride = mar.brideId?.let { memberRepo.getById(it) }
                     _state.update {
                         it.copy(
                             brideName = mar.brideName,
@@ -180,6 +208,15 @@ class CertificateFormViewModel @Inject constructor(
                             witnesses = listOfNotNull(mar.witnessOneName, mar.witnessTwoName).joinToString(", "),
                             registrationNumber = mar.registrationNumber,
                             date = Formatters.date(mar.nikahDate),
+                            groomFatherName = mar.groomFatherName,
+                            groomAge = mar.groomAge?.toString().orEmpty(),
+                            brideFatherName = mar.brideFatherName,
+                            brideAge = mar.brideAge?.toString().orEmpty(),
+                            mahar = mar.maharAmount.takeIf { it > 0 }?.let { "Rs. ${"%,.2f".format(it)}" }.orEmpty(),
+                            performedBy = mar.performedBy.orEmpty(),
+                            address = mar.nikahLocation.orEmpty(),
+                            groomAddress = groom?.address.orEmpty(),
+                            brideAddress = bride?.address.orEmpty(),
                             recordQuery = "",
                             recordOptions = emptyList()
                         )
@@ -208,6 +245,7 @@ class CertificateFormViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val mahalluName = settingsRepo.getString("mahallu.name", "Mahallu Manager")
+                val mahalluAddress = settingsRepo.getString("mahallu.address", "").orEmpty()
                 val title = context.getString(
                     when (type) {
                         "MEMBERSHIP" -> R.string.cert_membership_title
@@ -216,53 +254,135 @@ class CertificateFormViewModel @Inject constructor(
                         "DEATH" -> R.string.cert_death_title
                         else -> R.string.cert_generic_title
                     }
-                )
+                ).uppercase(java.util.Locale.getDefault())
                 val s = _state.value
+                val teal = android.graphics.Color.parseColor("#0F766E")
+                val janab = context.getString(R.string.cert_pdf_janab)
+                val stamp = java.text.SimpleDateFormat("dd MMM yyyy, hh:mm a", java.util.Locale.getDefault()).format(java.util.Date())
+
                 val lines = mutableListOf<PdfTextLine>()
-                lines += PdfTextLine(mahalluName, sizeSp = 22f, bold = true, align = Align.CENTER)
-                lines += PdfTextLine(title, sizeSp = 16f, bold = true, align = Align.CENTER)
-                lines += PdfTextLine(" ", sizeSp = 8f)
-                lines += PdfTextLine(context.getString(R.string.cert_pdf_this_is_to_certify), sizeSp = 12f)
+                var panels = emptyList<PdfPanel>()
+                var infoBlocks = emptyList<PdfInfoBlock>()
+                var signatureLabels = listOf(
+                    context.getString(R.string.cert_secretary),
+                    context.getString(R.string.cert_president)
+                )
+
+                fun centered(text: String, sizeSp: Float = 13f, bold: Boolean = false) {
+                    lines += PdfTextLine(
+                        text,
+                        sizeSp = sizeSp,
+                        bold = bold,
+                        align = Align.CENTER,
+                        color = if (bold) teal else android.graphics.Color.BLACK
+                    )
+                }
+
+                fun lv(label: String, value: String): String =
+                    context.getString(R.string.cert_pdf_label_value, label, value)
+
+                fun fieldsLines(pairs: List<Pair<String, String>>): List<String> {
+                    val mapped = pairs.filter { it.second.isNotBlank() }
+                        .map { (k, v) -> lv(k, v) }
+                    return mapped.chunked(2).map { it.joinToString("  •  ") }
+                }
+
+                fun ageLabel(age: String): String {
+                    val n = age.toIntOrNull()
+                    return if (n != null) context.getString(R.string.cert_years, n) else age
+                }
+
                 when (type) {
                     "MEMBERSHIP" -> {
-                        lines += PdfTextLine(context.getString(R.string.cert_pdf_label_value, context.getString(R.string.cert_pdf_label_name), s.memberName.ifBlank { context.getString(R.string.cert_pdf_placeholder_name) }), sizeSp = 12f)
-                        lines += PdfTextLine(context.getString(R.string.cert_pdf_label_value, context.getString(R.string.cert_pdf_label_father_spouse), s.fatherName.ifBlank { context.getString(R.string.cert_pdf_placeholder_father_spouse) }), sizeSp = 12f)
-                        lines += PdfTextLine(context.getString(R.string.cert_pdf_label_value, context.getString(R.string.cert_pdf_label_address), s.address.ifBlank { context.getString(R.string.cert_pdf_placeholder_address) }), sizeSp = 12f)
-                        lines += PdfTextLine(context.getString(R.string.cert_pdf_label_value, context.getString(R.string.cert_pdf_label_member_id), s.memberNumber.ifBlank { context.getString(R.string.cert_pdf_placeholder_member_id) }), sizeSp = 12f)
+                        centered(context.getString(R.string.cert_pdf_certify_that))
+                        centered("$janab ${s.memberName}", sizeSp = 17f, bold = true)
+                        centered(context.getString(R.string.cert_pdf_body_membership))
+                        fieldsLines(listOf(
+                            context.getString(R.string.cert_pdf_label_member_id) to s.memberNumber,
+                            context.getString(R.string.cert_pdf_label_ward) to s.ward,
+                            context.getString(R.string.cert_pdf_label_father_spouse) to s.fatherName,
+                            context.getString(R.string.cert_pdf_label_address) to s.address
+                        )).forEach { centered(it) }
                     }
                     "RESIDENCE" -> {
-                        lines += PdfTextLine(context.getString(R.string.cert_pdf_label_value, context.getString(R.string.cert_pdf_label_name), s.memberName.ifBlank { context.getString(R.string.cert_pdf_placeholder_name) }), sizeSp = 12f)
-                        lines += PdfTextLine(context.getString(R.string.cert_pdf_label_value, context.getString(R.string.cert_pdf_label_father_spouse), s.fatherName.ifBlank { context.getString(R.string.cert_pdf_placeholder_father_spouse) }), sizeSp = 12f)
-                        lines += PdfTextLine(context.getString(R.string.cert_pdf_label_value, context.getString(R.string.cert_pdf_label_address), s.address.ifBlank { context.getString(R.string.cert_pdf_placeholder_address) }), sizeSp = 12f)
-                        lines += PdfTextLine(context.getString(R.string.cert_pdf_ward_pincode, s.ward.ifBlank { context.getString(R.string.cert_pdf_placeholder_ward) }, s.pincode.ifBlank { context.getString(R.string.cert_pdf_placeholder_pincode) }), sizeSp = 12f)
+                        centered(context.getString(R.string.cert_pdf_certify_that))
+                        centered("$janab ${s.memberName}", sizeSp = 17f, bold = true)
+                        centered(context.getString(R.string.cert_pdf_body_residence))
+                        fieldsLines(listOf(
+                            context.getString(R.string.cert_pdf_label_name) to s.memberName,
+                            context.getString(R.string.cert_pdf_label_father_spouse) to s.fatherName,
+                            context.getString(R.string.cert_pdf_label_ward) to s.ward,
+                            context.getString(R.string.cert_pdf_label_pincode) to s.pincode,
+                            context.getString(R.string.cert_pdf_label_address) to s.address
+                        )).forEach { centered(it) }
                     }
                     "MARRIAGE" -> {
-                        lines += PdfTextLine(context.getString(R.string.cert_pdf_label_value, context.getString(R.string.cert_pdf_label_bride), s.brideName.ifBlank { context.getString(R.string.cert_pdf_placeholder_bride) }), sizeSp = 12f)
-                        lines += PdfTextLine(context.getString(R.string.cert_pdf_label_value, context.getString(R.string.cert_pdf_label_groom), s.groomName.ifBlank { context.getString(R.string.cert_pdf_placeholder_groom) }), sizeSp = 12f)
-                        lines += PdfTextLine(context.getString(R.string.cert_pdf_label_value, context.getString(R.string.cert_pdf_label_nikah_date), s.date.ifBlank { context.getString(R.string.cert_pdf_placeholder_date) }), sizeSp = 12f)
-                        lines += PdfTextLine(context.getString(R.string.cert_pdf_label_value, context.getString(R.string.cert_pdf_label_location), s.address.ifBlank { context.getString(R.string.cert_pdf_placeholder_location) }), sizeSp = 12f)
-                        lines += PdfTextLine(context.getString(R.string.cert_pdf_label_value, context.getString(R.string.cert_pdf_label_witnesses), s.witnesses.ifBlank { context.getString(R.string.cert_pdf_placeholder_witnesses) }), sizeSp = 12f)
-                        lines += PdfTextLine(context.getString(R.string.cert_pdf_label_value, context.getString(R.string.cert_pdf_label_registration), s.registrationNumber.ifBlank { context.getString(R.string.cert_pdf_placeholder_registration) }), sizeSp = 12f)
+                        signatureLabels = listOf(
+                            context.getString(R.string.cert_secretary),
+                            context.getString(R.string.cert_qazi_label),
+                            context.getString(R.string.cert_president)
+                        )
+                        centered(context.getString(R.string.cert_pdf_marriage_intro), sizeSp = 13f)
+                        val groomRows = listOfNotNull(
+                            context.getString(R.string.cert_label_full_name) to s.groomName,
+                            context.getString(R.string.cert_label_fathers_name) to s.groomFatherName,
+                            context.getString(R.string.cert_label_age) to ageLabel(s.groomAge),
+                            context.getString(R.string.cert_label_address) to s.groomAddress
+                        ).filter { it.second.isNotBlank() }
+                        val brideRows = listOfNotNull(
+                            context.getString(R.string.cert_label_full_name) to s.brideName,
+                            context.getString(R.string.cert_label_fathers_name) to s.brideFatherName,
+                            context.getString(R.string.cert_label_age) to ageLabel(s.brideAge),
+                            context.getString(R.string.cert_label_address) to s.brideAddress
+                        ).filter { it.second.isNotBlank() }
+                        panels = listOf(
+                            PdfPanel(
+                                title1 = context.getString(R.string.cert_marriage_groom),
+                                rows1 = groomRows,
+                                title2 = context.getString(R.string.cert_marriage_bride),
+                                rows2 = brideRows
+                            )
+                        )
+                        val nikahRows = listOfNotNull(
+                            context.getString(R.string.cert_nikah_date) to s.date,
+                            context.getString(R.string.cert_nikah_venue) to s.address,
+                            context.getString(R.string.cert_mahr) to s.mahar,
+                            context.getString(R.string.cert_registration_no) to s.registrationNumber
+                        ).filter { it.second.isNotBlank() }
+                        val witnessLines = s.witnesses
+                            .split(",")
+                            .map { it.trim() }
+                            .filter { it.isNotEmpty() }
+                            .mapIndexed { i, w -> "${i + 1}. $w" }
+                        infoBlocks = listOfNotNull(
+                            PdfInfoBlock(context.getString(R.string.cert_nikah_details), keyValueRows = nikahRows),
+                            PdfInfoBlock(context.getString(R.string.cert_witnesses), textRows = witnessLines),
+                            s.performedBy.ifBlank { null }?.let { PdfInfoBlock(context.getString(R.string.cert_qazi), textRows = listOf(it)) }
+                        )
                     }
                     "DEATH" -> {
-                        lines += PdfTextLine(context.getString(R.string.cert_pdf_label_value, context.getString(R.string.cert_pdf_label_name), s.deceasedName.ifBlank { context.getString(R.string.cert_pdf_placeholder_name) }), sizeSp = 12f)
-                        lines += PdfTextLine(context.getString(R.string.cert_pdf_label_value, context.getString(R.string.cert_pdf_label_father_spouse), s.fatherName.ifBlank { context.getString(R.string.cert_pdf_placeholder_father_spouse) }), sizeSp = 12f)
-                        lines += PdfTextLine(context.getString(R.string.cert_pdf_label_value, context.getString(R.string.cert_pdf_label_date_of_death), s.date.ifBlank { context.getString(R.string.cert_pdf_placeholder_date) }), sizeSp = 12f)
-                        lines += PdfTextLine(context.getString(R.string.cert_pdf_label_value, context.getString(R.string.cert_pdf_label_place), s.address.ifBlank { context.getString(R.string.cert_pdf_placeholder_place) }), sizeSp = 12f)
-                        lines += PdfTextLine(context.getString(R.string.cert_pdf_label_value, context.getString(R.string.cert_pdf_label_registration), s.registrationNumber.ifBlank { context.getString(R.string.cert_pdf_placeholder_registration) }), sizeSp = 12f)
+                        centered(context.getString(R.string.cert_pdf_certify_that))
+                        centered("$janab ${s.deceasedName}", sizeSp = 17f, bold = true)
+                        centered(context.getString(R.string.cert_pdf_body_death, s.date, s.address))
+                        fieldsLines(listOf(
+                            context.getString(R.string.cert_pdf_label_father_spouse) to s.fatherName,
+                            context.getString(R.string.cert_pdf_label_registration) to s.registrationNumber
+                        )).forEach { centered(it) }
                     }
                 }
-                lines += PdfTextLine(" ", sizeSp = 8f)
-                val stamp = java.text.SimpleDateFormat("dd MMM yyyy, hh:mm a", java.util.Locale.getDefault()).format(java.util.Date())
-                lines += PdfTextLine(context.getString(R.string.cert_pdf_issued_on, stamp), sizeSp = 11f, align = Align.RIGHT)
-                lines += PdfTextLine(context.getString(R.string.cert_pdf_authorised_signatory), sizeSp = 11f, bold = true, align = Align.RIGHT)
 
                 val file = pdfGenerator.generate(
                     fileName = "${type.lowercase()}_${System.currentTimeMillis()}.pdf",
                     spec = com.mahallu.manager.feature.certificates.pdf.PdfDocumentSpec(
                         title = title,
                         subtitle = mahalluName,
+                        address = mahalluAddress,
                         lines = lines,
+                        ornament = true,
+                        panels = panels,
+                        infoBlocks = infoBlocks,
+                        signatureLabels = signatureLabels,
+                        issuedLine = context.getString(R.string.cert_pdf_issued_on, stamp),
                         footer = context.getString(R.string.cert_pdf_footer_generated_at, mahalluName, stamp)
                     )
                 )

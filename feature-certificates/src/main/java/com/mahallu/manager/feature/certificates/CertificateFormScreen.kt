@@ -76,7 +76,15 @@ fun CertificateFormScreen(
                 witnesses = prefill.witnesses,
                 registrationNumber = prefill.registrationNumber,
                 date = prefill.date,
-                deceasedName = prefill.deceasedName
+                deceasedName = prefill.deceasedName,
+                groomFatherName = prefill.groomFatherName,
+                groomAge = prefill.groomAge,
+                brideFatherName = prefill.brideFatherName,
+                brideAge = prefill.brideAge,
+                mahar = prefill.mahar,
+                performedBy = prefill.performedBy,
+                groomAddress = prefill.groomAddress,
+                brideAddress = prefill.brideAddress
             )
         }
     }
@@ -249,17 +257,69 @@ private fun ResidenceFields(state: CertificateFormState, vm: CertificateFormView
 @Composable
 private fun MarriageFields(state: CertificateFormState, vm: CertificateFormViewModel) {
     AppTextField(
+        value = state.groomName,
+        onValueChange = { v -> vm.update { it.copy(groomName = v) } },
+        label = stringResource(R.string.cert_field_groom_name),
+        isRequired = true
+    )
+    Spacer(Modifier.height(10.dp))
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+        Box(modifier = Modifier.weight(1f)) {
+            AppTextField(
+                value = state.groomFatherName,
+                onValueChange = { v -> vm.update { it.copy(groomFatherName = v) } },
+                label = stringResource(R.string.cert_field_groom_father_name)
+            )
+        }
+        Box(modifier = Modifier.weight(1f)) {
+            AppTextField(
+                value = state.groomAge,
+                onValueChange = { v -> vm.update { it.copy(groomAge = v) } },
+                label = stringResource(R.string.cert_field_groom_age),
+                keyboardType = KeyboardType.Number
+            )
+        }
+    }
+    Spacer(Modifier.height(10.dp))
+    AppTextField(
+        value = state.groomAddress,
+        onValueChange = { v -> vm.update { it.copy(groomAddress = v) } },
+        label = stringResource(R.string.cert_field_groom_address),
+        singleLine = false,
+        maxLines = 2
+    )
+    Spacer(Modifier.height(10.dp))
+    AppTextField(
         value = state.brideName,
         onValueChange = { v -> vm.update { it.copy(brideName = v) } },
         label = stringResource(R.string.cert_field_bride_name),
         isRequired = true
     )
     Spacer(Modifier.height(10.dp))
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+        Box(modifier = Modifier.weight(1f)) {
+            AppTextField(
+                value = state.brideFatherName,
+                onValueChange = { v -> vm.update { it.copy(brideFatherName = v) } },
+                label = stringResource(R.string.cert_field_bride_father_name)
+            )
+        }
+        Box(modifier = Modifier.weight(1f)) {
+            AppTextField(
+                value = state.brideAge,
+                onValueChange = { v -> vm.update { it.copy(brideAge = v) } },
+                label = stringResource(R.string.cert_field_bride_age),
+                keyboardType = KeyboardType.Number
+            )
+        }
+    }
+    Spacer(Modifier.height(10.dp))
     AppTextField(
-        value = state.groomName,
-        onValueChange = { v -> vm.update { it.copy(groomName = v) } },
-        label = stringResource(R.string.cert_field_groom_name),
-        isRequired = true
+        value = state.brideAddress,
+        onValueChange = { v -> vm.update { it.copy(brideAddress = v) } },
+        label = stringResource(R.string.cert_field_bride_address),
+        singleLine = false,
+        maxLines = 2
     )
     Spacer(Modifier.height(10.dp))
     AppTextField(
@@ -276,11 +336,22 @@ private fun MarriageFields(state: CertificateFormState, vm: CertificateFormViewM
         maxLines = 2
     )
     Spacer(Modifier.height(10.dp))
-    AppTextField(
-        value = state.registrationNumber,
-        onValueChange = { v -> vm.update { it.copy(registrationNumber = v) } },
-        label = stringResource(R.string.cert_field_registration_number)
-    )
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+        Box(modifier = Modifier.weight(1f)) {
+            AppTextField(
+                value = state.mahar,
+                onValueChange = { v -> vm.update { it.copy(mahar = v) } },
+                label = stringResource(R.string.cert_field_mahr)
+            )
+        }
+        Box(modifier = Modifier.weight(1f)) {
+            AppTextField(
+                value = state.registrationNumber,
+                onValueChange = { v -> vm.update { it.copy(registrationNumber = v) } },
+                label = stringResource(R.string.cert_field_registration_number)
+            )
+        }
+    }
     Spacer(Modifier.height(10.dp))
     AppTextField(
         value = state.address,
@@ -288,6 +359,12 @@ private fun MarriageFields(state: CertificateFormState, vm: CertificateFormViewM
         label = stringResource(R.string.cert_field_nikah_location),
         singleLine = false,
         maxLines = 2
+    )
+    Spacer(Modifier.height(10.dp))
+    AppTextField(
+        value = state.performedBy,
+        onValueChange = { v -> vm.update { it.copy(performedBy = v) } },
+        label = stringResource(R.string.cert_field_performed_by)
     )
 }
 

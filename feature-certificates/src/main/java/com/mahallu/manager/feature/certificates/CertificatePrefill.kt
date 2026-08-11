@@ -17,7 +17,15 @@ data class CertificatePrefillData(
     val witnesses: String? = null,
     val registrationNumber: String? = null,
     val date: String? = null,
-    val deceasedName: String? = null
+    val deceasedName: String? = null,
+    val groomFatherName: String? = null,
+    val groomAge: String? = null,
+    val brideFatherName: String? = null,
+    val brideAge: String? = null,
+    val mahar: String? = null,
+    val performedBy: String? = null,
+    val groomAddress: String? = null,
+    val brideAddress: String? = null
 )
 
 object CertificatePrefillHolder {
