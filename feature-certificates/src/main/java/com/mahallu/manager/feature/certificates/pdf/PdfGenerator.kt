@@ -97,30 +97,30 @@ class PdfGenerator @Inject constructor(
         }
         val addrPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = Color.DKGRAY
-            textSize = 11.5f
+            textSize = 13f
         }
         val certTitlePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = spec.goldColor
-            textSize = 24f
+            textSize = 26f
             isFakeBoldText = true
         }
         val panelHeaderPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = spec.goldColor
-            textSize = 12f
+            textSize = 13f
             isFakeBoldText = true
         }
         val sectionTitlePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = spec.goldColor
-            textSize = 11.5f
+            textSize = 13f
             isFakeBoldText = true
         }
         val panelLabelPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = Color.parseColor("#55666F")
-            textSize = 10.5f
+            textSize = 12.5f
         }
         val panelValuePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = Color.parseColor("#21303A")
-            textSize = 10.5f
+            textSize = 12.5f
             isFakeBoldText = true
         }
         val sectionLinePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -142,33 +142,48 @@ class PdfGenerator @Inject constructor(
         }
         val signatureLabelPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = Color.parseColor("#21303A")
-            textSize = 10.5f
+            textSize = 13f
             isFakeBoldText = true
         }
         val issuedPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = spec.ornamentColor
-            textSize = 11f
+            textSize = 13f
         }
 
         fun centeredX(text: String, paint: Paint): Float =
             (pageWidth / 2f) - (paint.measureText(text) / 2f)
 
         fun wrap(text: String, paint: Paint, maxWidth: Float): List<String> {
-            val words = text.split(" ")
+            if (maxWidth <= 0f || text.isEmpty()) return listOf(text)
             val out = mutableListOf<String>()
-            val cur = StringBuilder()
+            var line = StringBuilder()
+            val words = text.split(" ")
             for (word in words) {
-                val candidate = if (cur.isEmpty()) word else "$cur $word"
-                if (paint.measureText(candidate) <= maxWidth || cur.isEmpty()) {
-                    cur.clear()
-                    cur.append(candidate)
+                if (paint.measureText("$line $word") <= maxWidth || line.isEmpty()) {
+                    if (line.isNotEmpty()) line.append(' ')
+                    line.append(word)
                 } else {
-                    out.add(cur.toString())
-                    cur.clear()
-                    cur.append(word)
+                    if (paint.measureText(word) > maxWidth) {
+                        // Break an over-long word character-by-character
+                        if (line.isNotEmpty()) { out.add(line.toString()); line = StringBuilder() }
+                        val sb = StringBuilder()
+                        for (ch in word) {
+                            if (paint.measureText(sb.toString() + ch) <= maxWidth) {
+                                sb.append(ch)
+                            } else {
+                                out.add(sb.toString())
+                                sb.clear()
+                                sb.append(ch)
+                            }
+                        }
+                        if (sb.isNotEmpty()) line = StringBuilder(sb.toString())
+                    } else {
+                        out.add(line.toString())
+                        line = StringBuilder(word)
+                    }
                 }
             }
-            if (cur.isNotEmpty()) out.add(cur.toString())
+            if (line.isNotEmpty()) out.add(line.toString())
             return out
         }
 
@@ -183,7 +198,8 @@ class PdfGenerator @Inject constructor(
 
         fun drawFooter(canvas: android.graphics.Canvas) {
             val txt = spec.footer ?: context.getString(R.string.cert_pdf_default_footer, java.util.Date())
-            canvas.drawText(txt, margin.toFloat(), (pageHeight - margin / 2).toFloat(), footerPaint)
+            val footerY = if (ornament) (pageHeight - 14f) else (pageHeight - margin / 2).toFloat()
+            canvas.drawText(txt, margin.toFloat(), footerY, footerPaint)
         }
 
         fun drawCertificateFrame(canvas: android.graphics.Canvas) {
@@ -352,8 +368,19 @@ class PdfGenerator @Inject constructor(
             val colW = (contentWidth - gap) / 2f
             val headerH = 26f
             val rowH = 22f
-            val maxRows = maxOf(panel.rows1.size, panel.rows2.size)
-            val boxH = headerH + maxRows * rowH
+
+            // Measure per-column height with value wrapping so nothing overflows.
+            fun columnHeight(rows: List<Pair<String, String>>): Float {
+                var h = headerH
+                for ((label, value) in rows) {
+                    val labelW = panelLabelPaint.measureText("$label:")
+                    val avail = colW - labelW - 20f
+                    val lines = wrap(value, panelValuePaint, avail)
+                    h += lines.size * rowH
+                }
+                return h
+            }
+            val boxH = maxOf(columnHeight(panel.rows1), columnHeight(panel.rows2))
             if (y + boxH.toInt() + 16 > contentBottom) nextPage()
 
             fun drawColumn(px: Float, title: String, rows: List<Pair<String, String>>) {
@@ -362,9 +389,20 @@ class PdfGenerator @Inject constructor(
                 canvas.drawLine(px + 6f, y + 24f, px + colW - 6f, y + 24f, sectionLinePaint)
                 var ry = y + 24f
                 for ((label, value) in rows) {
+                    val labelW = panelLabelPaint.measureText("$label:")
+                    val avail = colW - labelW - 20f
+                    val lines = wrap(value, panelValuePaint, avail)
                     ry += rowH
-                    canvas.drawText(label, px + 10f, ry + 3f, panelLabelPaint)
-                    canvas.drawText(value, (px + colW - 10f) - panelValuePaint.measureText(value), ry + 3f, panelValuePaint)
+                    canvas.drawText("$label:", px + 10f, ry + 3f, panelLabelPaint)
+                    if (lines.size == 1) {
+                        canvas.drawText(lines[0], px + 10f + labelW, ry + 3f, panelValuePaint)
+                    } else {
+                        canvas.drawText(lines[0], px + 10f + labelW, ry + 3f, panelValuePaint)
+                        for (i in 1 until lines.size) {
+                            ry += rowH
+                            canvas.drawText(lines[i], px + 10f, ry + 3f, panelValuePaint)
+                        }
+                    }
                     canvas.drawLine(px + 6f, ry + 9f, px + colW - 6f, ry + 9f, dashPaint)
                 }
             }
@@ -380,11 +418,22 @@ class PdfGenerator @Inject constructor(
             canvas.drawLine(textLeft.toFloat(), y + 16f, (textLeft + contentWidth).toFloat(), y + 16f, sectionLinePaint)
             y += 24
             for ((label, value) in block.keyValueRows) {
-                if (y + 22 > contentBottom) nextPage()
-                canvas.drawText(label, textLeft.toFloat(), y + 10f, panelLabelPaint)
-                canvas.drawText(value, (pageWidth - textLeft).toFloat() - panelValuePaint.measureText(value), y + 10f, panelValuePaint)
-                canvas.drawLine(textLeft.toFloat(), y + 14f, (textLeft + contentWidth).toFloat(), y + 14f, dashPaint)
-                y += 22
+                val labelW = panelLabelPaint.measureText("$label:")
+                val avail = contentWidth - labelW - 20f
+                val lines = wrap(value, panelValuePaint, avail)
+                var drawn = 0
+                for (chunk in lines) {
+                    if (y + 22 > contentBottom) nextPage()
+                    if (drawn == 0) {
+                        canvas.drawText("$label:", textLeft.toFloat(), y + 10f, panelLabelPaint)
+                        canvas.drawText(chunk, textLeft.toFloat() + labelW, y + 10f, panelValuePaint)
+                    } else {
+                        canvas.drawText(chunk, textLeft.toFloat(), y + 10f, panelValuePaint)
+                    }
+                    drawn++
+                    y += 22
+                }
+                canvas.drawLine(textLeft.toFloat(), y - 8f, (textLeft + contentWidth).toFloat(), y - 8f, dashPaint)
             }
             for (t in block.textRows) {
                 val wrappedT = wrap(t, panelValuePaint, contentWidth.toFloat())

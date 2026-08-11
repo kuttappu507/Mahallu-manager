@@ -268,7 +268,7 @@ class CertificateFormViewModel @Inject constructor(
                     context.getString(R.string.cert_president)
                 )
 
-                fun centered(text: String, sizeSp: Float = 13f, bold: Boolean = false) {
+                fun centered(text: String, sizeSp: Float = 14f, bold: Boolean = false) {
                     lines += PdfTextLine(
                         text,
                         sizeSp = sizeSp,
@@ -295,7 +295,7 @@ class CertificateFormViewModel @Inject constructor(
                 when (type) {
                     "MEMBERSHIP" -> {
                         centered(context.getString(R.string.cert_pdf_certify_that))
-                        centered("$janab ${s.memberName}", sizeSp = 17f, bold = true)
+                        centered("$janab ${s.memberName}", sizeSp = 20f, bold = true)
                         centered(context.getString(R.string.cert_pdf_body_membership))
                         fieldsLines(listOf(
                             context.getString(R.string.cert_pdf_label_member_id) to s.memberNumber,
@@ -306,7 +306,7 @@ class CertificateFormViewModel @Inject constructor(
                     }
                     "RESIDENCE" -> {
                         centered(context.getString(R.string.cert_pdf_certify_that))
-                        centered("$janab ${s.memberName}", sizeSp = 17f, bold = true)
+                        centered("$janab ${s.memberName}", sizeSp = 20f, bold = true)
                         centered(context.getString(R.string.cert_pdf_body_residence))
                         fieldsLines(listOf(
                             context.getString(R.string.cert_pdf_label_name) to s.memberName,
@@ -322,7 +322,7 @@ class CertificateFormViewModel @Inject constructor(
                             context.getString(R.string.cert_qazi_label),
                             context.getString(R.string.cert_president)
                         )
-                        centered(context.getString(R.string.cert_pdf_marriage_intro), sizeSp = 13f)
+                        centered(context.getString(R.string.cert_pdf_marriage_intro), sizeSp = 14f)
                         val groomRows = listOfNotNull(
                             context.getString(R.string.cert_label_full_name) to s.groomName,
                             context.getString(R.string.cert_label_fathers_name) to s.groomFatherName,
@@ -362,7 +362,7 @@ class CertificateFormViewModel @Inject constructor(
                     }
                     "DEATH" -> {
                         centered(context.getString(R.string.cert_pdf_certify_that))
-                        centered("$janab ${s.deceasedName}", sizeSp = 17f, bold = true)
+                        centered("$janab ${s.deceasedName}", sizeSp = 20f, bold = true)
                         centered(context.getString(R.string.cert_pdf_body_death, s.date, s.address))
                         fieldsLines(listOf(
                             context.getString(R.string.cert_pdf_label_father_spouse) to s.fatherName,
