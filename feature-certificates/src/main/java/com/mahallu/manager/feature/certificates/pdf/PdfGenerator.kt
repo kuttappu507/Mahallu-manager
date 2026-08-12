@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.Rect
+import android.graphics.Typeface
 import android.graphics.pdf.PdfDocument
 import dagger.hilt.android.qualifiers.ApplicationContext
 import feature.certificates.feature.certificates.R
@@ -74,7 +75,7 @@ class PdfGenerator @Inject constructor(
         val titlePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = Color.parseColor("#4F46E5")
             textSize = 22f
-            isFakeBoldText = true
+            typeface = Typeface.DEFAULT_BOLD
         }
         val subtitlePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = Color.DKGRAY
@@ -93,7 +94,7 @@ class PdfGenerator @Inject constructor(
         val orgPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = spec.ornamentColor
             textSize = 17f
-            isFakeBoldText = true
+            typeface = Typeface.DEFAULT_BOLD
         }
         val addrPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = Color.DKGRAY
@@ -102,17 +103,17 @@ class PdfGenerator @Inject constructor(
         val certTitlePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = spec.goldColor
             textSize = 26f
-            isFakeBoldText = true
+            typeface = Typeface.DEFAULT_BOLD
         }
         val panelHeaderPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = spec.goldColor
             textSize = 13f
-            isFakeBoldText = true
+            typeface = Typeface.DEFAULT_BOLD
         }
         val sectionTitlePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = spec.goldColor
             textSize = 13f
-            isFakeBoldText = true
+            typeface = Typeface.DEFAULT_BOLD
         }
         val panelLabelPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = Color.parseColor("#55666F")
@@ -121,7 +122,7 @@ class PdfGenerator @Inject constructor(
         val panelValuePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = Color.parseColor("#21303A")
             textSize = 12.5f
-            isFakeBoldText = true
+            typeface = Typeface.DEFAULT_BOLD
         }
         val sectionLinePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = spec.goldColor
@@ -143,7 +144,7 @@ class PdfGenerator @Inject constructor(
         val signatureLabelPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = Color.parseColor("#21303A")
             textSize = 13f
-            isFakeBoldText = true
+            typeface = Typeface.DEFAULT_BOLD
         }
         val issuedPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = spec.ornamentColor
@@ -280,7 +281,7 @@ class PdfGenerator @Inject constructor(
             val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
                 color = line.color
                 textSize = line.sizeSp
-                isFakeBoldText = line.bold
+                typeface = if (line.bold) Typeface.DEFAULT_BOLD else Typeface.DEFAULT
             }
             y += line.gapBefore.toInt()
             val wrapped = wrap(line.text, paint, contentWidth.toFloat())
@@ -306,12 +307,11 @@ class PdfGenerator @Inject constructor(
             val cellPadding = 4f
             val cellPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
                 textSize = 9.5f
-                isFakeBoldText = false
             }
             val headerPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
                 color = Color.WHITE
                 textSize = 10f
-                isFakeBoldText = true
+                typeface = Typeface.DEFAULT_BOLD
             }
             val headerBg = Paint().apply { color = Color.parseColor("#4F46E5") }
             val rowBg = Paint().apply { color = Color.parseColor("#F8FAFC") }
