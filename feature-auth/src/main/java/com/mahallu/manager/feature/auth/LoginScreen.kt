@@ -79,26 +79,26 @@ fun LoginScreen(
         ) {
             Spacer(Modifier.height(56.dp))
 
-            // Gradient mosque tile with dashed ring + deco
+            // Light gradient mosque tile with dashed ring + deco
             AnimatedReveal(index = 0) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(196.dp)
-                        .shadow(18.dp, RoundedCornerShape(28.dp), ambientColor = Color(0xFF312E81).copy(alpha = 0.4f))
+                        .height(220.dp)
+                        .shadow(18.dp, RoundedCornerShape(28.dp), ambientColor = Color(0xFF4F46E5).copy(alpha = 0.22f))
                         .clip(RoundedCornerShape(28.dp))
-                        .background(Brush.linearGradient(listOf(PrimaryIndigo, Color(0xFF7C3AED)))),
+                        .background(Brush.linearGradient(listOf(Color(0xFFEEF2FF), Color(0xFFE0E7FF)))),
                     contentAlignment = Alignment.Center
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(150.dp)
-                            .border(1.5.dp, Color.White.copy(alpha = 0.28f), CircleShape)
+                            .size(172.dp)
+                            .border(2.dp, PrimaryIndigo.copy(alpha = 0.30f), CircleShape)
                     )
                     Image(
                         painter = painterResource(CoreUiR.drawable.ic_logo),
                         contentDescription = null,
-                        modifier = Modifier.size(104.dp)
+                        modifier = Modifier.size(150.dp)
                     )
                 }
             }

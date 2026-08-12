@@ -43,19 +43,19 @@ fun MahalluNavGraph() {
         // screen never flashes for signed-in users and first-run seeding jank
         // is hidden behind this screen instead of janking the UI.
         Box(
-            modifier = Modifier.fillMaxSize().background(PrimaryIndigo),
+            modifier = Modifier.fillMaxSize().background(Color(0xFFF8FAFC)),
             contentAlignment = Alignment.Center
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Image(
                     painter = painterResource(CoreUiR.drawable.ic_logo),
                     contentDescription = null,
-                    modifier = Modifier.size(120.dp)
+                    modifier = Modifier.size(200.dp)
                 )
-                Spacer(Modifier.height(20.dp))
+                Spacer(Modifier.height(24.dp))
                 CircularProgressIndicator(
-                    modifier = Modifier.size(26.dp),
-                    color = Color.White.copy(alpha = 0.9f),
+                    modifier = Modifier.size(28.dp),
+                    color = PrimaryIndigo,
                     strokeWidth = 3.dp
                 )
             }
