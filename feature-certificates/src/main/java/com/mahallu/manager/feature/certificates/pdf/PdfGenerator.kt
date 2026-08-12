@@ -47,6 +47,7 @@ data class PdfDocumentSpec(
     val ornament: Boolean = false,
     val ornamentColor: Int = Color.parseColor("#0F766E"),
     val goldColor: Int = Color.parseColor("#D9A441"),
+    val goldTextColor: Int = Color.parseColor("#7A5C16"),
     val address: String? = null,
     val panels: List<PdfPanel> = emptyList(),
     val infoBlocks: List<PdfInfoBlock> = emptyList(),
@@ -75,11 +76,12 @@ class PdfGenerator @Inject constructor(
         val titlePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = Color.parseColor("#4F46E5")
             textSize = 22f
-            typeface = Typeface.DEFAULT_BOLD
+            typeface = Typeface.create(Typeface.SERIF, Typeface.BOLD)
         }
         val subtitlePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = Color.DKGRAY
             textSize = 12f
+            typeface = Typeface.SERIF
         }
         val linePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = Color.parseColor("#4F46E5")
@@ -88,41 +90,46 @@ class PdfGenerator @Inject constructor(
         val footerPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = Color.GRAY
             textSize = 9f
+            typeface = Typeface.SERIF
         }
 
         // Ornamental certificate paints
         val orgPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = spec.ornamentColor
             textSize = 17f
-            typeface = Typeface.DEFAULT_BOLD
+            letterSpacing = 0.18f
+            typeface = Typeface.create(Typeface.SERIF, Typeface.BOLD)
         }
         val addrPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = Color.DKGRAY
+            color = Color.parseColor("#55666F")
             textSize = 13f
+            typeface = Typeface.SERIF
         }
         val certTitlePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = spec.goldColor
+            color = spec.goldTextColor
             textSize = 26f
-            typeface = Typeface.DEFAULT_BOLD
+            letterSpacing = 0.08f
+            typeface = Typeface.create(Typeface.SERIF, Typeface.BOLD)
         }
         val panelHeaderPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = spec.goldColor
+            color = spec.goldTextColor
             textSize = 13f
-            typeface = Typeface.DEFAULT_BOLD
+            typeface = Typeface.create(Typeface.SERIF, Typeface.BOLD)
         }
         val sectionTitlePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = spec.goldColor
+            color = spec.goldTextColor
             textSize = 13f
-            typeface = Typeface.DEFAULT_BOLD
+            typeface = Typeface.create(Typeface.SERIF, Typeface.BOLD)
         }
         val panelLabelPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = Color.parseColor("#55666F")
             textSize = 12.5f
+            typeface = Typeface.SERIF
         }
         val panelValuePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = Color.parseColor("#21303A")
             textSize = 12.5f
-            typeface = Typeface.DEFAULT_BOLD
+            typeface = Typeface.create(Typeface.SERIF, Typeface.BOLD)
         }
         val sectionLinePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = spec.goldColor
@@ -132,6 +139,10 @@ class PdfGenerator @Inject constructor(
             color = spec.ornamentColor
             style = Paint.Style.STROKE
             strokeWidth = 1f
+        }
+        val panelBgPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = Color.parseColor("#FBFDFC")
+            style = Paint.Style.FILL
         }
         val dashPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = Color.parseColor("#D8E2DF")
@@ -144,11 +155,12 @@ class PdfGenerator @Inject constructor(
         val signatureLabelPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = Color.parseColor("#21303A")
             textSize = 13f
-            typeface = Typeface.DEFAULT_BOLD
+            typeface = Typeface.create(Typeface.SERIF, Typeface.BOLD)
         }
         val issuedPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = spec.ornamentColor
             textSize = 13f
+            typeface = Typeface.SERIF
         }
 
         fun centeredX(text: String, paint: Paint): Float =
@@ -263,7 +275,7 @@ class PdfGenerator @Inject constructor(
             }
             canvas.drawText(spec.title, centeredX(spec.title, certTitlePaint), (y + 24).toFloat(), certTitlePaint)
             y += 30
-            canvas.drawLine(textLeft.toFloat(), y.toFloat(), (pageWidth - textLeft).toFloat(), y.toFloat(), linePaint)
+            canvas.drawLine(textLeft.toFloat(), y.toFloat(), (pageWidth - textLeft).toFloat(), y.toFloat(), sectionLinePaint)
             y += 16
         } else {
             canvas.drawText(spec.title, margin.toFloat(), (y + 22).toFloat(), titlePaint)
@@ -281,7 +293,7 @@ class PdfGenerator @Inject constructor(
             val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
                 color = line.color
                 textSize = line.sizeSp
-                typeface = if (line.bold) Typeface.DEFAULT_BOLD else Typeface.DEFAULT
+                typeface = if (line.bold) Typeface.create(Typeface.SERIF, Typeface.BOLD) else Typeface.SERIF
             }
             y += line.gapBefore.toInt()
             val wrapped = wrap(line.text, paint, contentWidth.toFloat())
@@ -311,7 +323,7 @@ class PdfGenerator @Inject constructor(
             val headerPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
                 color = Color.WHITE
                 textSize = 10f
-                typeface = Typeface.DEFAULT_BOLD
+                typeface = Typeface.create(Typeface.SERIF, Typeface.BOLD)
             }
             val headerBg = Paint().apply { color = Color.parseColor("#4F46E5") }
             val rowBg = Paint().apply { color = Color.parseColor("#F8FAFC") }
@@ -384,18 +396,22 @@ class PdfGenerator @Inject constructor(
             if (y + boxH.toInt() + 16 > contentBottom) nextPage()
 
             fun drawColumn(px: Float, title: String, rows: List<Pair<String, String>>) {
-                canvas.drawRect(px, y.toFloat(), (px + colW).toFloat(), (y + boxH).toFloat(), boxBorderPaint)
-                canvas.drawText(title, px + 10f, y + 17f, panelHeaderPaint)
-                canvas.drawLine(px + 6f, y + 24f, px + colW - 6f, y + 24f, sectionLinePaint)
+                canvas.drawRoundRect(px, y.toFloat(), (px + colW).toFloat(), (y + boxH).toFloat(), 8f, 8f, panelBgPaint)
+                canvas.drawRoundRect(px, y.toFloat(), (px + colW).toFloat(), (y + boxH).toFloat(), 8f, 8f, boxBorderPaint)
+                val titleUp = title.uppercase()
+                val tw = panelHeaderPaint.measureText(titleUp)
+                canvas.drawText(titleUp, px + colW / 2f - tw / 2f, y + 17f, panelHeaderPaint)
+                canvas.drawLine(px + 8f, y + 24f, px + colW - 8f, y + 24f, sectionLinePaint)
                 var ry = y + 24f
                 for ((label, value) in rows) {
                     val labelW = panelLabelPaint.measureText("$label:")
-                    val avail = colW - labelW - 20f
+                    val avail = colW - 20f
                     val lines = wrap(value, panelValuePaint, avail)
                     ry += rowH
                     canvas.drawText("$label:", px + 10f, ry + 3f, panelLabelPaint)
                     if (lines.size == 1) {
-                        canvas.drawText(lines[0], px + 10f + labelW, ry + 3f, panelValuePaint)
+                        val vx = px + colW - 10f - panelValuePaint.measureText(lines[0])
+                        canvas.drawText(lines[0], vx, ry + 3f, panelValuePaint)
                     } else {
                         canvas.drawText(lines[0], px + 10f + labelW, ry + 3f, panelValuePaint)
                         for (i in 1 until lines.size) {
@@ -403,7 +419,7 @@ class PdfGenerator @Inject constructor(
                             canvas.drawText(lines[i], px + 10f, ry + 3f, panelValuePaint)
                         }
                     }
-                    canvas.drawLine(px + 6f, ry + 9f, px + colW - 6f, ry + 9f, dashPaint)
+                    canvas.drawLine(px + 8f, ry + 9f, px + colW - 8f, ry + 9f, dashPaint)
                 }
             }
             drawColumn(textLeft.toFloat(), panel.title1, panel.rows1)
