@@ -379,7 +379,7 @@ class PdfGenerator @Inject constructor(
             val gap = 14f
             val colW = (contentWidth - gap) / 2f
             val headerH = 30f
-            val rowH = 26f
+            val rowH = 24f
             val bottomPad = 14f
 
             // Measure per-column height with value wrapping so nothing overflows.
@@ -425,7 +425,7 @@ class PdfGenerator @Inject constructor(
             }
             drawColumn(textLeft.toFloat(), panel.title1, panel.rows1)
             drawColumn(textLeft + colW + gap, panel.title2, panel.rows2)
-            y += boxH.toInt() + 36
+            y += boxH.toInt() + 20
         }
 
         // Info blocks (titled sections)
@@ -433,14 +433,14 @@ class PdfGenerator @Inject constructor(
             if (y + 50 > contentBottom) nextPage()
             canvas.drawText(block.title, textLeft.toFloat(), y + 12f, sectionTitlePaint)
             canvas.drawLine(textLeft.toFloat(), y + 16f, (textLeft + contentWidth).toFloat(), y + 16f, sectionLinePaint)
-            y += 30
+            y += 24
             for ((label, value) in block.keyValueRows) {
                 val labelW = panelLabelPaint.measureText("$label:")
                 val avail = contentWidth - labelW - 20f
                 val lines = wrap(value, panelValuePaint, avail)
                 var drawn = 0
                 for (chunk in lines) {
-                    if (y + 26 > contentBottom) nextPage()
+                    if (y + 22 > contentBottom) nextPage()
                     if (drawn == 0) {
                         canvas.drawText("$label:", textLeft.toFloat(), y + 12f, panelLabelPaint)
                         canvas.drawText(chunk, textLeft.toFloat() + labelW, y + 12f, panelValuePaint)
@@ -448,31 +448,30 @@ class PdfGenerator @Inject constructor(
                         canvas.drawText(chunk, textLeft.toFloat(), y + 12f, panelValuePaint)
                     }
                     drawn++
-                    y += 26
+                    y += 22
                 }
                 canvas.drawLine(textLeft.toFloat(), y - 8f, (textLeft + contentWidth).toFloat(), y - 8f, dashPaint)
             }
             for (t in block.textRows) {
                 val wrappedT = wrap(t, panelValuePaint, contentWidth.toFloat())
                 for (chunk in wrappedT) {
-                    if (y + 24 > contentBottom) nextPage()
+                    if (y + 20 > contentBottom) nextPage()
                     canvas.drawText(chunk, textLeft.toFloat(), y + 12f, panelValuePaint)
-                    y += 24
+                    y += 20
                 }
             }
-            y += 24
+            y += 12
         }
 
         // Signature row
         if (spec.signatureLabels.isNotEmpty()) {
-            // Flex spacer: push the signature block toward the page bottom so
-            // the ornamental certificate fills the A4 page like the preview.
+            // Flex spacer: distribute leftover space so the signature row sits
+            // near the page bottom, filling the A4 page like the preview.
+            // Only engages when there is real slack, so long content stays on one page.
             if (ornament) {
-                val tailNeed = if (!spec.issuedLine.isNullOrBlank()) 84 else 44
+                val tailNeed = 68 + (if (!spec.issuedLine.isNullOrBlank()) 40 else 0) + 10
                 val spare = contentBottom - y - tailNeed
-                if (spare > 40) {
-                    y += (spare * 0.55).toInt()
-                }
+                if (spare > 40) y += spare
             }
             if (y + 44 > contentBottom) nextPage()
             y += 30
