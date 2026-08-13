@@ -107,28 +107,28 @@ class PdfGenerator @Inject constructor(
         }
         val certTitlePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = spec.goldTextColor
-            textSize = 26f
+            textSize = 28f
             letterSpacing = 0.08f
             typeface = Typeface.create(Typeface.SERIF, Typeface.BOLD)
         }
         val panelHeaderPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = spec.goldTextColor
-            textSize = 13f
+            textSize = 14f
             typeface = Typeface.create(Typeface.SERIF, Typeface.BOLD)
         }
         val sectionTitlePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = spec.goldTextColor
-            textSize = 13f
+            textSize = 14f
             typeface = Typeface.create(Typeface.SERIF, Typeface.BOLD)
         }
         val panelLabelPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = Color.parseColor("#55666F")
-            textSize = 12.5f
+            textSize = 13f
             typeface = Typeface.SERIF
         }
         val panelValuePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = Color.parseColor("#21303A")
-            textSize = 12.5f
+            textSize = 13f
             typeface = Typeface.create(Typeface.SERIF, Typeface.BOLD)
         }
         val sectionLinePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -154,12 +154,12 @@ class PdfGenerator @Inject constructor(
         }
         val signatureLabelPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = Color.parseColor("#21303A")
-            textSize = 13f
+            textSize = 13.5f
             typeface = Typeface.create(Typeface.SERIF, Typeface.BOLD)
         }
         val issuedPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = spec.ornamentColor
-            textSize = 13f
+            textSize = 13.5f
             typeface = Typeface.SERIF
         }
 
@@ -378,8 +378,9 @@ class PdfGenerator @Inject constructor(
         for (panel in spec.panels) {
             val gap = 14f
             val colW = (contentWidth - gap) / 2f
-            val headerH = 26f
-            val rowH = 22f
+            val headerH = 30f
+            val rowH = 26f
+            val bottomPad = 14f
 
             // Measure per-column height with value wrapping so nothing overflows.
             fun columnHeight(rows: List<Pair<String, String>>): Float {
@@ -390,10 +391,10 @@ class PdfGenerator @Inject constructor(
                     val lines = wrap(value, panelValuePaint, avail)
                     h += lines.size * rowH
                 }
-                return h
+                return h + bottomPad
             }
             val boxH = maxOf(columnHeight(panel.rows1), columnHeight(panel.rows2))
-            if (y + boxH.toInt() + 16 > contentBottom) nextPage()
+            if (y + boxH.toInt() + 24 > contentBottom) nextPage()
 
             fun drawColumn(px: Float, title: String, rows: List<Pair<String, String>>) {
                 canvas.drawRoundRect(px, y.toFloat(), (px + colW).toFloat(), (y + boxH).toFloat(), 8f, 8f, panelBgPaint)
@@ -405,7 +406,7 @@ class PdfGenerator @Inject constructor(
                 var ry = y + 24f
                 for ((label, value) in rows) {
                     val labelW = panelLabelPaint.measureText("$label:")
-                    val avail = colW - 20f
+                    val avail = colW - labelW - 20f
                     val lines = wrap(value, panelValuePaint, avail)
                     ry += rowH
                     canvas.drawText("$label:", px + 10f, ry + 3f, panelLabelPaint)
@@ -424,7 +425,7 @@ class PdfGenerator @Inject constructor(
             }
             drawColumn(textLeft.toFloat(), panel.title1, panel.rows1)
             drawColumn(textLeft + colW + gap, panel.title2, panel.rows2)
-            y += boxH.toInt() + 16
+            y += boxH.toInt() + 36
         }
 
         // Info blocks (titled sections)
@@ -432,40 +433,49 @@ class PdfGenerator @Inject constructor(
             if (y + 50 > contentBottom) nextPage()
             canvas.drawText(block.title, textLeft.toFloat(), y + 12f, sectionTitlePaint)
             canvas.drawLine(textLeft.toFloat(), y + 16f, (textLeft + contentWidth).toFloat(), y + 16f, sectionLinePaint)
-            y += 24
+            y += 30
             for ((label, value) in block.keyValueRows) {
                 val labelW = panelLabelPaint.measureText("$label:")
                 val avail = contentWidth - labelW - 20f
                 val lines = wrap(value, panelValuePaint, avail)
                 var drawn = 0
                 for (chunk in lines) {
-                    if (y + 22 > contentBottom) nextPage()
+                    if (y + 26 > contentBottom) nextPage()
                     if (drawn == 0) {
-                        canvas.drawText("$label:", textLeft.toFloat(), y + 10f, panelLabelPaint)
-                        canvas.drawText(chunk, textLeft.toFloat() + labelW, y + 10f, panelValuePaint)
+                        canvas.drawText("$label:", textLeft.toFloat(), y + 12f, panelLabelPaint)
+                        canvas.drawText(chunk, textLeft.toFloat() + labelW, y + 12f, panelValuePaint)
                     } else {
-                        canvas.drawText(chunk, textLeft.toFloat(), y + 10f, panelValuePaint)
+                        canvas.drawText(chunk, textLeft.toFloat(), y + 12f, panelValuePaint)
                     }
                     drawn++
-                    y += 22
+                    y += 26
                 }
                 canvas.drawLine(textLeft.toFloat(), y - 8f, (textLeft + contentWidth).toFloat(), y - 8f, dashPaint)
             }
             for (t in block.textRows) {
                 val wrappedT = wrap(t, panelValuePaint, contentWidth.toFloat())
                 for (chunk in wrappedT) {
-                    if (y + 20 > contentBottom) nextPage()
-                    canvas.drawText(chunk, textLeft.toFloat(), y + 10f, panelValuePaint)
-                    y += 20
+                    if (y + 24 > contentBottom) nextPage()
+                    canvas.drawText(chunk, textLeft.toFloat(), y + 12f, panelValuePaint)
+                    y += 24
                 }
             }
-            y += 8
+            y += 24
         }
 
         // Signature row
         if (spec.signatureLabels.isNotEmpty()) {
+            // Flex spacer: push the signature block toward the page bottom so
+            // the ornamental certificate fills the A4 page like the preview.
+            if (ornament) {
+                val tailNeed = if (!spec.issuedLine.isNullOrBlank()) 84 else 44
+                val spare = contentBottom - y - tailNeed
+                if (spare > 40) {
+                    y += (spare * 0.55).toInt()
+                }
+            }
             if (y + 44 > contentBottom) nextPage()
-            y += 24
+            y += 30
             val n = spec.signatureLabels.size
             val slotW = contentWidth / n
             for ((i, label) in spec.signatureLabels.withIndex()) {
@@ -474,17 +484,17 @@ class PdfGenerator @Inject constructor(
                 val lineEnd = sx + slotW - 24f
                 canvas.drawLine(lineStart, y.toFloat(), lineEnd, y.toFloat(), signatureLinePaint)
                 val lw = signatureLabelPaint.measureText(label)
-                canvas.drawText(label, sx + slotW / 2f - lw / 2f, y + 16f, signatureLabelPaint)
+                canvas.drawText(label, sx + slotW / 2f - lw / 2f, y + 18f, signatureLabelPaint)
             }
-            y += 32
+            y += 38
         }
 
         // Issued date/time line
         if (!spec.issuedLine.isNullOrBlank()) {
-            if (y + 24 > contentBottom) nextPage()
-            y += 12
+            if (y + 28 > contentBottom) nextPage()
+            y += 16
             canvas.drawText(spec.issuedLine, centeredX(spec.issuedLine, issuedPaint), y.toFloat(), issuedPaint)
-            y += 18
+            y += 24
         }
 
         chrome()
