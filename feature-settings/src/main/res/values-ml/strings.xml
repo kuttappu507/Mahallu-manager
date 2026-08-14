@@ -22,7 +22,7 @@
     <string name="more_title">കൂടുതൽ</string>
     <string name="more_group_records">രേഖകൾ</string>
     <string name="more_group_data_tools">ഡാറ്റ &amp; ടൂളുകൾ</string>
-    <string name="more_menu_subscriptions">ചന്ദ്രക്കുറി</string>
+    <string name="more_menu_subscriptions">വരിസംഖ്യ</string>
     <string name="more_menu_subscriptions_sub">പ്രതിമാസ പിരിവുകൾ</string>
     <string name="more_menu_donations">സംഭാവനകൾ</string>
     <string name="more_menu_donations_sub">ഫണ്ടുകൾ &amp; സംഭാവനകൾ</string>
@@ -45,7 +45,7 @@
     <string name="more_profile_contributed">സംഭാവന ചെയ്തത്</string>
     <string name="more_profile_certificates">സർട്ടിഫിക്കറ്റുകൾ</string>
     <string name="more_logout">ലോഗ് ഔട്ട്</string>
-    <string name="more_logout_subtitle">ഫജ്ർ നമസ്കാരത്തിൽ കാണാം, ഇൻഷാ അല്ലാഹ്</string>
+    <string name="more_logout_subtitle">ഈ ഉപകരണത്തിൽ നിന്ന് ലോഗ് ഔട്ട് ചെയ്യുക</string>
     <string name="more_version_footer">മഹല്ല് മാനേജർ v1.0.0 · %1$s</string>
     <string name="settings_title">ക്രമീകരണങ്ങൾ</string>
     <string name="settings_mahallu_info">മഹല്ല് വിവരങ്ങൾ</string>

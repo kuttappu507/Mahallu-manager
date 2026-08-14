@@ -7,6 +7,7 @@ import com.mahallu.manager.core.database.entity.UserEntity
 import com.mahallu.manager.core.database.repository.AuditActor
 import com.mahallu.manager.core.database.repository.CurrentActor
 import com.mahallu.manager.core.database.repository.SeedData
+import com.mahallu.manager.core.database.repository.SettingsRepository
 import com.mahallu.manager.core.database.repository.UserRepository
 import com.mahallu.manager.core.security.SessionManager
 import com.mahallu.manager.feature.auth.R
@@ -23,7 +24,8 @@ data class AuthState(
     val isInitializing: Boolean = true,
     val currentUser: UserEntity? = null,
     val isLoading: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
+    val mahalluName: String = ""
 )
 
 @HiltViewModel
@@ -32,7 +34,8 @@ class LoginViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val sessionManager: SessionManager,
     private val seedData: SeedData,
-    private val currentActor: CurrentActor
+    private val currentActor: CurrentActor,
+    private val settingsRepository: SettingsRepository
 ) : AndroidViewModel(application) {
 
     private val _authState = MutableStateFlow(AuthState())
@@ -44,6 +47,8 @@ class LoginViewModel @Inject constructor(
         // in Application.onCreate), seed now so the user can log in.
         viewModelScope.launch {
             runCatching { seedData.seedIfEmpty() }
+            val name = settingsRepository.getString("mahallu.name", "Mahallu Manager")
+            _authState.update { it.copy(mahalluName = name) }
         }
     }
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="subscriptions_title">ചന്ദ്രക്കുറി</string>
+    <string name="subscriptions_title">വരിസംഖ്യ</string>
     <string name="subscriptions_total_this_month">ഈ മാസം ആകെ</string>
     <string name="subscriptions_search_placeholder">രസീത് നമ്പർ അല്ലെങ്കിൽ കുറിപ്പുകൾ ഉപയോഗിച്ച് തിരയുക…</string>
     <string name="subscriptions_row_detail">%1$s • %2$s</string>
@@ -26,13 +26,13 @@
     <string name="collection_family_selector">%1$s • %2$s</string>
     <string name="collection_error_no_selection">ആദ്യം കുടുംബം അല്ലെങ്കിൽ അംഗത്തെ തിരഞ്ഞെടുക്കുക</string>
     <string name="collection_error_invalid_amount">സാധുവായ തുക നൽകുക</string>
-    <string name="pdf_subscription_receipt">ചന്ദ്രക്കുറി രസീത്</string>
+    <string name="pdf_subscription_receipt">വരിസംഖ്യ രസീത്</string>
     <string name="pdf_receipt_no">രസീത് നമ്പർ: %1$s</string>
     <string name="pdf_date">തീയതി: %1$s</string>
     <string name="pdf_received_from">ലഭിച്ചത്:</string>
     <string name="pdf_family_member_placeholder">[കുടുംബം / അംഗം]</string>
     <string name="pdf_member">അംഗം: %1$s</string>
-    <string name="pdf_subscription_type">ചന്ദ്രക്കുറി തരം: %1$s</string>
+    <string name="pdf_subscription_type">വരിസംഖ്യ തരം: %1$s</string>
     <string name="pdf_the_sum_of">തുക</string>
     <string name="pdf_payment">പേയ്മെന്റ്: %1$s</string>
     <string name="pdf_remarks">കുറിപ്പുകൾ: %1$s</string>

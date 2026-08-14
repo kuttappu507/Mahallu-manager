@@ -208,7 +208,7 @@ fun LoginScreen(
             Spacer(Modifier.height(26.dp))
             AnimatedReveal(index = 4) {
                 Text(
-                    text = stringResource(R.string.login_version_tagline),
+                    text = stringResource(R.string.login_version_tagline, authState.mahalluName.ifBlank { "Mahallu Manager" }),
                     style = MaterialTheme.typography.labelSmall,
                     color = colors.textTertiary,
                     fontWeight = FontWeight.Bold,

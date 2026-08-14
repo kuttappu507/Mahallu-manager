@@ -10,7 +10,7 @@
     <string name="search_section_families">കുടുംബങ്ങൾ (%1$d)</string>
     <string name="search_section_members">അംഗങ്ങൾ (%1$d)</string>
     <string name="search_section_donations">സംഭാവനകൾ (%1$d)</string>
-    <string name="search_section_subscriptions">ചന്ദ്രക്കുറി (%1$d)</string>
+    <string name="search_section_subscriptions">വരിസംഖ്യ (%1$d)</string>
     <string name="search_section_marriages">വിവാഹങ്ങൾ (%1$d)</string>
     <string name="search_section_deaths">മരണങ്ങൾ (%1$d)</string>
     <string name="search_section_welfare">ക്ഷേമം (%1$d)</string>

@@ -2,7 +2,6 @@
 <resources>
     <!-- Finance screen -->
     <string name="finance_title">Finance</string>
-    <string name="finance_masjid_name">Masjid An-Noor</string>
     <string name="finance_filter_all">All</string>
     <string name="finance_filter_income">Income</string>
     <string name="finance_filter_expense">Expense</string>

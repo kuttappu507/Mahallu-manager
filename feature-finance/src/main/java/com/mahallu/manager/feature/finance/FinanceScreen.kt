@@ -90,7 +90,7 @@ fun FinanceScreen(
                 )
                 Spacer(Modifier.width(10.dp))
                 Text(
-                    text = stringResource(R.string.finance_masjid_name),
+                    text = state.mahalluName.ifBlank { stringResource(R.string.finance_title) },
                     style = MaterialTheme.typography.labelSmall,
                     color = colors.textSecondary,
                     fontWeight = FontWeight.ExtraBold,
@@ -444,7 +444,7 @@ private fun FinanceRow(e: FinanceEntryEntity, modifier: Modifier = Modifier) {
 private fun shareFinance(context: android.content.Context, state: FinanceUiState) {
     runCatching {
         val text = buildString {
-            append(context.getString(R.string.finance_share_summary_header, context.getString(R.string.finance_masjid_name)))
+            append(context.getString(R.string.finance_share_summary_header, state.mahalluName.ifBlank { context.getString(R.string.finance_title) }))
             append(context.getString(R.string.finance_share_balance, Formatters.currency(state.balance)))
             append(context.getString(R.string.finance_share_income, Formatters.currency(state.totalIncome)))
             append(context.getString(R.string.finance_share_expenses, Formatters.currency(state.totalExpense)))

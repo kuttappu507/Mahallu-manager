@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="finance_title">ധനകാര്യം</string>
-    <string name="finance_masjid_name">മസ്ജിദ് അന്നൂർ</string>
     <string name="finance_filter_all">എല്ലാം</string>
     <string name="finance_filter_income">വരുമാനം</string>
     <string name="finance_filter_expense">ചെലവ്</string>
@@ -27,7 +26,7 @@
     <string name="finance_type_income">വരുമാനം</string>
     <string name="finance_type_expense">ചെലവ്</string>
     <string name="finance_field_category">വിഭാഗം</string>
-    <string name="finance_cat_subscription">ചന്ദ്രക്കുറി</string>
+    <string name="finance_cat_subscription">വരിസംഖ്യ</string>
     <string name="finance_cat_donation">സംഭാവന</string>
     <string name="finance_cat_rent">വാടക</string>
     <string name="finance_cat_other_income">മറ്റ് വരുമാനം</string>

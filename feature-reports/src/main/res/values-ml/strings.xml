@@ -9,7 +9,7 @@
     <string name="reports_member_register">അംഗ രജിസ്റ്റർ</string>
     <string name="reports_member_register_desc">എല്ലാ രജിസ്റ്റർ ചെയ്ത അംഗങ്ങൾ</string>
     <string name="reports_collection_report">പിരിവ് റിപ്പോർട്ട്</string>
-    <string name="reports_collection_report_desc">ചന്ദ്രക്കുറി പിരിവ് ചരിത്രം</string>
+    <string name="reports_collection_report_desc">വരിസംഖ്യ പിരിവ് ചരിത്രം</string>
     <string name="reports_donation_report">സംഭാവന റിപ്പോർട്ട്</string>
     <string name="reports_donation_report_desc">സംഭാവന ചരിത്രം</string>
     <string name="reports_finance_report">ധനകാര്യ റിപ്പോർട്ട്</string>
@@ -43,7 +43,7 @@
     <string name="reports_header_nikah_date">നിക്കാഹ് തീയതി</string>
     <string name="reports_header_father">പിതാവ്</string>
     <string name="reports_header_date_of_death">മരണ തീയതി</string>
-    <string name="reports_header_fallback">കോൾ 1</string>
+    <string name="reports_header_fallback">കോളം 1</string>
     <string name="reports_generated_subtitle">സൃഷ്ടിച്ചു: %1$s</string>
     <string name="reports_mahallu_management_report">മഹല്ല് മാനേജ്മെന്റ് റിപ്പോർട്ട്</string>
     <string name="reports_footer_confidential">മഹല്ല് മാനേജർ • രഹസ്യം</string>

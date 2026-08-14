@@ -23,7 +23,7 @@
     <string name="dashboard_see_all">എല്ലാം കാണുക</string>
     <string name="dashboard_no_recent">സമീപകാല പ്രവർത്തനങ്ങളൊന്നുമില്ല</string>
     <string name="announcement_title">പുതിയ അറിയിപ്പ്</string>
-    <string name="announcement_sent_to">%1$d അംഗങ്ങൾക്കും പുഷ്, വാട്സ്ആപ്പ് വഴി അയച്ചു.</string>
+    <string name="announcement_sent_to">%1$d അംഗങ്ങൾക്ക് പുഷ്, വാട്സ്ആപ്പ് വഴി അയച്ചു.</string>
     <string name="announcement_message_label">സന്ദേശം</string>
     <string name="announcement_message_placeholder">ഉദാ. ഇന്ന് രാത്രി 9:30-ന് തറാവീഹ് ആരംഭിക്കുന്നു, ഇൻഷാ അല്ലാഹ്…</string>
     <string name="announcement_error_empty">ആദ്യം ഒരു സന്ദേശം എഴുതുക</string>

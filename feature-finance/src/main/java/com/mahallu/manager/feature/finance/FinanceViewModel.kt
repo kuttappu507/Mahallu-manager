@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mahallu.manager.core.database.entity.FinanceEntryEntity
 import com.mahallu.manager.core.database.repository.FinanceRepository
+import com.mahallu.manager.core.database.repository.SettingsRepository
 import com.mahallu.manager.core.util.DateUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,6 +12,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import java.util.Calendar
 import javax.inject.Inject
 
@@ -22,16 +24,25 @@ data class FinanceUiState(
     val typeFilter: String = "ALL",
     val monthFilter: Long = -1L,
     val monthChips: List<Pair<String, Long>> = emptyList(),
-    val isLoading: Boolean = true
+    val isLoading: Boolean = true,
+    val mahalluName: String = ""
 )
 
 @HiltViewModel
 class FinanceViewModel @Inject constructor(
-    private val repo: FinanceRepository
+    private val repo: FinanceRepository,
+    private val settingsRepo: SettingsRepository
 ) : ViewModel() {
 
     private val typeFilter = MutableStateFlow("ALL")
     private val monthFilter = MutableStateFlow(DateUtils.startOfMonth())
+    private val mahalluName = MutableStateFlow("")
+
+    init {
+        viewModelScope.launch {
+            mahalluName.value = settingsRepo.getString("mahallu.name", "Mahallu Manager")
+        }
+    }
 
     private fun monthOptions(): List<Pair<String, Long>> {
         val now = Calendar.getInstance().timeInMillis
@@ -46,8 +57,9 @@ class FinanceViewModel @Inject constructor(
     val state: StateFlow<FinanceUiState> = combine(
         repo.observeAll(),
         typeFilter,
-        monthFilter
-    ) { all, t, m ->
+        monthFilter,
+        mahalluName
+    ) { all, t, m, name ->
         val inRange = if (m < 0L) all else all.filter { it.date in m..DateUtils.endOfMonth(m) }
         val filtered = if (t == "ALL") inRange else inRange.filter { it.type == t }
         val totalIn = inRange.filter { it.type == "INCOME" }.sumOf { it.amount }
@@ -60,7 +72,8 @@ class FinanceViewModel @Inject constructor(
             typeFilter = t,
             monthFilter = m,
             monthChips = monthOptions(),
-            isLoading = false
+            isLoading = false,
+            mahalluName = name
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), FinanceUiState())
 
