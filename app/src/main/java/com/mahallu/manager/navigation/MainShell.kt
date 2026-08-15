@@ -3,8 +3,6 @@ package com.mahallu.manager.navigation
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -102,18 +100,10 @@ fun MainShell(
             NavHost(
                 navController = navController,
                 startDestination = "dashboard",
-                enterTransition = {
-                    slideInHorizontally(animationSpec = tween(300), initialOffsetX = { it / 4 }) + fadeIn(tween(300))
-                },
-                exitTransition = {
-                    slideOutHorizontally(animationSpec = tween(220), targetOffsetX = { -it / 4 }) + fadeOut(tween(220))
-                },
-                popEnterTransition = {
-                    slideInHorizontally(animationSpec = tween(300), initialOffsetX = { -it / 4 }) + fadeIn(tween(300))
-                },
-                popExitTransition = {
-                    slideOutHorizontally(animationSpec = tween(220), targetOffsetX = { it / 4 }) + fadeOut(tween(220))
-                }
+                enterTransition = { fadeIn(tween(220)) },
+                exitTransition = { fadeOut(tween(120)) },
+                popEnterTransition = { fadeIn(tween(220)) },
+                popExitTransition = { fadeOut(tween(120)) }
             ) {
                 composable("dashboard") {
                     DashboardScreen(
