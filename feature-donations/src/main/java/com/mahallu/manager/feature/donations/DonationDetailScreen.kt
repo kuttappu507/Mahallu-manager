@@ -102,23 +102,20 @@ fun DonationDetailScreen(
                     }
 
                     item {
+                        val mobileValue = donation.donorMobile?.takeIf { it.isNotBlank() }
+                        val purposeValue = donation.purpose?.takeIf { it.isNotBlank() }
+                        val remarksValue = donation.remarks?.takeIf { it.isNotBlank() }
                         InfoGridCard(
                             modifier = Modifier.padding(horizontal = 14.dp),
-                            items = buildList {
-                                add(stringResource(R.string.donations_receipt_number) to donation.receiptNumber)
-                                add(stringResource(R.string.donations_date) to Formatters.date(donation.date))
-                                add(stringResource(R.string.donations_category) to stringResource(donationCategoryLabelRes(donation.category)))
-                                add(stringResource(R.string.donations_payment_method) to stringResource(donationPaymentLabelRes(donation.paymentMethod)))
-                                donation.donorMobile?.takeIf { it.isNotBlank() }?.let {
-                                    add(stringResource(R.string.donations_mobile) to it)
-                                }
-                                donation.purpose?.takeIf { it.isNotBlank() }?.let {
-                                    add(stringResource(R.string.donations_purpose) to it)
-                                }
-                                donation.remarks?.takeIf { it.isNotBlank() }?.let {
-                                    add(stringResource(R.string.donations_remarks) to it)
-                                }
-                            }
+                            items = listOfNotNull(
+                                stringResource(R.string.donations_receipt_number) to donation.receiptNumber,
+                                stringResource(R.string.donations_date) to Formatters.date(donation.date),
+                                stringResource(R.string.donations_category) to stringResource(donationCategoryLabelRes(donation.category)),
+                                stringResource(R.string.donations_payment_method) to stringResource(donationPaymentLabelRes(donation.paymentMethod)),
+                                if (mobileValue != null) stringResource(R.string.donations_mobile) to mobileValue else null,
+                                if (purposeValue != null) stringResource(R.string.donations_purpose) to purposeValue else null,
+                                if (remarksValue != null) stringResource(R.string.donations_remarks) to remarksValue else null
+                            )
                         )
                     }
 

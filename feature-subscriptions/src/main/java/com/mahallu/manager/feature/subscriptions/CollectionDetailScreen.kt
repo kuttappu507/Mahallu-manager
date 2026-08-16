@@ -103,20 +103,18 @@ fun CollectionDetailScreen(
                     }
 
                     item {
+                        val memberValue = state.memberName.takeIf { it.isNotBlank() }
+                        val remarksValue = sub.remarks?.takeIf { it.isNotBlank() }
                         InfoGridCard(
                             modifier = Modifier.padding(horizontal = 14.dp),
-                            items = buildList {
-                                add(stringResource(R.string.collection_field_receipt_number) to sub.receiptNumber)
-                                add(stringResource(R.string.collection_field_payment_date) to Formatters.date(sub.date))
-                                add(stringResource(R.string.collection_field_collection_type) to sub.type)
-                                add(stringResource(R.string.collection_field_payment_method) to sub.paymentMethod)
-                                if (state.memberName.isNotBlank()) {
-                                    add(stringResource(R.string.collection_field_select_member) to state.memberName)
-                                }
-                                sub.remarks?.takeIf { it.isNotBlank() }?.let {
-                                    add(stringResource(R.string.collection_field_remarks) to it)
-                                }
-                            }
+                            items = listOfNotNull(
+                                stringResource(R.string.collection_field_receipt_number) to sub.receiptNumber,
+                                stringResource(R.string.collection_field_payment_date) to Formatters.date(sub.date),
+                                stringResource(R.string.collection_field_collection_type) to sub.type,
+                                stringResource(R.string.collection_field_payment_method) to sub.paymentMethod,
+                                if (memberValue != null) stringResource(R.string.collection_field_select_member) to memberValue else null,
+                                if (remarksValue != null) stringResource(R.string.collection_field_remarks) to remarksValue else null
+                            )
                         )
                     }
 

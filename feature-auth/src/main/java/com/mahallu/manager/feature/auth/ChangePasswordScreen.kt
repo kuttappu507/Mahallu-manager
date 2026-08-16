@@ -46,6 +46,7 @@ fun ChangePasswordScreen(
     var current by remember { mutableStateOf("") }
     var newPassword by remember { mutableStateOf("") }
     var confirm by remember { mutableStateOf("") }
+    val mismatchError = stringResource(R.string.change_password_error_mismatch)
 
     Box(modifier = Modifier.fillMaxSize().background(colors.background)) {
         Column(modifier = Modifier.fillMaxSize()) {
@@ -119,7 +120,7 @@ fun ChangePasswordScreen(
                     text = if (state.isLoading) stringResource(R.string.change_password_saving) else stringResource(R.string.change_password_button),
                     onClick = {
                         if (newPassword != confirm) {
-                            viewModel.setError(stringResource(R.string.change_password_error_mismatch))
+                            viewModel.setError(mismatchError)
                         } else {
                             viewModel.changePassword(current, newPassword) { onChanged() }
                         }

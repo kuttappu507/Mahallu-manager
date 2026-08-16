@@ -11,6 +11,7 @@ import com.mahallu.manager.core.database.repository.SubscriptionRepository
 import com.mahallu.manager.feature.certificates.pdf.PdfGenerator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import feature.subscriptions.feature.subscriptions.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
