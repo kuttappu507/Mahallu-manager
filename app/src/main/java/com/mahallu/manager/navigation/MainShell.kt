@@ -38,6 +38,7 @@ import com.mahallu.manager.feature.dashboard.AnnouncementScreen
 import com.mahallu.manager.feature.dashboard.DashboardScreen
 import com.mahallu.manager.feature.death.DeathEditScreen
 import com.mahallu.manager.feature.death.DeathListScreen
+import com.mahallu.manager.feature.donations.DonationDetailScreen
 import com.mahallu.manager.feature.donations.DonationEntryScreen
 import com.mahallu.manager.feature.donations.DonationsScreen
 import com.mahallu.manager.feature.families.FamilyDetailScreen
@@ -55,6 +56,7 @@ import com.mahallu.manager.feature.search.GlobalSearchScreen
 import com.mahallu.manager.feature.settings.BackupScreen
 import com.mahallu.manager.feature.settings.MoreScreen
 import com.mahallu.manager.feature.settings.SettingsScreen
+import com.mahallu.manager.feature.subscriptions.CollectionDetailScreen
 import com.mahallu.manager.feature.subscriptions.CollectionEntryScreen
 import com.mahallu.manager.feature.subscriptions.SubscriptionsScreen
 import com.mahallu.manager.feature.welfare.WelfareEditScreen
@@ -177,20 +179,28 @@ fun MainShell(
                 })) {
                     CollectionEntryScreen(onDone = { navController.popBackStack() })
                 }
+                composable("collection_detail/{collectionId}", arguments = listOf(navArgument("collectionId") { type = NavType.StringType })) {
+                    CollectionDetailScreen(onBack = { navController.popBackStack() })
+                }
                 composable("subscriptions") {
                     SubscriptionsScreen(
                         onBack = { navController.popBackStack() },
-                        onAddCollection = { navController.navigate("collection_entry?memberId=") }
+                        onAddCollection = { navController.navigate("collection_entry?memberId=") },
+                        onOpenItem = { id -> navController.navigate("collection_detail/$id") }
                     )
                 }
                 composable("donations") {
                     DonationsScreen(
                         onBack = { navController.popBackStack() },
-                        onAdd = { navController.navigate("donation_entry") }
+                        onAdd = { navController.navigate("donation_entry") },
+                        onOpenItem = { id -> navController.navigate("donation_detail/$id") }
                     )
                 }
                 composable("donation_entry") {
                     DonationEntryScreen(onDone = { navController.popBackStack() })
+                }
+                composable("donation_detail/{donationId}", arguments = listOf(navArgument("donationId") { type = NavType.StringType })) {
+                    DonationDetailScreen(onBack = { navController.popBackStack() })
                 }
                 composable("finance_entry") {
                     IncomeExpenseEntryScreen(onDone = { navController.popBackStack() })

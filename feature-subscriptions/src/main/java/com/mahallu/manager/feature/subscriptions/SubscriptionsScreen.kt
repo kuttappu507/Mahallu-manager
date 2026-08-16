@@ -49,6 +49,7 @@ import feature.subscriptions.feature.subscriptions.R
 fun SubscriptionsScreen(
     onBack: () -> Unit,
     onAddCollection: () -> Unit,
+    onOpenItem: (String) -> Unit = {},
     viewModel: SubscriptionsViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -106,7 +107,7 @@ fun SubscriptionsScreen(
                 modifier = Modifier.weight(1f)
             ) {
                 items(state.subscriptions, key = { it.id }) { sub ->
-                    SubscriptionRow(sub)
+                    SubscriptionRow(sub, onClick = { onOpenItem(sub.id) })
                 }
             }
         }
@@ -114,11 +115,12 @@ fun SubscriptionsScreen(
 }
 
 @Composable
-private fun SubscriptionRow(sub: SubscriptionEntity) {
+private fun SubscriptionRow(sub: SubscriptionEntity, onClick: () -> Unit) {
     val colors = LocalMahalluColors.current
     AppCard(
         modifier = Modifier.fillMaxWidth(),
-        contentPadding = PaddingValues(horizontal = 14.dp, vertical = 12.dp)
+        contentPadding = PaddingValues(horizontal = 14.dp, vertical = 12.dp),
+        onClick = onClick
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Box(

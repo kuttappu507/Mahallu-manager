@@ -21,6 +21,13 @@
     <string name="collection_saving">Saving…</string>
     <string name="collection_save_print">Save &amp; Print Receipt</string>
     <string name="collection_receipt_saved">✓ Saved. Receipt generated: %1$s</string>
+
+    <string name="subscriptions_detail_title">Collection Details</string>
+    <string name="collection_receipt_section">Receipt</string>
+    <string name="collection_receipt_generating">Generating receipt…</string>
+    <string name="collection_receipt_failed">Could not generate the receipt. Try again.</string>
+    <string name="collection_receipt_retry">Retry</string>
+    <string name="collection_error_not_found">Collection not found</string>
     <string name="collection_view_receipt">View Receipt</string>
     <string name="collection_share">Share</string>
     <string name="collection_done">Done</string>

@@ -37,6 +37,13 @@
     <string name="donations_share">പങ്കിടുക</string>
     <string name="donations_done">പൂർത്തിയായി</string>
     <string name="donations_receipt_generated">✓ സേവ് ചെയ്തു. രസീത് സൃഷ്ടിച്ചു: %1$s</string>
+
+    <string name="donations_detail_title">സംഭാവന വിവരങ്ങൾ</string>
+    <string name="donations_receipt_section">രസീത്</string>
+    <string name="donations_pdf_generating">രസീത് സൃഷ്ടിക്കുന്നു…</string>
+    <string name="donations_pdf_failed">രസീത് സൃഷ്ടിക്കാൻ കഴിഞ്ഞില്ല. വീണ്ടും ശ്രമിക്കുക.</string>
+    <string name="donations_pdf_retry">വീണ്ടും ശ്രമിക്കുക</string>
+    <string name="donations_error_not_found">സംഭാവന കണ്ടെത്തിയില്ല</string>
     <string name="donations_error_donor_name">ദാതാവിന്റെ പേര് ആവശ്യമാണ്</string>
     <string name="donations_error_amount">സാധുവായ തുക നൽകുക</string>
     <string name="donations_pdf_receipt_title">സംഭാവന രസീത്</string>

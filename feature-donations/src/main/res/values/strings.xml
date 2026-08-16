@@ -43,6 +43,13 @@
     <string name="donations_done">Done</string>
     <string name="donations_receipt_generated">✓ Saved. Receipt generated: %1$s</string>
 
+    <string name="donations_detail_title">Donation Details</string>
+    <string name="donations_receipt_section">Receipt</string>
+    <string name="donations_pdf_generating">Generating receipt…</string>
+    <string name="donations_pdf_failed">Could not generate the receipt. Try again.</string>
+    <string name="donations_pdf_retry">Retry</string>
+    <string name="donations_error_not_found">Donation not found</string>
+
     <string name="donations_error_donor_name">Donor name is required</string>
     <string name="donations_error_amount">Enter a valid amount</string>
 

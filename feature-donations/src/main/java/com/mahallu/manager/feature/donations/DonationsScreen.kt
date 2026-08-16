@@ -47,6 +47,7 @@ import feature.donations.feature.donations.R
 fun DonationsScreen(
     onBack: () -> Unit,
     onAdd: () -> Unit,
+    onOpenItem: (String) -> Unit = {},
     viewModel: DonationsViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -99,18 +100,19 @@ fun DonationsScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.weight(1f)
             ) {
-                items(state.donations, key = { it.id }) { d -> DonationRow(d) }
+                items(state.donations, key = { it.id }) { d -> DonationRow(d, onClick = { onOpenItem(d.id) }) }
             }
         }
     }
 }
 
 @Composable
-private fun DonationRow(d: DonationEntity) {
+private fun DonationRow(d: DonationEntity, onClick: () -> Unit) {
     val colors = LocalMahalluColors.current
     AppCard(
         modifier = Modifier.fillMaxWidth(),
-        contentPadding = PaddingValues(horizontal = 14.dp, vertical = 12.dp)
+        contentPadding = PaddingValues(horizontal = 14.dp, vertical = 12.dp),
+        onClick = onClick
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Box(
