@@ -24,7 +24,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -54,11 +53,7 @@ fun DonationEntryScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val colors = LocalMahalluColors.current
     val context = LocalContext.current
-
-    // Don't auto-navigate if a PDF was generated — let the user view/share it first.
-    LaunchedEffect(state.saved, state.pdfPath) {
-        if (state.saved && state.pdfPath == null) onDone()
-    }
+    val pdfFailedMessage = stringResource(R.string.donations_pdf_failed)
 
     Box(modifier = Modifier.fillMaxSize().background(colors.background)) {
         Column(modifier = Modifier.fillMaxSize()) {
@@ -67,7 +62,10 @@ fun DonationEntryScreen(
                 showBack = true,
                 onBackClick = onDone,
                 trailingActions = {
-                    IconButton(onClick = { viewModel.save() }) {
+                    IconButton(
+                        onClick = { viewModel.save() },
+                        enabled = !state.saved && !state.isSaving
+                    ) {
                         Icon(Icons.Rounded.Check, contentDescription = stringResource(R.string.cd_save), tint = colors.primaryIndigo)
                     }
                 }
@@ -169,6 +167,25 @@ fun DonationEntryScreen(
                         onClick = onDone,
                         modifier = Modifier.fillMaxWidth()
                     )
+                } else if (state.saved && state.pdfFailed) {
+                    Column(verticalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            text = pdfFailedMessage,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = colors.error
+                        )
+                        AppButton(
+                            text = stringResource(R.string.donations_pdf_retry),
+                            onClick = { viewModel.retry() },
+                            isLoading = state.isSaving,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        AppButton(
+                            text = stringResource(R.string.donations_done),
+                            onClick = onDone,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
                 } else {
                     AppButton(
                         text = if (state.isSaving) stringResource(R.string.donations_saving) else stringResource(R.string.donations_save_generate),

@@ -6,6 +6,7 @@
     <string name="subscriptions_row_detail">%1$s • %2$s</string>
     <string name="collection_title">പിരിവ് എൻട്രി</string>
     <string name="collection_cd_save">സേവ് ചെയ്യുക</string>
+    <string name="cd_view_receipt">രസീത് PDF കാണുക</string>
     <string name="collection_field_receipt_number">രസീത് നമ്പർ</string>
     <string name="collection_field_select_family">കുടുംബം തിരഞ്ഞെടുക്കുക</string>
     <string name="collection_field_select_member">അംഗത്തെ തിരഞ്ഞെടുക്കുക</string>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="cd_save">Save</string>
+    <string name="cd_view_receipt">View receipt PDF</string>
 
     <string name="donations_title">Donations</string>
     <string name="donations_add_title">Add Donation</string>

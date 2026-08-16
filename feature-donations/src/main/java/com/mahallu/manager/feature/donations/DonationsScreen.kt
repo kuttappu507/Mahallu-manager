@@ -19,8 +19,10 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material.icons.rounded.PictureAsPdf
 import androidx.compose.material.icons.rounded.VolunteerActivism
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,11 +30,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import android.widget.Toast
 import com.mahallu.manager.core.database.entity.DonationEntity
 import com.mahallu.manager.core.ui.components.AppCard
 import com.mahallu.manager.core.ui.components.AppSearchBar
@@ -41,6 +45,7 @@ import com.mahallu.manager.core.ui.components.FabAdd
 import com.mahallu.manager.core.ui.components.TopAppBar
 import com.mahallu.manager.core.ui.theme.LocalMahalluColors
 import com.mahallu.manager.core.ui.util.Formatters
+import com.mahallu.manager.core.ui.util.PdfShare
 import feature.donations.feature.donations.R
 
 @Composable
@@ -52,6 +57,9 @@ fun DonationsScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val colors = LocalMahalluColors.current
+    val context = LocalContext.current
+    val pdfFailedMessage = stringResource(R.string.donations_pdf_failed)
+    val viewReceiptCd = stringResource(R.string.cd_view_receipt)
 
     Box(modifier = Modifier.fillMaxSize().background(colors.background)) {
         Column(modifier = Modifier.fillMaxSize()) {
@@ -100,14 +108,31 @@ fun DonationsScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.weight(1f)
             ) {
-                items(state.donations, key = { it.id }) { d -> DonationRow(d, onClick = { onOpenItem(d.id) }) }
+                items(state.donations, key = { it.id }) { d ->
+                    DonationRow(
+                        d,
+                        onClick = { onOpenItem(d.id) },
+                        onViewReceipt = {
+                            viewModel.generateReceipt(d.id) { file ->
+                                if (file != null) PdfShare.open(context, file)
+                                else Toast.makeText(context, pdfFailedMessage, Toast.LENGTH_SHORT).show()
+                            }
+                        },
+                        viewReceiptCd = viewReceiptCd
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-private fun DonationRow(d: DonationEntity, onClick: () -> Unit) {
+private fun DonationRow(
+    d: DonationEntity,
+    onClick: () -> Unit,
+    onViewReceipt: () -> Unit,
+    viewReceiptCd: String
+) {
     val colors = LocalMahalluColors.current
     AppCard(
         modifier = Modifier.fillMaxWidth(),
@@ -141,6 +166,13 @@ private fun DonationRow(d: DonationEntity, onClick: () -> Unit) {
                     text = stringResource(R.string.donations_row_meta, Formatters.date(d.date), d.receiptNumber),
                     style = MaterialTheme.typography.labelSmall,
                     color = colors.textTertiary
+                )
+            }
+            IconButton(onClick = onViewReceipt) {
+                Icon(
+                    imageVector = Icons.Rounded.PictureAsPdf,
+                    contentDescription = viewReceiptCd,
+                    tint = colors.accentCoral
                 )
             }
             Text(

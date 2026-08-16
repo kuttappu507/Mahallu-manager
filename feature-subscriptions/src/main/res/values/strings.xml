@@ -7,6 +7,7 @@
 
     <string name="collection_title">Collection Entry</string>
     <string name="collection_cd_save">Save</string>
+    <string name="cd_view_receipt">View receipt PDF</string>
     <string name="collection_field_receipt_number">Receipt Number</string>
     <string name="collection_field_select_family">Select Family</string>
     <string name="collection_field_select_member">Select Member</string>

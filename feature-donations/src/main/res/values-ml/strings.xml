@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="cd_save">സേവ് ചെയ്യുക</string>
+    <string name="cd_view_receipt">രസീത് PDF കാണുക</string>
     <string name="donations_title">സംഭാവനകൾ</string>
     <string name="donations_add_title">സംഭാവന ചേർക്കുക</string>
     <string name="donations_total_month">ഈ മാസം ആകെ സംഭാവനകൾ</string>

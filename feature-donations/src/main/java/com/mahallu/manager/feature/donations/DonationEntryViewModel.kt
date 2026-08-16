@@ -31,6 +31,7 @@ data class DonationEntryState(
     val isSaving: Boolean = false,
     val saved: Boolean = false,
     val pdfPath: String? = null,
+    val pdfFailed: Boolean = false,
     val error: String? = null
 )
 
@@ -43,6 +44,8 @@ class DonationEntryViewModel @Inject constructor(
 ) : ViewModel() {
     private val _state = MutableStateFlow(DonationEntryState())
     val state: StateFlow<DonationEntryState> = _state.asStateFlow()
+
+    private var savedEntity: DonationEntity? = null
 
     fun update(transform: (DonationEntryState) -> DonationEntryState) {
         _state.update(transform)
@@ -74,11 +77,30 @@ class DonationEntryViewModel @Inject constructor(
                 remarks = s.remarks.trim().ifBlank { null }
             )
             repo.save(entity)
+            savedEntity = entity
+            generateReceiptPdf(entity)
+        }
+    }
 
-            // Generate the PDF receipt right away so the user can print/share it
-            val pdfPath = generateDonationReceipt(context, pdfGenerator, settingsRepo, entity)?.absolutePath
+    /**
+     * Re-runs PDF generation for the already-saved donation (used when the
+     * first attempt failed). Never re-inserts a duplicate row.
+     */
+    fun retry() {
+        val entity = savedEntity ?: return
+        _state.update { it.copy(isSaving = true, error = null) }
+        viewModelScope.launch { generateReceiptPdf(entity) }
+    }
 
-            _state.update { it.copy(isSaving = false, saved = true, pdfPath = pdfPath) }
+    private suspend fun generateReceiptPdf(entity: DonationEntity) {
+        val pdfPath = generateDonationReceipt(context, pdfGenerator, settingsRepo, entity)?.absolutePath
+        _state.update {
+            it.copy(
+                isSaving = false,
+                saved = true,
+                pdfPath = pdfPath,
+                pdfFailed = pdfPath == null
+            )
         }
     }
 }

@@ -40,6 +40,7 @@ data class CollectionEntryState(
     val isSaving: Boolean = false,
     val saved: Boolean = false,
     val pdfPath: String? = null,
+    val pdfFailed: Boolean = false,
     val receiptNumber: String = "",
     val error: String? = null
 )
@@ -57,6 +58,8 @@ class CollectionEntryViewModel @Inject constructor(
 
     private val _state = MutableStateFlow(CollectionEntryState(receiptNumber = IdGenerator.receiptNumber()))
     val state: StateFlow<CollectionEntryState> = _state
+
+    private var savedEntity: SubscriptionEntity? = null
 
     init {
         viewModelScope.launch {
@@ -149,18 +152,40 @@ class CollectionEntryViewModel @Inject constructor(
                 month = cal.get(Calendar.MONTH) + 1
             )
             subRepo.save(entity)
+            savedEntity = entity
 
             // Generate the PDF receipt right away so the user can print/share it
-            val pdfPath = generateSubscriptionReceipt(
-                context = context,
-                pdfGenerator = pdfGenerator,
-                settingsRepo = settingsRepo,
-                subscription = entity,
-                familyName = s.selectedFamilyName,
-                memberName = s.selectedMemberName
-            )?.absolutePath
+            generateReceiptPdf(entity, s.selectedFamilyName, s.selectedMemberName)
+        }
+    }
 
-            _state.update { it.copy(isSaving = false, saved = true, pdfPath = pdfPath) }
+    /**
+     * Re-runs PDF generation for the already-saved collection (used when the
+     * first attempt failed). Never re-inserts a duplicate row.
+     */
+    fun retry() {
+        val entity = savedEntity ?: return
+        _state.update { it.copy(isSaving = true, error = null) }
+        viewModelScope.launch { generateReceiptPdf(entity, _state.value.selectedFamilyName, _state.value.selectedMemberName) }
+    }
+
+    private suspend fun generateReceiptPdf(entity: SubscriptionEntity, familyName: String, memberName: String) {
+        val pdfPath = generateSubscriptionReceipt(
+            context = context,
+            pdfGenerator = pdfGenerator,
+            settingsRepo = settingsRepo,
+            subscription = entity,
+            familyName = familyName,
+            memberName = memberName
+        )?.absolutePath
+
+        _state.update {
+            it.copy(
+                isSaving = false,
+                saved = true,
+                pdfPath = pdfPath,
+                pdfFailed = pdfPath == null
+            )
         }
     }
 }

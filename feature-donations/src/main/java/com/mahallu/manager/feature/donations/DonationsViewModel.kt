@@ -1,15 +1,21 @@
 package com.mahallu.manager.feature.donations
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mahallu.manager.core.database.entity.DonationEntity
 import com.mahallu.manager.core.database.repository.DonationRepository
+import com.mahallu.manager.core.database.repository.SettingsRepository
+import com.mahallu.manager.feature.certificates.pdf.PdfGenerator
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
 
 data class DonationsUiState(
@@ -22,7 +28,10 @@ data class DonationsUiState(
 
 @HiltViewModel
 class DonationsViewModel @Inject constructor(
-    private val repo: DonationRepository
+    private val repo: DonationRepository,
+    @ApplicationContext private val context: Context,
+    private val settingsRepo: SettingsRepository,
+    private val pdfGenerator: PdfGenerator
 ) : ViewModel() {
 
     private val query = MutableStateFlow("")
@@ -54,4 +63,20 @@ class DonationsViewModel @Inject constructor(
 
     fun setQuery(q: String) { query.value = q }
     fun setCategory(c: String) { categoryFilter.value = c }
+
+    /**
+     * Regenerates the receipt PDF for an existing donation so it can be
+     * previewed directly from the list. [onResult] is called with the file
+     * (null on failure).
+     */
+    fun generateReceipt(donationId: String, onResult: (File?) -> Unit) {
+        viewModelScope.launch {
+            val donation = repo.getById(donationId)
+            if (donation == null) {
+                onResult(null)
+                return@launch
+            }
+            onResult(generateDonationReceipt(context, pdfGenerator, settingsRepo, donation))
+        }
+    }
 }
