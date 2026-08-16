@@ -10,8 +10,11 @@ import com.mahallu.manager.core.security.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import feature.settings.feature.settings.R
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -42,6 +45,9 @@ class SettingsViewModel @Inject constructor(
     private val _state = MutableStateFlow(SettingsUiState())
     val state: StateFlow<SettingsUiState> = _state.asStateFlow()
 
+    private val _toastMessages = MutableSharedFlow<String>()
+    val toastMessages: SharedFlow<String> = _toastMessages.asSharedFlow()
+
     init {
         viewModelScope.launch {
             _state.value = SettingsUiState(
@@ -68,6 +74,7 @@ class SettingsViewModel @Inject constructor(
             _state.update {
                 it.copy(mahalluName = name, mahalluAddress = address, mahalluPhone = phone, mahalluEmail = email)
             }
+            _toastMessages.emit(context.getString(R.string.settings_saved_message))
         }
     }
 

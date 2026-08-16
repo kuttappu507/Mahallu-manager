@@ -22,11 +22,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import android.widget.Toast
 import com.mahallu.manager.core.ui.components.AppButton
 import com.mahallu.manager.core.ui.components.AppCard
 import com.mahallu.manager.core.ui.components.AppTextField
@@ -44,6 +46,13 @@ fun SettingsScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val colors = LocalMahalluColors.current
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        viewModel.toastMessages.collect { msg ->
+            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+        }
+    }
 
     var name by remember(state.mahalluName) { mutableStateOf(state.mahalluName) }
     var address by remember(state.mahalluAddress) { mutableStateOf(state.mahalluAddress) }

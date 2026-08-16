@@ -54,6 +54,7 @@
     <string name="settings_phone">ഫോൺ</string>
     <string name="settings_email">ഇമെയിൽ</string>
     <string name="settings_save_mahallu">മഹല്ല് വിവരങ്ങൾ സേവ് ചെയ്യുക</string>
+    <string name="settings_saved_message">മഹല്ല് വിവരങ്ങൾ സേവ് ചെയ്തു</string>
     <string name="settings_theme">തീം</string>
     <string name="settings_theme_system">സിസ്റ്റം</string>
     <string name="settings_theme_light">ലൈറ്റ്</string>
