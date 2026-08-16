@@ -37,7 +37,11 @@ import com.mahallu.manager.core.ui.util.Formatters
 import feature.settings.feature.settings.R
 
 @Composable
-fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewModel()) {
+fun SettingsScreen(
+    onBack: () -> Unit,
+    onChangePassword: () -> Unit = {},
+    viewModel: SettingsViewModel = hiltViewModel()
+) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val colors = LocalMahalluColors.current
 
@@ -110,6 +114,12 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewMo
                     Column {
                         Text(state.userName, style = MaterialTheme.typography.titleSmall, color = colors.textPrimary)
                         Text(state.userRole, style = MaterialTheme.typography.labelMedium, color = colors.primaryIndigo)
+                        Spacer(Modifier.height(10.dp))
+                        AppButton(
+                            text = stringResource(R.string.settings_change_password),
+                            onClick = onChangePassword,
+                            style = com.mahallu.manager.core.ui.components.AppButtonStyle.Outline
+                        )
                     }
                 }
                 Spacer(Modifier.height(24.dp))

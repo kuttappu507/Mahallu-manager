@@ -15,4 +15,16 @@
     <string name="login_error_enter_password">പാസ്വേഡ് നൽകുക</string>
     <string name="login_error_failed">ലോഗിൻ പരാജയപ്പെട്ടു</string>
     <string name="login_default_user_name">ഉപയോക്താവ്</string>
+
+    <string name="change_password_title">പാസ്വേഡ് മാറ്റുക</string>
+    <string name="change_password_forced_subtitle">സുരക്ഷയ്ക്കായി, തുടരുന്നതിന് മുമ്പ് ഡിഫോൾട്ട് പാസ്വേഡ് മാറ്റുക.</string>
+    <string name="change_password_current">നിലവിലെ പാസ്വേഡ്</string>
+    <string name="change_password_new">പുതിയ പാസ്വേഡ്</string>
+    <string name="change_password_confirm">പുതിയ പാസ്വേഡ് സ്ഥിരീകരിക്കുക</string>
+    <string name="change_password_button">പാസ്വേഡ് അപ്ഡേറ്റ് ചെയ്യുക</string>
+    <string name="change_password_saving">അപ്ഡേറ്റ് ചെയ്യുന്നു...</string>
+    <string name="change_password_error_too_short">പുതിയ പാസ്വേഡ് കുറഞ്ഞത് 6 പ്രതീകങ്ങൾ ആയിരിക്കണം</string>
+    <string name="change_password_error_wrong_current">നിലവിലെ പാസ്വേഡ് തെറ്റാണ്</string>
+    <string name="change_password_error_mismatch">പാസ്വേഡുകൾ പൊരുത്തപ്പെടുന്നില്ല</string>
+    <string name="change_password_error_failed">പാസ്വേഡ് അപ്ഡേറ്റ് ചെയ്യാൻ കഴിഞ്ഞില്ല</string>
 </resources>

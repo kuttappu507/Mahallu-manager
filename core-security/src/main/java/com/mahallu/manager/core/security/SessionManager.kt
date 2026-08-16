@@ -57,5 +57,6 @@ class SessionManager(context: Context) {
         const val KEY_LOGGED_IN = "logged_in"
         const val KEY_LOGIN_TIME = "login_time"
         const val KEY_REMEMBER = "remember"
+        const val KEY_MUST_CHANGE_PASSWORD = "must_change_password"
     }
 }

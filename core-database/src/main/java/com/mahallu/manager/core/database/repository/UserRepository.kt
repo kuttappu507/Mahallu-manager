@@ -75,6 +75,11 @@ class UserRepository @Inject constructor(
         return Result.success(Unit)
     }
 
+    suspend fun verifyPassword(userId: String, password: String): Boolean {
+        val user = userDao.getById(userId) ?: return false
+        return user.isActive && PasswordHasher.verify(password, user.passwordHash)
+    }
+
     suspend fun updateProfile(userId: String, fullName: String, phone: String?, email: String?): Result<Unit> {
         val user = userDao.getById(userId) ?: return Result.failure(IllegalStateException("User not found"))
         userDao.update(user.copy(fullName = fullName, phone = phone, email = email))
@@ -87,7 +92,7 @@ class UserRepository @Inject constructor(
     }
 
     suspend fun delete(userId: String) {
-        userDao.getById(userId)?.let { userDao.clear() } // simple
+        userDao.deleteById(userId)
     }
 
     suspend fun count(): Int = 0 // optional

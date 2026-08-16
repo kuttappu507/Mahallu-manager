@@ -16,4 +16,16 @@
     <string name="login_error_enter_password">Enter password</string>
     <string name="login_error_failed">Login failed</string>
     <string name="login_default_user_name">User</string>
+
+    <string name="change_password_title">Change Password</string>
+    <string name="change_password_forced_subtitle">For your security, change the default password before continuing.</string>
+    <string name="change_password_current">Current Password</string>
+    <string name="change_password_new">New Password</string>
+    <string name="change_password_confirm">Confirm New Password</string>
+    <string name="change_password_button">Update Password</string>
+    <string name="change_password_saving">Updating...</string>
+    <string name="change_password_error_too_short">New password must be at least 6 characters</string>
+    <string name="change_password_error_wrong_current">Current password is incorrect</string>
+    <string name="change_password_error_mismatch">Passwords do not match</string>
+    <string name="change_password_error_failed">Could not update password</string>
 </resources>

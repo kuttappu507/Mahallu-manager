@@ -26,6 +26,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.mahallu.manager.core.ui.components.AppBottomNavBar
 import com.mahallu.manager.core.ui.theme.LocalMahalluColors
+import com.mahallu.manager.feature.auth.ChangePasswordScreen
 import com.mahallu.manager.feature.certificates.CertificateListScreen
 import com.mahallu.manager.feature.certificates.CertificatePrefillData
 import com.mahallu.manager.feature.certificates.CertificatePrefillHolder
@@ -286,7 +287,19 @@ fun MainShell(
                     ReportsScreen(onBack = { navController.popBackStack() })
                 }
                 composable("settings") {
-                    SettingsScreen(onBack = { navController.popBackStack() })
+                    SettingsScreen(
+                        onBack = { navController.popBackStack() },
+                        onChangePassword = { navController.navigate("change_password?forced=false") }
+                    )
+                }
+                composable("change_password?forced={forced}", arguments = listOf(navArgument("forced") {
+                    type = NavType.StringType; defaultValue = "false"
+                })) {
+                    ChangePasswordScreen(
+                        forced = it.arguments?.getString("forced") == "true",
+                        onBack = { navController.popBackStack() },
+                        onChanged = { navController.popBackStack() }
+                    )
                 }
                 composable("backup") {
                     BackupScreen(onBack = { navController.popBackStack() })

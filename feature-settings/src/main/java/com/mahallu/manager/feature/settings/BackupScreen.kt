@@ -19,7 +19,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Backup
 import androidx.compose.material.icons.rounded.CheckCircle
-import androidx.compose.material.icons.rounded.CloudUpload
 import androidx.compose.material.icons.rounded.Error
 import androidx.compose.material.icons.rounded.Restore
 import androidx.compose.material.icons.rounded.Schedule

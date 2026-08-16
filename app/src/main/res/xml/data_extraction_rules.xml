@@ -3,6 +3,7 @@
     <cloud-backup>
         <exclude domain="sharedpref" path="mahallu_secure_prefs.xml" />
         <exclude domain="sharedpref" path="mahallu_drive_prefs.xml" />
+        <exclude domain="database" path="mahallu_db" />
     </cloud-backup>
     <device-transfer>
         <include domain="database" path="." />

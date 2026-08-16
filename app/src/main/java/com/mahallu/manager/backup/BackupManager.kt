@@ -1,6 +1,9 @@
 package com.mahallu.manager.backup
 
 import android.content.Context
+import android.content.SharedPreferences
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKey
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.mahallu.manager.core.database.MahalluDatabase
 import com.mahallu.manager.core.database.entity.BackupEntity
@@ -146,12 +149,40 @@ class BackupManager @Inject constructor(
     }
 
     private fun ensureMasterKey(): ByteArray {
-        val prefs = context.getSharedPreferences("mahallu_secure_prefs", Context.MODE_PRIVATE)
-        val existing = prefs.getString("backup_master_key", null)
+        val secure = securePrefs()
+        var existing = secure.getString(KEY_MASTER_KEY, null)
+        if (existing == null) {
+            // Migrate the legacy plain SharedPreferences value (if any) so old
+            // backups remain restorable, then drop it from the plain file.
+            val legacy = context.getSharedPreferences("mahallu_secure_prefs", Context.MODE_PRIVATE)
+            existing = legacy.getString(KEY_MASTER_KEY, null)
+            if (existing != null) {
+                secure.edit().putString(KEY_MASTER_KEY, existing).apply()
+                legacy.edit().remove(KEY_MASTER_KEY).apply()
+            }
+        }
         if (existing != null) return AesGcmCipher.fromBase64(existing)
         val newKey = AesGcmCipher.generateKey()
-        prefs.edit().putString("backup_master_key", AesGcmCipher.toBase64(newKey)).apply()
+        secure.edit().putString(KEY_MASTER_KEY, AesGcmCipher.toBase64(newKey)).apply()
         return newKey
+    }
+
+    private fun securePrefs(): SharedPreferences {
+        return try {
+            val masterKey = MasterKey.Builder(context)
+                .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                .build()
+            EncryptedSharedPreferences.create(
+                context,
+                "mahallu_secure_prefs_enc",
+                masterKey,
+                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            )
+        } catch (t: Throwable) {
+            Timber.w(t, "EncryptedSharedPreferences unavailable; using fallback")
+            context.getSharedPreferences("mahallu_secure_prefs_fallback", Context.MODE_PRIVATE)
+        }
     }
 
     private fun restorePayload(payload: JsonObject) {
@@ -247,5 +278,9 @@ class BackupManager @Inject constructor(
             b.localPath?.let { runCatching { File(it).delete() } }
             backupRepo.delete(b.id)
         }
+    }
+
+    companion object {
+        private const val KEY_MASTER_KEY = "backup_master_key"
     }
 }

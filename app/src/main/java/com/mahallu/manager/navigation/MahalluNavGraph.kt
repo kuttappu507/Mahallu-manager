@@ -25,6 +25,7 @@ import androidx.navigation.compose.rememberNavController
 import com.mahallu.manager.MahalluApplication
 import com.mahallu.manager.core.ui.R as CoreUiR
 import com.mahallu.manager.core.ui.theme.PrimaryIndigo
+import com.mahallu.manager.feature.auth.ChangePasswordScreen
 import com.mahallu.manager.feature.auth.LoginScreen
 import com.mahallu.manager.feature.auth.LoginViewModel
 
@@ -61,14 +62,42 @@ fun MahalluNavGraph() {
             }
         }
     } else {
-        val startDestination = if (authState.isLoggedIn) "main" else "login"
+        val startDestination = when {
+            authState.isLoggedIn && authState.mustChangePassword -> "change_password?forced=true"
+            authState.isLoggedIn -> "main"
+            else -> "login"
+        }
 
         NavHost(navController = navController, startDestination = startDestination) {
             composable("login") {
                 LoginScreen(
                     onLoggedIn = {
+                        if (authState.mustChangePassword) {
+                            navController.navigate("change_password?forced=true") {
+                                popUpTo("login") { inclusive = true }
+                            }
+                        } else {
+                            navController.navigate("main") {
+                                popUpTo("login") { inclusive = true }
+                            }
+                        }
+                    }
+                )
+            }
+
+            composable("change_password?forced={forced}", arguments = listOf(
+                androidx.navigation.navArgument("forced") {
+                    type = androidx.navigation.NavType.StringType
+                    defaultValue = "false"
+                }
+            )) {
+                val forced = it.arguments?.getString("forced") == "true"
+                ChangePasswordScreen(
+                    forced = forced,
+                    onBack = { navController.popBackStack() },
+                    onChanged = {
                         navController.navigate("main") {
-                            popUpTo("login") { inclusive = true }
+                            popUpTo(0) { inclusive = true }
                         }
                     }
                 )

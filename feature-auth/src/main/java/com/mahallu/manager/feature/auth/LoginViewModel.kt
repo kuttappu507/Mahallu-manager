@@ -25,7 +25,8 @@ data class AuthState(
     val currentUser: UserEntity? = null,
     val isLoading: Boolean = false,
     val error: String? = null,
-    val mahalluName: String = ""
+    val mahalluName: String = "",
+    val mustChangePassword: Boolean = false
 )
 
 @HiltViewModel
@@ -59,7 +60,14 @@ class LoginViewModel @Inject constructor(
                 val user = userRepository.getById(userId)
                 if (user != null && user.isActive) {
                     currentActor.set(AuditActor(user.id, user.fullName))
-                    _authState.update { it.copy(isLoggedIn = true, isInitializing = false, currentUser = user) }
+                    _authState.update {
+                        it.copy(
+                            isLoggedIn = true,
+                            isInitializing = false,
+                            currentUser = user,
+                            mustChangePassword = sessionManager.getBoolean(SessionManager.KEY_MUST_CHANGE_PASSWORD)
+                        )
+                    }
                 } else {
                     sessionManager.clear()
                     currentActor.set(null)
@@ -96,13 +104,51 @@ class LoginViewModel @Inject constructor(
                     sessionManager.putBoolean(SessionManager.KEY_LOGGED_IN, true)
                     sessionManager.putLong(SessionManager.KEY_LOGIN_TIME, System.currentTimeMillis())
                     currentActor.set(AuditActor(user.id, user.fullName))
-                    _authState.update { AuthState(isInitializing = false, isLoggedIn = true, currentUser = user) }
+                    val mustChange = seedData.isDefaultCredential(user.username, password)
+                    sessionManager.putBoolean(SessionManager.KEY_MUST_CHANGE_PASSWORD, mustChange)
+                    _authState.update {
+                        AuthState(
+                            isInitializing = false,
+                            isLoggedIn = true,
+                            currentUser = user,
+                            mustChangePassword = mustChange
+                        )
+                    }
                     onSuccess()
                 },
                 onFailure = { err ->
                     _authState.update { it.copy(isLoading = false, error = err.message ?: getApplication<Application>().getString(R.string.login_error_failed)) }
                 }
             )
+        }
+    }
+
+    fun changePassword(currentPassword: String, newPassword: String, onDone: () -> Unit) {
+        val userId = sessionManager.getString(SessionManager.KEY_USER_ID)
+        if (userId == null) {
+            onDone()
+            return
+        }
+        if (newPassword.length < 6) {
+            _authState.update { it.copy(error = getApplication<Application>().getString(R.string.change_password_error_too_short)) }
+            return
+        }
+        _authState.update { it.copy(isLoading = true, error = null) }
+        viewModelScope.launch {
+            val valid = userRepository.verifyPassword(userId, currentPassword)
+            if (!valid) {
+                _authState.update { it.copy(isLoading = false, error = getApplication<Application>().getString(R.string.change_password_error_wrong_current)) }
+                return@launch
+            }
+            userRepository.updatePassword(userId, newPassword)
+                .onSuccess {
+                    sessionManager.putBoolean(SessionManager.KEY_MUST_CHANGE_PASSWORD, false)
+                    _authState.update { it.copy(isLoading = false, error = null, mustChangePassword = false) }
+                    onDone()
+                }
+                .onFailure { err ->
+                    _authState.update { it.copy(isLoading = false, error = err.message ?: getApplication<Application>().getString(R.string.change_password_error_failed)) }
+                }
         }
     }
 
@@ -114,6 +160,10 @@ class LoginViewModel @Inject constructor(
 
     fun clearError() {
         _authState.update { it.copy(error = null) }
+    }
+
+    fun setError(message: String) {
+        _authState.update { it.copy(error = message) }
     }
 
     fun currentRole(): String? = sessionManager.getString(SessionManager.KEY_ROLE)

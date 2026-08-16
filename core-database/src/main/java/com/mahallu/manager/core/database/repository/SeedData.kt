@@ -34,6 +34,24 @@ class SeedData @Inject constructor(
         if (familyDao.count() == 0) seedFamiliesAndMembers()
     }
 
+    /**
+     * True when the username/password pair is one of the seeded default
+     * credentials. Used to force a password change on first login so the app
+     * is never left running on a well-known default password.
+     */
+    fun isDefaultCredential(username: String, password: String): Boolean =
+        DEFAULT_CREDENTIALS.any { it.username.equals(username.trim().lowercase(), ignoreCase = true) && it.password == password }
+
+    private data class DefaultCredential(val username: String, val password: String)
+
+    private companion object {
+        val DEFAULT_CREDENTIALS = listOf(
+            DefaultCredential("admin", "admin123"),
+            DefaultCredential("secretary", "secretary123"),
+            DefaultCredential("treasurer", "treasurer123")
+        )
+    }
+
     private suspend fun seedAdminUser() {
         if (userDao.getByUsername("admin") != null) return
         userDao.insert(
