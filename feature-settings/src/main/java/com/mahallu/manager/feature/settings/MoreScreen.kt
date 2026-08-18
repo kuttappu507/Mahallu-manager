@@ -120,7 +120,14 @@ fun MoreScreen(
                 modifier = Modifier.weight(1f)
             ) {
                 item {
-                    ProfileCard(name = state.userName, role = state.userRole, mahallu = state.mahalluName)
+                    ProfileCard(
+                        name = state.userName,
+                        role = state.userRole,
+                        mahallu = state.mahalluName,
+                        totalMembers = state.totalMembers,
+                        totalFamilies = state.totalFamilies,
+                        totalCertificates = state.totalCertificates
+                    )
                 }
 
                 item {
@@ -144,7 +151,7 @@ fun MoreScreen(
 }
 
 @Composable
-private fun ProfileCard(name: String, role: String, mahallu: String) {
+private fun ProfileCard(name: String, role: String, mahallu: String, totalMembers: Int, totalFamilies: Int, totalCertificates: Int) {
     val colors = LocalMahalluColors.current
     Box(
         modifier = Modifier
@@ -208,11 +215,11 @@ private fun ProfileCard(name: String, role: String, mahallu: String) {
                 }
                 .padding(top = 14.dp)
         ) {
-            ProfileStat(value = "92%", label = stringResource(R.string.more_profile_attendance), modifier = Modifier.weight(1f))
+            ProfileStat(value = totalMembers.toString(), label = stringResource(R.string.more_profile_members), modifier = Modifier.weight(1f))
             VerticalDivider(modifier = Modifier.height(32.dp), thickness = 1.dp, color = Color.White.copy(alpha = 0.22f))
-            ProfileStat(value = Formatters.currency(4120.0), label = stringResource(R.string.more_profile_contributed), modifier = Modifier.weight(1f))
+            ProfileStat(value = totalFamilies.toString(), label = stringResource(R.string.more_profile_families), modifier = Modifier.weight(1f))
             VerticalDivider(modifier = Modifier.height(32.dp), thickness = 1.dp, color = Color.White.copy(alpha = 0.22f))
-            ProfileStat(value = "12", label = stringResource(R.string.more_profile_certificates), modifier = Modifier.weight(1f))
+            ProfileStat(value = totalCertificates.toString(), label = stringResource(R.string.more_profile_certificates), modifier = Modifier.weight(1f))
         }
     }
     }

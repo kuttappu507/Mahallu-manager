@@ -44,8 +44,8 @@
     <string name="more_menu_settings">Settings</string>
     <string name="more_menu_settings_sub">App preferences</string>
     <string name="more_mahallu_badge">MAHALLU</string>
-    <string name="more_profile_attendance">Attendance</string>
-    <string name="more_profile_contributed">Contributed</string>
+    <string name="more_profile_members">Members</string>
+    <string name="more_profile_families">Families</string>
     <string name="more_profile_certificates">Certificates</string>
     <string name="more_logout">Log out</string>
     <string name="more_logout_subtitle">Sign out of this device</string>

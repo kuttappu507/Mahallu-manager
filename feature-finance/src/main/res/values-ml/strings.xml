@@ -9,8 +9,8 @@
     <string name="finance_recent_activity">സമീപകാല പ്രവർത്തനങ്ങൾ</string>
     <string name="finance_transactions_this_month">ഈ മാസം %1$d ഇടപാടുകൾ</string>
     <string name="finance_net_balance_month">അറ്റ ബാലൻസ് · %1$s</string>
-    <string name="finance_trend_up">+18.4% ജൂണിനെ അപേക്ഷിച്ച്</string>
-    <string name="finance_trend_down">−12.4% മേയിനെ അപേക്ഷിച്ച്</string>
+    <string name="finance_trend_up">+%1$s കഴിഞ്ഞ മാസത്തേക്കാൾ</string>
+    <string name="finance_trend_down">−%1$s കഴിഞ്ഞ മാസത്തേക്കാൾ</string>
     <string name="finance_income">വരുമാനം</string>
     <string name="finance_expenses">ചെലവുകൾ</string>
     <string name="finance_row_detail">%1$s • %2$s • %3$s</string>

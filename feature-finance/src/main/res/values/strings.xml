@@ -10,8 +10,8 @@
     <string name="finance_recent_activity">Recent activity</string>
     <string name="finance_transactions_this_month">%1$d transactions · this month</string>
     <string name="finance_net_balance_month">Net balance · %1$s</string>
-    <string name="finance_trend_up">+18.4% vs June</string>
-    <string name="finance_trend_down">−12.4% vs May</string>
+    <string name="finance_trend_up">+%1$s vs last month</string>
+    <string name="finance_trend_down">−%1$s vs last month</string>
     <string name="finance_income">Income</string>
     <string name="finance_expenses">Expenses</string>
     <string name="finance_row_detail">%1$s • %2$s • %3$s</string>

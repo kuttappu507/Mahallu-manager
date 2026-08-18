@@ -25,7 +25,10 @@ data class FinanceUiState(
     val monthFilter: Long = -1L,
     val monthChips: List<Pair<String, Long>> = emptyList(),
     val isLoading: Boolean = true,
-    val mahalluName: String = ""
+    val mahalluName: String = "",
+    val monthLabel: String = "",
+    val trendPct: Double? = null,
+    val trendUp: Boolean = true
 )
 
 @HiltViewModel
@@ -64,16 +67,28 @@ class FinanceViewModel @Inject constructor(
         val filtered = if (t == "ALL") inRange else inRange.filter { it.type == t }
         val totalIn = inRange.filter { it.type == "INCOME" }.sumOf { it.amount }
         val totalOut = inRange.filter { it.type == "EXPENSE" }.sumOf { it.amount }
+        val balance = totalIn - totalOut
+
+        val prevStart = DateUtils.startOfMonth(m - 1)
+        val prevEnd = DateUtils.endOfMonth(prevStart)
+        val prevBalance = all
+            .filter { it.date in prevStart..prevEnd }
+            .sumOf { if (it.type == "INCOME") it.amount else -it.amount }
+        val trendPct = if (prevBalance != 0.0) ((balance - prevBalance) / prevBalance) * 100.0 else null
+
         FinanceUiState(
             totalIncome = totalIn,
             totalExpense = totalOut,
-            balance = totalIn - totalOut,
+            balance = balance,
             entries = filtered,
             typeFilter = t,
             monthFilter = m,
             monthChips = monthOptions(),
             isLoading = false,
-            mahalluName = name
+            mahalluName = name,
+            monthLabel = DateUtils.formatMonth(m),
+            trendPct = trendPct,
+            trendUp = trendPct?.let { it >= 0.0 } ?: true
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), FinanceUiState())
 

@@ -41,8 +41,8 @@
     <string name="more_menu_settings">ക്രമീകരണങ്ങൾ</string>
     <string name="more_menu_settings_sub">ആപ്പ് മുൻഗണനകൾ</string>
     <string name="more_mahallu_badge">മഹല്ല്</string>
-    <string name="more_profile_attendance">ഹാജർ</string>
-    <string name="more_profile_contributed">സംഭാവന ചെയ്തത്</string>
+    <string name="more_profile_members">അംഗങ്ങൾ</string>
+    <string name="more_profile_families">കുടുംബങ്ങൾ</string>
     <string name="more_profile_certificates">സർട്ടിഫിക്കറ്റുകൾ</string>
     <string name="more_logout">ലോഗ് ഔട്ട്</string>
     <string name="more_logout_subtitle">ഈ ഉപകരണത്തിൽ നിന്ന് ലോഗ് ഔട്ട് ചെയ്യുക</string>

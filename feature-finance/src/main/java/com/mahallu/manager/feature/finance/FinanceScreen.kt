@@ -113,7 +113,14 @@ fun FinanceScreen(
                 contentPadding = PaddingValues(bottom = 100.dp)
             ) {
                 item {
-                    BalanceCard(balance = state.balance, income = state.totalIncome, expense = state.totalExpense)
+                    BalanceCard(
+                        balance = state.balance,
+                        income = state.totalIncome,
+                        expense = state.totalExpense,
+                        monthLabel = state.monthLabel,
+                        trendPct = state.trendPct,
+                        trendUp = state.trendUp
+                    )
                 }
 
                 item {
@@ -247,7 +254,14 @@ private fun SumTile(
 }
 
 @Composable
-private fun BalanceCard(balance: Double, income: Double, expense: Double) {
+private fun BalanceCard(
+    balance: Double,
+    income: Double,
+    expense: Double,
+    monthLabel: String,
+    trendPct: Double?,
+    trendUp: Boolean
+) {
     val colors = LocalMahalluColors.current
     val shape = RoundedCornerShape(26.dp)
     val isPositive = balance >= 0
@@ -288,31 +302,41 @@ private fun BalanceCard(balance: Double, income: Double, expense: Double) {
         Column {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = stringResource(R.string.finance_net_balance_month, currentMonthLabel()),
+                    text = stringResource(R.string.finance_net_balance_month, monthLabel),
                     style = MaterialTheme.typography.labelMedium,
                     color = Color.White.copy(alpha = 0.8f),
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f, fill = false)
                 )
-                Spacer(Modifier.weight(1f))
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(9.dp))
-                        .background(Color.White)
-                        .padding(horizontal = 9.dp, vertical = 5.dp)
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Icon(
-                            imageVector = if (isPositive) Icons.AutoMirrored.Rounded.TrendingUp else Icons.AutoMirrored.Rounded.TrendingDown,
-                            contentDescription = null,
-                            tint = if (isPositive) colors.successDark else colors.rose,
-                            modifier = Modifier.size(12.dp)
-                        )
-                        Text(
-                            text = if (isPositive) stringResource(R.string.finance_trend_up) else stringResource(R.string.finance_trend_down),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = if (isPositive) colors.successDark else colors.rose,
-                            fontWeight = FontWeight.ExtraBold
-                        )
+                Spacer(Modifier.width(8.dp))
+                if (trendPct != null) {
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(9.dp))
+                            .background(Color.White)
+                            .padding(horizontal = 9.dp, vertical = 5.dp)
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                            Icon(
+                                imageVector = if (trendUp) Icons.AutoMirrored.Rounded.TrendingUp else Icons.AutoMirrored.Rounded.TrendingDown,
+                                contentDescription = null,
+                                tint = if (trendUp) colors.successDark else colors.rose,
+                                modifier = Modifier.size(12.dp)
+                            )
+                            Text(
+                                text = stringResource(
+                                    if (trendUp) R.string.finance_trend_up else R.string.finance_trend_down,
+                                    String.format(java.util.Locale.getDefault(), "%.1f%%", kotlin.math.abs(trendPct))
+                                ),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = if (trendUp) colors.successDark else colors.rose,
+                                fontWeight = FontWeight.ExtraBold,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
                     }
                 }
             }
@@ -357,9 +381,6 @@ private fun BalanceCard(balance: Double, income: Double, expense: Double) {
         }
     }
 }
-
-private fun currentMonthLabel(): String =
-    java.text.SimpleDateFormat("MMMM", java.util.Locale.getDefault()).format(java.util.Date())
 
 @Composable
 private fun BalanceSub(
