@@ -57,10 +57,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mahallu.manager.core.database.entity.FinanceEntryEntity
 import com.mahallu.manager.core.ui.components.AppCard
 import com.mahallu.manager.core.ui.components.ChipPill
-import com.mahallu.manager.core.ui.components.IconCircleButton
+import com.mahallu.manager.core.ui.components.ScreenPageHeader
 import com.mahallu.manager.core.ui.theme.LocalMahalluColors
 import com.mahallu.manager.core.ui.theme.PrimaryIndigo
-import com.mahallu.manager.core.ui.theme.Rose
 import com.mahallu.manager.core.ui.util.Formatters
 import feature.finance.feature.finance.R
 import kotlinx.coroutines.delay
@@ -76,37 +75,14 @@ fun FinanceScreen(
 
     Box(modifier = Modifier.fillMaxSize().background(colors.background)) {
         Column(modifier = Modifier.fillMaxSize()) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 18.dp, start = 18.dp, end = 18.dp, bottom = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = stringResource(R.string.finance_title),
-                    style = MaterialTheme.typography.headlineMedium,
-                    color = colors.textPrimary,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(Modifier.width(10.dp))
-                Text(
-                    text = state.mahalluName.ifBlank { stringResource(R.string.finance_title) },
-                    style = MaterialTheme.typography.labelSmall,
-                    color = colors.textSecondary,
-                    fontWeight = FontWeight.ExtraBold,
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(colors.surfaceVariant)
-                        .padding(horizontal = 10.dp, vertical = 5.dp)
-                )
-                Spacer(Modifier.weight(1f))
-                IconCircleButton(
-                    icon = Icons.Rounded.IosShare,
-                    onClick = { shareFinance(context, state) },
-                    backgroundColor = colors.surfaceVariant,
-                    tint = colors.textPrimary
-                )
-            }
+            ScreenPageHeader(
+                title = stringResource(R.string.finance_title),
+                pillText = state.mahalluName.ifBlank { stringResource(R.string.finance_title) },
+                pillColor = colors.textSecondary,
+                pillBackground = colors.surfaceVariant,
+                trailingIcon = Icons.Rounded.IosShare,
+                onTrailingClick = { shareFinance(context, state) }
+            )
 
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),

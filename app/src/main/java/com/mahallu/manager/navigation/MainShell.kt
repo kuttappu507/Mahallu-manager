@@ -8,10 +8,7 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -76,15 +73,14 @@ private val TAB_ROUTES = setOf("dashboard", "families", "members", "finance", "m
 
 private fun isTabRoute(route: String?): Boolean = route in TAB_ROUTES
 
-private fun tabEnter(): EnterTransition = fadeIn(tween(150))
+private fun tabEnter(): EnterTransition = fadeIn(tween(120))
 
-private fun tabExit(): ExitTransition = fadeOut(tween(110))
+private fun tabExit(): ExitTransition = ExitTransition.None
 
 private fun pushEnter(): EnterTransition =
-    fadeIn(tween(200)) + scaleIn(initialScale = 0.97f, animationSpec = tween(200))
+    fadeIn(tween(160)) + scaleIn(initialScale = 0.98f, animationSpec = tween(160))
 
-private fun pushExit(): ExitTransition =
-    fadeOut(tween(130)) + scaleOut(targetScale = 0.98f, animationSpec = tween(130))
+private fun pushExit(): ExitTransition = fadeOut(tween(90))
 
 @Composable
 fun MainShell(
@@ -116,12 +112,10 @@ fun MainShell(
         bottomBar = {
             AnimatedVisibility(
                 visible = showBottomBar,
-                enter = slideInVertically(tween(220)) { it } +
-                    expandVertically(expandFrom = Alignment.Bottom) +
-                    fadeIn(tween(220)),
-                exit = slideOutVertically(tween(180)) { it } +
-                    shrinkVertically(shrinkTowards = Alignment.Bottom) +
-                    fadeOut(tween(180))
+                enter = expandVertically(expandFrom = Alignment.Bottom, animationSpec = tween(180)) +
+                    fadeIn(tween(180)),
+                exit = shrinkVertically(shrinkTowards = Alignment.Bottom, animationSpec = tween(150)) +
+                    fadeOut(tween(150))
             ) {
                 AppBottomNavBar(
                     currentRoute = currentRoute,

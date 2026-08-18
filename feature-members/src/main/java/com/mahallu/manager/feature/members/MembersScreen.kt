@@ -18,7 +18,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.ChevronRight
 import androidx.compose.material.icons.rounded.Groups
 import androidx.compose.material3.Icon
@@ -41,7 +40,7 @@ import com.mahallu.manager.core.ui.components.AppCard
 import com.mahallu.manager.core.ui.components.AppSearchBar
 import com.mahallu.manager.core.ui.components.ChipPill
 import com.mahallu.manager.core.ui.components.EmptyState
-import com.mahallu.manager.core.ui.components.IconCircleButton
+import com.mahallu.manager.core.ui.components.ScreenPageHeader
 import com.mahallu.manager.core.ui.theme.LocalMahalluColors
 import com.mahallu.manager.core.ui.util.Formatters
 
@@ -57,37 +56,11 @@ fun MembersScreen(
     Box(modifier = Modifier.fillMaxSize().background(colors.background)) {
         Column(modifier = Modifier.fillMaxSize()) {
             // Page head — title + count + add button
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 18.dp, start = 18.dp, end = 18.dp, bottom = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = stringResource(R.string.members_title),
-                    style = MaterialTheme.typography.headlineMedium,
-                    color = colors.textPrimary,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(Modifier.width(10.dp))
-                Text(
-                    text = state.members.size.toString(),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = colors.primaryIndigo,
-                    fontWeight = FontWeight.ExtraBold,
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(colors.primaryIndigo.copy(alpha = 0.10f))
-                        .padding(horizontal = 10.dp, vertical = 5.dp)
-                )
-                Spacer(Modifier.weight(1f))
-                IconCircleButton(
-                    icon = Icons.Rounded.Add,
-                    onClick = onAddMember,
-                    backgroundColor = colors.surfaceVariant,
-                    tint = colors.textPrimary
-                )
-            }
+            ScreenPageHeader(
+                title = stringResource(R.string.members_title),
+                pillText = state.members.size.toString(),
+                onTrailingClick = onAddMember
+            )
 
             AppSearchBar(
                 query = state.query,
