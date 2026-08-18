@@ -34,7 +34,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -213,7 +212,7 @@ private fun CertificatePageHead(
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (showBack && onBack != null) {
-            IconCircleButton(icon = Icons.AutoMirrored.Rounded.ArrowBack, onClick = onBack, backgroundColor = Color.White, tint = colors.textPrimary)
+            IconCircleButton(icon = Icons.AutoMirrored.Rounded.ArrowBack, onClick = onBack, backgroundColor = colors.surfaceVariant, tint = colors.textPrimary)
             Spacer(Modifier.width(8.dp))
         }
         Text(title, style = MaterialTheme.typography.headlineMedium, color = colors.textPrimary, fontWeight = FontWeight.Bold)
@@ -230,7 +229,7 @@ private fun CertificatePageHead(
         )
         Spacer(Modifier.weight(1f))
         if (showAdd) {
-            IconCircleButton(icon = Icons.Rounded.Add, onClick = { onAdd?.invoke() }, backgroundColor = Color.White, tint = colors.textPrimary)
+            IconCircleButton(icon = Icons.Rounded.Add, onClick = { onAdd?.invoke() }, backgroundColor = colors.surfaceVariant, tint = colors.textPrimary)
         }
     }
 }

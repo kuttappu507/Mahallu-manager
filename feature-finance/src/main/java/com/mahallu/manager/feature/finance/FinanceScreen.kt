@@ -103,7 +103,7 @@ fun FinanceScreen(
                 IconCircleButton(
                     icon = Icons.Rounded.IosShare,
                     onClick = { shareFinance(context, state) },
-                    backgroundColor = Color.White,
+                    backgroundColor = colors.surfaceVariant,
                     tint = colors.textPrimary
                 )
             }

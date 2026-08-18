@@ -1,8 +1,17 @@
 package com.mahallu.manager.navigation
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -15,6 +24,7 @@ import androidx.compose.material.icons.rounded.AccountBalanceWallet
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -62,6 +72,20 @@ import com.mahallu.manager.feature.subscriptions.SubscriptionsScreen
 import com.mahallu.manager.feature.welfare.WelfareEditScreen
 import com.mahallu.manager.feature.welfare.WelfareScreen
 
+private val TAB_ROUTES = setOf("dashboard", "families", "members", "finance", "more")
+
+private fun isTabRoute(route: String?): Boolean = route in TAB_ROUTES
+
+private fun tabEnter(): EnterTransition = fadeIn(tween(150))
+
+private fun tabExit(): ExitTransition = fadeOut(tween(110))
+
+private fun pushEnter(): EnterTransition =
+    fadeIn(tween(200)) + scaleIn(initialScale = 0.97f, animationSpec = tween(200))
+
+private fun pushExit(): ExitTransition =
+    fadeOut(tween(130)) + scaleOut(targetScale = 0.98f, animationSpec = tween(130))
+
 @Composable
 fun MainShell(
     onLogout: () -> Unit
@@ -90,7 +114,15 @@ fun MainShell(
 
     Scaffold(
         bottomBar = {
-            if (showBottomBar) {
+            AnimatedVisibility(
+                visible = showBottomBar,
+                enter = slideInVertically(tween(220)) { it } +
+                    expandVertically(expandFrom = Alignment.Bottom) +
+                    fadeIn(tween(220)),
+                exit = slideOutVertically(tween(180)) { it } +
+                    shrinkVertically(shrinkTowards = Alignment.Bottom) +
+                    fadeOut(tween(180))
+            ) {
                 AppBottomNavBar(
                     currentRoute = currentRoute,
                     onItemClick = { item -> navigateToTab(item.route) }
@@ -103,10 +135,18 @@ fun MainShell(
             NavHost(
                 navController = navController,
                 startDestination = "dashboard",
-                enterTransition = { fadeIn(tween(220)) },
-                exitTransition = { fadeOut(tween(120)) },
-                popEnterTransition = { fadeIn(tween(220)) },
-                popExitTransition = { fadeOut(tween(120)) }
+                enterTransition = {
+                    if (isTabRoute(targetState.destination.route)) tabEnter() else pushEnter()
+                },
+                exitTransition = {
+                    if (isTabRoute(initialState.destination.route)) tabExit() else pushExit()
+                },
+                popEnterTransition = {
+                    if (isTabRoute(targetState.destination.route)) tabEnter() else pushEnter()
+                },
+                popExitTransition = {
+                    if (isTabRoute(initialState.destination.route)) tabExit() else pushExit()
+                }
             ) {
                 composable("dashboard") {
                     DashboardScreen(
