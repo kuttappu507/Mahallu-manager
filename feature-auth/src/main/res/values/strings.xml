@@ -8,8 +8,6 @@
     <string name="login_forgot_password">Forgot password?</string>
     <string name="login_signing_in">Signing in...</string>
     <string name="login_sign_in">Sign In</string>
-    <string name="login_or">OR</string>
-    <string name="login_continue_as_guest">Continue as Guest</string>
     <string name="login_version_tagline">MAHALLU v1.0 · %1$s</string>
 
     <string name="login_error_enter_username">Enter username or mobile</string>

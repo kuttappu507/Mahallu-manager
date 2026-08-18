@@ -45,7 +45,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mahallu.manager.core.ui.components.AnimatedReveal
 import com.mahallu.manager.core.ui.components.AppButton
-import com.mahallu.manager.core.ui.components.AppButtonStyle
 import com.mahallu.manager.core.ui.components.AppTextField
 import com.mahallu.manager.core.ui.components.PasswordTextField
 import com.mahallu.manager.core.ui.theme.LocalMahalluColors
@@ -186,26 +185,6 @@ fun LoginScreen(
             }
 
             Spacer(Modifier.height(18.dp))
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(modifier = Modifier.weight(1f).height(1.dp).background(colors.border))
-                Text(
-                    text = stringResource(R.string.login_or),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = colors.textTertiary,
-                    fontWeight = FontWeight.ExtraBold,
-                    modifier = Modifier.padding(horizontal = 12.dp)
-                )
-                Box(modifier = Modifier.weight(1f).height(1.dp).background(colors.border))
-            }
-
-            Spacer(Modifier.height(12.dp))
-            AnimatedReveal(index = 4) {
-                AppButton(
-                    text = stringResource(R.string.login_continue_as_guest),
-                    onClick = { viewModel.login("secretary", "secretary123", rememberMe) {} },
-                    style = AppButtonStyle.Outline
-                )
-            }
 
             Spacer(Modifier.height(26.dp))
             AnimatedReveal(index = 4) {

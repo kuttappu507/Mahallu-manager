@@ -67,6 +67,10 @@ class CollectionEntryViewModel @Inject constructor(
                 _state.update { it.copy(families = fams) }
             }
         }
+        viewModelScope.launch {
+            val defaultAmount = settingsRepo.getString("default_subscription_amount", "500")
+            _state.update { it.copy(amount = defaultAmount) }
+        }
         val preMemberId = savedStateHandle.get<String>("memberId").orEmpty()
         if (preMemberId.isNotBlank()) {
             viewModelScope.launch {

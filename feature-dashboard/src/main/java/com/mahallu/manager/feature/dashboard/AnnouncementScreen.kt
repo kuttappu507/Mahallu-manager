@@ -27,6 +27,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mahallu.manager.core.ui.components.AppButton
 import com.mahallu.manager.core.ui.components.AppTextField
 import com.mahallu.manager.core.ui.components.TopAppBar
@@ -41,9 +43,10 @@ import feature.dashboard.feature.dashboard.R
 @Composable
 fun AnnouncementScreen(
     onDone: () -> Unit,
-    memberCount: Int = 0
+    viewModel: AnnouncementViewModel = hiltViewModel()
 ) {
     val colors = LocalMahalluColors.current
+    val memberCount by viewModel.memberCount.collectAsStateWithLifecycle()
     var message by rememberSaveable { mutableStateOf("") }
     var attempted by rememberSaveable { mutableStateOf(false) }
     val empty = message.isBlank()
