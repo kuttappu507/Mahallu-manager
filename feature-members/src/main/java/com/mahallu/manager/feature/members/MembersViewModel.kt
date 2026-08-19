@@ -47,7 +47,7 @@ class MembersViewModel @Inject constructor(
             genderFilter = filter,
             isLoading = false
         )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), MembersUiState())
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, MembersUiState())
 
     fun setQuery(q: String) { query.value = q }
     fun setGender(g: String) { genderFilter.value = g }
