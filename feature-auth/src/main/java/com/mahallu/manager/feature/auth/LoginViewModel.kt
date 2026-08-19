@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.mahallu.manager.core.database.entity.UserEntity
 import com.mahallu.manager.core.database.repository.AuditActor
 import com.mahallu.manager.core.database.repository.CurrentActor
+import com.mahallu.manager.core.database.repository.SeedData
 import com.mahallu.manager.core.database.repository.SettingsRepository
 import com.mahallu.manager.core.database.repository.UserRepository
 import com.mahallu.manager.core.security.SessionManager
@@ -33,6 +34,7 @@ class LoginViewModel @Inject constructor(
     application: Application,
     private val userRepository: UserRepository,
     private val sessionManager: SessionManager,
+    private val seedData: SeedData,
     private val currentActor: CurrentActor,
     private val settingsRepository: SettingsRepository
 ) : AndroidViewModel(application) {
@@ -101,7 +103,7 @@ class LoginViewModel @Inject constructor(
                     sessionManager.putBoolean(SessionManager.KEY_LOGGED_IN, true)
                     sessionManager.putLong(SessionManager.KEY_LOGIN_TIME, System.currentTimeMillis())
                     currentActor.set(AuditActor(user.id, user.fullName))
-                    val mustChange = sessionManager.getBoolean(SessionManager.KEY_MUST_CHANGE_PASSWORD)
+                    val mustChange = seedData.isDefaultCredential(user.username, password)
                     sessionManager.putBoolean(SessionManager.KEY_MUST_CHANGE_PASSWORD, mustChange)
                     _authState.update {
                         AuthState(
