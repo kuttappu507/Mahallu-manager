@@ -73,8 +73,11 @@ private val TAB_ROUTES = setOf("dashboard", "families", "members", "finance", "m
 
 private fun isTabRoute(route: String?): Boolean = route in TAB_ROUTES
 
-private fun tabEnter(): EnterTransition = fadeIn(tween(120))
-
+// Bottom tabs are state-restored views, not pushed pages. Keeping them free of
+// enter/exit animation prevents a heavy Room-backed screen from fading while it
+// is also being restored/recomposed, which looked like a freeze followed by a
+// snap. Detail/form destinations retain the subtle motion below.
+private fun tabEnter(): EnterTransition = EnterTransition.None
 private fun tabExit(): ExitTransition = ExitTransition.None
 
 private fun pushEnter(): EnterTransition =
@@ -171,7 +174,6 @@ fun MainShell(
                     )
                 }
 
-                // Detail / form screens
                 composable("family_detail/{familyId}", arguments = listOf(navArgument("familyId") { type = NavType.StringType })) {
                     FamilyDetailScreen(
                         onBack = { navController.popBackStack() },
@@ -194,7 +196,7 @@ fun MainShell(
                             CertificatePrefillHolder.set(
                                 CertificatePrefillData(
                                     memberName = m.name,
-                                    fatherName = "",  // MemberEntity doesn't have fatherName
+                                    fatherName = "",
                                     address = m.address.orEmpty(),
                                     memberNumber = m.memberNumber
                                 )
