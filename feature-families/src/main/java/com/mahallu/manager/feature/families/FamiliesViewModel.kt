@@ -5,10 +5,12 @@ import androidx.lifecycle.viewModelScope
 import com.mahallu.manager.core.database.entity.FamilyEntity
 import com.mahallu.manager.core.database.repository.FamilyRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -49,7 +51,8 @@ class FamiliesViewModel @Inject constructor(
             isLoading = false,
             totalCount = families.size
         )
-    }.stateIn(viewModelScope, SharingStarted.Eagerly, FamiliesUiState())
+    }.flowOn(Dispatchers.Default)
+        .stateIn(viewModelScope, SharingStarted.Eagerly, FamiliesUiState())
 
     fun setQuery(q: String) { query.value = q }
     fun setStatusFilter(filter: String) { statusFilter.value = filter }
