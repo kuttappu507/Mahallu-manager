@@ -90,7 +90,7 @@ class FinanceViewModel @Inject constructor(
             trendPct = trendPct,
             trendUp = trendPct?.let { it >= 0.0 } ?: true
         )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), FinanceUiState())
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, FinanceUiState())
 
     fun setType(t: String) { typeFilter.value = t }
     fun setMonth(m: Long) { monthFilter.value = m }
