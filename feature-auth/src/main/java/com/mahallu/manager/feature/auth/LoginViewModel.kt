@@ -43,35 +43,30 @@ class LoginViewModel @Inject constructor(
     val authState: StateFlow<AuthState> = _authState.asStateFlow()
 
     init {
-        checkExistingSession()
         viewModelScope.launch {
             val name = settingsRepository.getString("mahallu.name", "Mahallu Manager")
-            _authState.update { it.copy(mahalluName = name) }
-        }
-    }
-
-    private fun checkExistingSession() {
-        viewModelScope.launch {
             val userId = sessionManager.getString(SessionManager.KEY_USER_ID)
-            if (userId != null) {
-                val user = userRepository.getById(userId)
-                if (user != null && user.isActive) {
-                    currentActor.set(AuditActor(user.id, user.fullName))
-                    _authState.update {
-                        it.copy(
-                            isLoggedIn = true,
-                            isInitializing = false,
-                            currentUser = user,
-                            mustChangePassword = sessionManager.getBoolean(SessionManager.KEY_MUST_CHANGE_PASSWORD)
-                        )
-                    }
-                } else {
-                    sessionManager.clear()
-                    currentActor.set(null)
-                    _authState.update { it.copy(isInitializing = false) }
+            if (userId == null) {
+                _authState.update { it.copy(isInitializing = false, mahalluName = name) }
+                return@launch
+            }
+
+            val user = userRepository.getById(userId)
+            if (user != null && user.isActive) {
+                currentActor.set(AuditActor(user.id, user.fullName))
+                _authState.update {
+                    it.copy(
+                        isLoggedIn = true,
+                        isInitializing = false,
+                        currentUser = user,
+                        mahalluName = name,
+                        mustChangePassword = sessionManager.getBoolean(SessionManager.KEY_MUST_CHANGE_PASSWORD)
+                    )
                 }
             } else {
-                _authState.update { it.copy(isInitializing = false) }
+                sessionManager.clear()
+                currentActor.set(null)
+                _authState.update { it.copy(isInitializing = false, mahalluName = name) }
             }
         }
     }
@@ -105,6 +100,7 @@ class LoginViewModel @Inject constructor(
                             isInitializing = false,
                             isLoggedIn = true,
                             currentUser = user,
+                            mahalluName = it.mahalluName,
                             mustChangePassword = mustChange
                         )
                     }
