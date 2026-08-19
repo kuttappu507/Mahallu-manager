@@ -7,10 +7,12 @@ import com.mahallu.manager.core.database.repository.FinanceRepository
 import com.mahallu.manager.core.database.repository.SettingsRepository
 import com.mahallu.manager.core.util.DateUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -90,7 +92,8 @@ class FinanceViewModel @Inject constructor(
             trendPct = trendPct,
             trendUp = trendPct?.let { it >= 0.0 } ?: true
         )
-    }.stateIn(viewModelScope, SharingStarted.Eagerly, FinanceUiState())
+    }.flowOn(Dispatchers.Default)
+        .stateIn(viewModelScope, SharingStarted.Eagerly, FinanceUiState())
 
     fun setType(t: String) { typeFilter.value = t }
     fun setMonth(m: Long) { monthFilter.value = m }
