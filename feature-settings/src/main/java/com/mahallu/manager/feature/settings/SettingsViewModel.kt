@@ -3,9 +3,6 @@ package com.mahallu.manager.feature.settings
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mahallu.manager.core.database.entity.CertificateEntity
-import com.mahallu.manager.core.database.entity.FamilyEntity
-import com.mahallu.manager.core.database.entity.MemberEntity
 import com.mahallu.manager.core.database.repository.CertificateRepository
 import com.mahallu.manager.core.database.repository.FamilyRepository
 import com.mahallu.manager.core.database.repository.LanguageController
@@ -16,14 +13,19 @@ import com.mahallu.manager.core.security.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import feature.settings.feature.settings.R
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.SharingStarted
 import javax.inject.Inject
 
 data class SettingsUiState(
@@ -61,35 +63,38 @@ class SettingsViewModel @Inject constructor(
     val toastMessages: SharedFlow<String> = _toastMessages.asSharedFlow()
 
     init {
-        viewModelScope.launch {
-            _state.value = SettingsUiState(
-                mahalluName = settingsRepo.getString("mahallu.name", context.getString(R.string.settings_app_name)),
-                mahalluAddress = settingsRepo.getString("mahallu.address", ""),
-                mahalluPhone = settingsRepo.getString("mahallu.phone", ""),
-                mahalluEmail = settingsRepo.getString("mahallu.email", ""),
-                themeMode = settingsRepo.getString("theme_mode", "system"),
-                language = settingsRepo.getString(LanguageController.KEY, LanguageController.DEFAULT),
-                backupAutoEnabled = settingsRepo.getBoolean("backup.auto_enabled", true),
-                userName = sessionManager.getString(SessionManager.KEY_FULL_NAME, context.getString(R.string.settings_default_user)) ?: context.getString(R.string.settings_default_user),
-                userRole = sessionManager.getString(SessionManager.KEY_ROLE, "") ?: "",
-                lastBackupAt = settingsRepo.getLong("backup.last_at", 0)
-            )
-        }
-        viewModelScope.launch {
-            memberRepo.observeAll().collect { list: List<MemberEntity> ->
-                _state.update { it.copy(totalMembers = list.size) }
+        viewModelScope.launch(Dispatchers.IO) {
+            _state.update { current ->
+                current.copy(
+                    mahalluName = settingsRepo.getString("mahallu.name", context.getString(R.string.settings_app_name)),
+                    mahalluAddress = settingsRepo.getString("mahallu.address", ""),
+                    mahalluPhone = settingsRepo.getString("mahallu.phone", ""),
+                    mahalluEmail = settingsRepo.getString("mahallu.email", ""),
+                    themeMode = settingsRepo.getString("theme_mode", "system"),
+                    language = settingsRepo.getString(LanguageController.KEY, LanguageController.DEFAULT),
+                    backupAutoEnabled = settingsRepo.getBoolean("backup.auto_enabled", true),
+                    userName = sessionManager.getString(SessionManager.KEY_FULL_NAME, context.getString(R.string.settings_default_user)) ?: context.getString(R.string.settings_default_user),
+                    userRole = sessionManager.getString(SessionManager.KEY_ROLE, "") ?: "",
+                    lastBackupAt = settingsRepo.getLong("backup.last_at", 0)
+                )
             }
         }
-        viewModelScope.launch {
-            familyRepo.observeAll().collect { list: List<FamilyEntity> ->
-                _state.update { it.copy(totalFamilies = list.size) }
-            }
+        combine(
+            memberRepo.observeAll(),
+            familyRepo.observeAll(),
+            certificateRepo.observeAll()
+        ) { members, families, certificates ->
+            Triple(members.size, families.size, certificates.size)
         }
-        viewModelScope.launch {
-            certificateRepo.observeAll().collect { list: List<CertificateEntity> ->
-                _state.update { it.copy(totalCertificates = list.size) }
+            .flowOn(Dispatchers.Default)
+            .stateIn(viewModelScope, SharingStarted.Eagerly, Triple(0, 0, 0))
+            .let { counts ->
+                viewModelScope.launch {
+                    counts.collect { (members, families, certificates) ->
+                        _state.update { it.copy(totalMembers = members, totalFamilies = families, totalCertificates = certificates) }
+                    }
+                }
             }
-        }
     }
 
     fun updateMahallu(name: String, address: String, phone: String, email: String) {
@@ -98,9 +103,7 @@ class SettingsViewModel @Inject constructor(
             settingsRepo.put("mahallu.address", address)
             settingsRepo.put("mahallu.phone", phone)
             settingsRepo.put("mahallu.email", email)
-            _state.update {
-                it.copy(mahalluName = name, mahalluAddress = address, mahalluPhone = phone, mahalluEmail = email)
-            }
+            _state.update { it.copy(mahalluName = name, mahalluAddress = address, mahalluPhone = phone, mahalluEmail = email) }
             _toastMessages.emit(context.getString(R.string.settings_saved_message))
         }
     }
