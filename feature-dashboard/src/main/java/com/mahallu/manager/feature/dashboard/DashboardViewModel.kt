@@ -3,7 +3,6 @@ package com.mahallu.manager.feature.dashboard
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.mahallu.manager.core.database.repository.ActivityItem
 import com.mahallu.manager.core.database.repository.CollectionTrendPoint
 import com.mahallu.manager.core.database.repository.DashboardRepository
 import com.mahallu.manager.core.database.repository.DashboardSummary
@@ -51,5 +50,5 @@ class DashboardViewModel @Inject constructor(
             role = sessionManager.getString(SessionManager.KEY_ROLE, "") ?: "",
             isLoading = false
         )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), DashboardUiState())
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, DashboardUiState())
 }
