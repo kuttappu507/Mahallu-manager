@@ -46,23 +46,22 @@ class MahalluApplication : Application(), Configuration.Provider {
         }
         createNotificationChannels()
         appScope.launch {
-            // Warm the custom typefaces off the main thread so the first
-            // composition doesn't stall on font file loading.
+            // Keep all first-run preparation off the main thread. In particular,
+            // seedIfEmpty() may create the Room database and hash default users.
             prewarmFonts()
-            // CRITICAL: Seed default admin user + sample data on first launch
-            // so user can actually log in!
             try {
                 seedData.seedIfEmpty()
                 Timber.i("Database seed completed")
             } catch (t: Throwable) {
                 Timber.e(t, "Database seed failed")
             }
-            // Schedule daily backup if enabled
-            backupScheduler.scheduleIfEnabled()
-            // Only signal ready AFTER seeding, so the first-run (PBKDF2 hashing,
-            // Room DB creation) CPU churn happens behind the branded loading
-            // screen instead of janking the login screen / bottom nav.
+
+            // The UI is ready as soon as the data required for login is ready.
+            // Backup scheduling is independent and must not hold the splash/login
+            // transition open.
             _appReady.value = true
+            runCatching { backupScheduler.scheduleIfEnabled() }
+                .onFailure { Timber.e(it, "Backup scheduling failed") }
         }
     }
 
