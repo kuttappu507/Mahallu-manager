@@ -49,7 +49,7 @@ class FamiliesViewModel @Inject constructor(
             isLoading = false,
             totalCount = families.size
         )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), FamiliesUiState())
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, FamiliesUiState())
 
     fun setQuery(q: String) { query.value = q }
     fun setStatusFilter(filter: String) { statusFilter.value = filter }
