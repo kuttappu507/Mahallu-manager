@@ -32,7 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.FontWeight
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -67,14 +67,12 @@ fun FamiliesScreen(
                     pillText = state.families.size.toString(),
                     onTrailingClick = onAddFamily
                 )
-
                 AppSearchBar(
                     query = state.query,
                     onQueryChange = viewModel::setQuery,
                     placeholder = stringResource(R.string.families_search_placeholder),
                     count = state.families.size
                 )
-
                 Spacer(Modifier.height(10.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 18.dp).horizontalScroll(rememberScrollState()),
@@ -85,7 +83,6 @@ fun FamiliesScreen(
                     }
                 }
                 Spacer(Modifier.height(8.dp))
-
                 if (state.families.isEmpty()) {
                     EmptyState(
                         icon = Icons.Rounded.FamilyRestroom,
