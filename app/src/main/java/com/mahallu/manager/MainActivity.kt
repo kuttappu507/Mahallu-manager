@@ -6,8 +6,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
@@ -40,15 +38,13 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val appLanguage by languageController.language.collectAsStateWithLifecycle()
-            LaunchedEffect(appLanguage) {
-                applyLanguage(appLanguage)
-            }
+            LaunchedEffect(appLanguage) { applyLanguage(appLanguage) }
 
             val themeMode by themeModeController.themeMode.collectAsStateWithLifecycle()
             val darkTheme = when (themeMode) {
                 "dark" -> true
                 "light" -> false
-                else -> isSystemInDarkTheme()
+                else -> androidx.compose.foundation.isSystemInDarkTheme()
             }
             MahalluTheme(darkTheme = darkTheme) {
                 Surface(
@@ -61,11 +57,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    /**
-     * Wraps the base context with the persisted language before the activity's
-     * resources are created, so [androidx.compose.ui.res.stringResource] resolves
-     * the selected locale. Works with [ComponentActivity] on every API level.
-     */
     override fun attachBaseContext(newBase: Context) {
         val lang = newBase.getSharedPreferences(LanguageController.PREFS_FILE, Context.MODE_PRIVATE)
             .getString(LanguageController.KEY, LanguageController.DEFAULT) ?: LanguageController.DEFAULT
@@ -76,9 +67,8 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun applyLanguage(lang: String) {
-        val target = if (lang == "ml") Locale("ml") else Locale("en")
-        val current = resources.configuration.locales[0].language
-        if (current == target.language) return
+        val targetLanguage = if (lang == "ml") "ml" else "en"
+        if (resources.configuration.locales.firstOrNull()?.language == targetLanguage) return
         recreate()
     }
 }
