@@ -9,10 +9,12 @@ import com.mahallu.manager.core.database.repository.SettingsRepository
 import com.mahallu.manager.feature.certificates.pdf.PdfGenerator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.io.File
@@ -59,7 +61,8 @@ class DonationsViewModel @Inject constructor(
             categoryFilter = c,
             isLoading = false
         )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), DonationsUiState())
+    }.flowOn(Dispatchers.Default)
+        .stateIn(viewModelScope, SharingStarted.Eagerly, DonationsUiState())
 
     fun setQuery(q: String) { query.value = q }
     fun setCategory(c: String) { categoryFilter.value = c }
@@ -70,7 +73,7 @@ class DonationsViewModel @Inject constructor(
      * (null on failure).
      */
     fun generateReceipt(donationId: String, onResult: (File?) -> Unit) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val donation = repo.getById(donationId)
             if (donation == null) {
                 onResult(null)
