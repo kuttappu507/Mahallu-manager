@@ -3,7 +3,6 @@ package com.mahallu.manager.feature.members
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mahallu.manager.core.database.entity.MemberEntity
-import com.mahallu.manager.core.database.repository.FamilyRepository
 import com.mahallu.manager.core.database.repository.MemberRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,7 +10,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class MembersUiState(
@@ -24,8 +22,7 @@ data class MembersUiState(
 
 @HiltViewModel
 class MembersViewModel @Inject constructor(
-    private val memberRepo: MemberRepository,
-    private val familyRepo: FamilyRepository
+    private val memberRepo: MemberRepository
 ) : ViewModel() {
 
     private val query = MutableStateFlow("")
