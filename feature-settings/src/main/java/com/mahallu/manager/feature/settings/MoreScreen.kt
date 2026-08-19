@@ -55,7 +55,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mahallu.manager.core.ui.components.AppCard
 import com.mahallu.manager.core.ui.theme.LocalMahalluColors
-import com.mahallu.manager.core.ui.theme.PrimaryIndigo
 import com.mahallu.manager.core.ui.util.Formatters
 import feature.settings.feature.settings.R
 
@@ -98,7 +97,7 @@ fun MoreScreen(
             listOf(
                 MenuItem(stringResource(R.string.more_menu_certificates), stringResource(R.string.more_menu_certificates_sub), Icons.Rounded.Description, "certificates", colors.primaryIndigo, colors.indigoTint),
                 MenuItem(stringResource(R.string.more_menu_reports), stringResource(R.string.more_menu_reports_sub), Icons.Rounded.Assessment, "reports", colors.purple, colors.purpleTint),
-                MenuItem(stringResource(R.string.more_menu_backup), stringResource(R.string.more_menu_backup_sub), Icons.Rounded.Backup, "backup", Color(0xFFB45309), colors.warningTint),
+                MenuItem(stringResource(R.string.more_menu_backup), stringResource(R.string.more_menu_backup_sub), Icons.Rounded.Backup, "backup", colors.warningDark, colors.warningTint),
                 MenuItem(stringResource(R.string.more_menu_settings), stringResource(R.string.more_menu_settings_sub), Icons.Rounded.Settings, "settings", colors.textSecondary, colors.surfaceVariant)
             )
         )
@@ -113,27 +112,15 @@ fun MoreScreen(
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(top = 18.dp, start = 18.dp, end = 18.dp, bottom = 10.dp)
             )
-
             LazyColumn(
                 contentPadding = PaddingValues(horizontal = 18.dp, vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(14.dp),
                 modifier = Modifier.weight(1f)
             ) {
                 item {
-                    ProfileCard(
-                        name = state.userName,
-                        role = state.userRole,
-                        mahallu = state.mahalluName,
-                        totalMembers = state.totalMembers,
-                        totalFamilies = state.totalFamilies,
-                        totalCertificates = state.totalCertificates
-                    )
+                    ProfileCard(state.userName, state.userRole, state.mahalluName, state.totalMembers, state.totalFamilies, state.totalCertificates)
                 }
-
-                item {
-                    MenuCard(groups = groups, onNavigate = onNavigate, onLogout = onLogout)
-                }
-
+                item { MenuCard(groups, onNavigate, onLogout) }
                 item {
                     Text(
                         text = stringResource(R.string.more_version_footer, state.mahalluName.uppercase()),
@@ -154,154 +141,68 @@ fun MoreScreen(
 private fun ProfileCard(name: String, role: String, mahallu: String, totalMembers: Int, totalFamilies: Int, totalCertificates: Int) {
     val colors = LocalMahalluColors.current
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .shadow(12.dp, RoundedCornerShape(26.dp))
-            .clip(RoundedCornerShape(26.dp))
-            .background(
-                Brush.linearGradient(
-                    colors = listOf(PrimaryIndigo, colors.primaryDark, colors.purple)
-                )
-            )
-            .padding(18.dp)
+        modifier = Modifier.fillMaxWidth().shadow(12.dp, RoundedCornerShape(26.dp)).clip(RoundedCornerShape(26.dp)).background(
+            Brush.linearGradient(colors = listOf(colors.primaryIndigo, colors.primaryDark, colors.purple))
+        ).padding(18.dp)
     ) {
         Column {
             Row(verticalAlignment = Alignment.CenterVertically) {
-            Box(
-                modifier = Modifier
-                    .size(58.dp)
-                    .clip(CircleShape)
-                    .border(2.dp, Color.White.copy(alpha = 0.55f), CircleShape)
-                    .background(Color.White.copy(alpha = 0.2f)),
-                contentAlignment = Alignment.Center
+                Box(
+                    modifier = Modifier.size(58.dp).clip(CircleShape).border(2.dp, Color.White.copy(alpha = 0.55f), CircleShape).background(Color.White.copy(alpha = 0.2f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(Formatters.initials(name), style = MaterialTheme.typography.titleLarge, color = Color.White, fontWeight = FontWeight.ExtraBold)
+                }
+                Spacer(Modifier.width(14.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(name, style = MaterialTheme.typography.titleMedium, color = Color.White, fontWeight = FontWeight.ExtraBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    if (mahallu.isNotBlank()) Text(mahallu, style = MaterialTheme.typography.labelSmall, color = Color.White.copy(alpha = 0.7f), maxLines = 1, overflow = TextOverflow.Ellipsis)
+                }
+                Spacer(Modifier.width(8.dp))
+                Text(stringResource(R.string.more_mahallu_badge), style = MaterialTheme.typography.labelSmall, color = colors.primaryIndigo, fontWeight = FontWeight.ExtraBold, modifier = Modifier.clip(RoundedCornerShape(9.dp)).background(Color.White).padding(horizontal = 9.dp, vertical = 5.dp))
+            }
+            Spacer(Modifier.height(16.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth().drawBehind { drawLine(color = Color.White.copy(alpha = 0.22f), start = Offset(0f, 0f), end = Offset(size.width, 0f), strokeWidth = 1f) }.padding(top = 14.dp)
             ) {
-                Text(
-                    text = Formatters.initials(name),
-                    style = MaterialTheme.typography.titleLarge,
-                    color = Color.White,
-                    fontWeight = FontWeight.ExtraBold
-                )
+                ProfileStat(totalMembers.toString(), stringResource(R.string.more_profile_members), Modifier.weight(1f))
+                VerticalDivider(Modifier.height(32.dp), thickness = 1.dp, color = Color.White.copy(alpha = 0.22f))
+                ProfileStat(totalFamilies.toString(), stringResource(R.string.more_profile_families), Modifier.weight(1f))
+                VerticalDivider(Modifier.height(32.dp), thickness = 1.dp, color = Color.White.copy(alpha = 0.22f))
+                ProfileStat(totalCertificates.toString(), stringResource(R.string.more_profile_certificates), Modifier.weight(1f))
             }
-            Spacer(Modifier.width(14.dp))
-            Column(modifier = Modifier.weight(1f)) {
-                Text(name, style = MaterialTheme.typography.titleMedium, color = Color.White, fontWeight = FontWeight.ExtraBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                if (mahallu.isNotBlank()) {
-                    Text(mahallu, style = MaterialTheme.typography.labelSmall, color = Color.White.copy(alpha = 0.7f), maxLines = 1, overflow = TextOverflow.Ellipsis)
-                }
-            }
-            Spacer(Modifier.width(8.dp))
-            Text(
-                text = stringResource(R.string.more_mahallu_badge),
-                style = MaterialTheme.typography.labelSmall,
-                color = colors.primaryIndigo,
-                fontWeight = FontWeight.ExtraBold,
-                modifier = Modifier
-                    .clip(RoundedCornerShape(9.dp))
-                    .background(Color.White)
-                    .padding(horizontal = 9.dp, vertical = 5.dp)
-            )
         }
-        Spacer(Modifier.height(16.dp))
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .drawBehind {
-                    drawLine(
-                        color = Color.White.copy(alpha = 0.22f),
-                        start = Offset(0f, 0f),
-                        end = Offset(size.width, 0f),
-                        strokeWidth = 1f
-                    )
-                }
-                .padding(top = 14.dp)
-        ) {
-            ProfileStat(value = totalMembers.toString(), label = stringResource(R.string.more_profile_members), modifier = Modifier.weight(1f))
-            VerticalDivider(modifier = Modifier.height(32.dp), thickness = 1.dp, color = Color.White.copy(alpha = 0.22f))
-            ProfileStat(value = totalFamilies.toString(), label = stringResource(R.string.more_profile_families), modifier = Modifier.weight(1f))
-            VerticalDivider(modifier = Modifier.height(32.dp), thickness = 1.dp, color = Color.White.copy(alpha = 0.22f))
-            ProfileStat(value = totalCertificates.toString(), label = stringResource(R.string.more_profile_certificates), modifier = Modifier.weight(1f))
-        }
-    }
     }
 }
 
 @Composable
 private fun ProfileStat(value: String, label: String, modifier: Modifier = Modifier) {
-    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            text = value,
-            style = MaterialTheme.typography.titleMedium,
-            color = Color.White,
-            fontWeight = FontWeight.ExtraBold
-        )
-        Text(
-            text = label.uppercase(),
-            style = MaterialTheme.typography.labelSmall,
-            color = Color.White.copy(alpha = 0.72f),
-            fontWeight = FontWeight.ExtraBold,
-            letterSpacing = MaterialTheme.typography.labelSmall.letterSpacing
-        )
+    Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(value, style = MaterialTheme.typography.titleMedium, color = Color.White, fontWeight = FontWeight.ExtraBold)
+        Text(label.uppercase(), style = MaterialTheme.typography.labelSmall, color = Color.White.copy(alpha = 0.72f), fontWeight = FontWeight.ExtraBold, letterSpacing = MaterialTheme.typography.labelSmall.letterSpacing)
     }
 }
 
 @Composable
 private fun MenuCard(groups: List<MenuGroup>, onNavigate: (String) -> Unit, onLogout: () -> Unit) {
     val colors = LocalMahalluColors.current
-    AppCard(
-        modifier = Modifier.fillMaxWidth(),
-        contentPadding = PaddingValues(6.dp)
-    ) {
+    AppCard(modifier = Modifier.fillMaxWidth(), contentPadding = PaddingValues(6.dp)) {
         Column {
             groups.forEachIndexed { gIdx, group ->
-                if (gIdx > 0) {
-                    HorizontalDivider(
-                        thickness = 1.dp,
-                        color = colors.border,
-                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 2.dp)
-                    )
-                }
-                Text(
-                    text = group.title.uppercase(),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = colors.textTertiary,
-                    fontWeight = FontWeight.ExtraBold,
-                    letterSpacing = 1.2.sp,
-                    modifier = Modifier.padding(start = 12.dp, top = 14.dp, end = 12.dp, bottom = 6.dp)
-                )
+                if (gIdx > 0) HorizontalDivider(thickness = 1.dp, color = colors.border, modifier = Modifier.padding(horizontal = 10.dp, vertical = 2.dp))
+                Text(group.title.uppercase(), style = MaterialTheme.typography.labelSmall, color = colors.textTertiary, fontWeight = FontWeight.ExtraBold, letterSpacing = 1.2.sp, modifier = Modifier.padding(start = 12.dp, top = 14.dp, end = 12.dp, bottom = 6.dp))
                 group.items.forEachIndexed { iIdx, item ->
-                    MenuRow(item, onClick = { onNavigate(item.route) })
-                    if (iIdx < group.items.lastIndex) {
-                        HorizontalDivider(
-                            thickness = 1.dp,
-                            color = colors.border,
-                            modifier = Modifier.padding(horizontal = 10.dp)
-                        )
-                    }
+                    MenuRow(item) { onNavigate(item.route) }
+                    if (iIdx < group.items.lastIndex) HorizontalDivider(thickness = 1.dp, color = colors.border, modifier = Modifier.padding(horizontal = 10.dp))
                 }
             }
-            HorizontalDivider(
-                thickness = 1.dp,
-                color = colors.border,
-                modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp)
-            )
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable(onClick = onLogout)
-                    .padding(horizontal = 10.dp, vertical = 12.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(38.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(colors.roseTint),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(Icons.Rounded.Logout, contentDescription = null, tint = colors.rose, modifier = Modifier.size(17.dp))
+            HorizontalDivider(thickness = 1.dp, color = colors.border, modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp))
+            Row(modifier = Modifier.fillMaxWidth().clickable(onClick = onLogout).padding(horizontal = 10.dp, vertical = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+                Box(modifier = Modifier.size(38.dp).clip(RoundedCornerShape(12.dp)).background(colors.roseTint), contentAlignment = Alignment.Center) {
+                    Icon(Icons.Rounded.Logout, null, tint = colors.rose, modifier = Modifier.size(17.dp))
                 }
                 Spacer(Modifier.width(12.dp))
-                Column(modifier = Modifier.weight(1f)) {
+                Column(Modifier.weight(1f)) {
                     Text(stringResource(R.string.more_logout), style = MaterialTheme.typography.bodyMedium, color = colors.rose, fontWeight = FontWeight.ExtraBold)
                     Text(stringResource(R.string.more_logout_subtitle), style = MaterialTheme.typography.labelSmall, color = colors.textSecondary)
                 }
@@ -313,27 +214,15 @@ private fun MenuCard(groups: List<MenuGroup>, onNavigate: (String) -> Unit, onLo
 @Composable
 private fun MenuRow(item: MenuItem, onClick: () -> Unit) {
     val colors = LocalMahalluColors.current
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(horizontal = 10.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Box(
-            modifier = Modifier
-                .size(38.dp)
-                .clip(RoundedCornerShape(12.dp))
-                .background(item.tintBackground),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(item.icon, contentDescription = null, tint = item.tint, modifier = Modifier.size(17.dp))
+    Row(modifier = Modifier.fillMaxWidth().clickable(onClick = onClick).padding(horizontal = 10.dp, vertical = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+        Box(modifier = Modifier.size(38.dp).clip(RoundedCornerShape(12.dp)).background(item.tintBackground), contentAlignment = Alignment.Center) {
+            Icon(item.icon, null, tint = item.tint, modifier = Modifier.size(17.dp))
         }
         Spacer(Modifier.width(12.dp))
-        Column(modifier = Modifier.weight(1f)) {
+        Column(Modifier.weight(1f)) {
             Text(item.label, style = MaterialTheme.typography.bodyMedium, color = colors.textPrimary, fontWeight = FontWeight.ExtraBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
             Text(item.subtitle, style = MaterialTheme.typography.labelSmall, color = colors.textSecondary, maxLines = 1, overflow = TextOverflow.Ellipsis)
         }
-        Icon(Icons.Rounded.ChevronRight, contentDescription = null, tint = colors.borderStrong, modifier = Modifier.size(17.dp))
+        Icon(Icons.Rounded.ChevronRight, null, tint = colors.borderStrong, modifier = Modifier.size(17.dp))
     }
 }
