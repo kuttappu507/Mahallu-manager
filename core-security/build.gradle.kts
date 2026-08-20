@@ -24,4 +24,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.security.crypto)
     implementation(libs.timber)
+
+    testImplementation(libs.junit)
+    testImplementation(libs.truth)
 }

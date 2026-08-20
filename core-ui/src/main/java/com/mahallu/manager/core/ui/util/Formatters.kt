@@ -2,21 +2,19 @@ package com.mahallu.manager.core.ui.util
 
 import android.content.Context
 import com.mahallu.manager.core.ui.R
-import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
 object Formatters {
-    private val indianRupeeFormat: NumberFormat = NumberFormat.getNumberInstance(Locale("en", "IN"))
     private val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
     private val dateWithWeekdayFormat = SimpleDateFormat("EEE, MMM d yyyy", Locale.getDefault())
     private val dateTimeFormat = SimpleDateFormat("dd MMM yyyy, hh:mm a", Locale.getDefault())
     private val isoDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
     private val displayDateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
 
-    fun currency(amount: Double): String = "₹" + indianRupeeFormat.format(amount)
+    fun currency(amount: Double): String = "₹" + indianGrouped(amount)
 
     fun currencyShort(amount: Double, context: Context? = null): String {
         val rupee = "₹"
@@ -27,8 +25,24 @@ object Formatters {
                 (context?.getString(R.string.suffix_lakh) ?: "L")
             amount >= 1_000 -> rupee + String.format(Locale.getDefault(), "%.1f", amount / 1_000) +
                 (context?.getString(R.string.suffix_thousand) ?: "K")
-            else -> rupee + indianRupeeFormat.format(amount)
+            else -> rupee + indianGrouped(amount)
         }
+    }
+
+    private fun indianGrouped(amount: Double): String {
+        val negative = amount < 0
+        val plain = String.format(Locale.US, "%.2f", Math.abs(amount))
+        val intPart = plain.substringBefore('.')
+        val frac = plain.substringAfter('.', "").trimEnd('0')
+        val grouped = StringBuilder(intPart.takeLast(3))
+        var idx = intPart.length - 3
+        while (idx > 0) {
+            val from = maxOf(0, idx - 2)
+            grouped.insert(0, intPart.substring(from, idx) + ",")
+            idx = from
+        }
+        val result = if (frac.isEmpty()) grouped.toString() else "$grouped.$frac"
+        return if (negative) "-$result" else result
     }
 
     fun date(timestamp: Long): String = dateFormat.format(Date(timestamp))

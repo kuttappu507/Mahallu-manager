@@ -1,6 +1,5 @@
 package com.mahallu.manager.core.security
 
-import android.util.Base64
 import java.security.MessageDigest
 import java.security.SecureRandom
 import javax.crypto.SecretKeyFactory
@@ -18,8 +17,9 @@ object PasswordHasher {
     fun hash(password: String): String {
         val salt = ByteArray(16).also { SecureRandom().nextBytes(it) }
         val hash = pbkdf2(password, salt)
-        val saltB64 = Base64.encodeToString(salt, Base64.NO_WRAP)
-        val hashB64 = Base64.encodeToString(hash, Base64.NO_WRAP)
+        val encoder = java.util.Base64.getEncoder()
+        val saltB64 = encoder.encodeToString(salt)
+        val hashB64 = encoder.encodeToString(hash)
         return "$saltB64:$hashB64"
     }
 
@@ -27,8 +27,9 @@ object PasswordHasher {
         return try {
             val parts = stored.split(":")
             if (parts.size != 2) return false
-            val salt = Base64.decode(parts[0], Base64.NO_WRAP)
-            val expected = Base64.decode(parts[1], Base64.NO_WRAP)
+            val decoder = java.util.Base64.getDecoder()
+            val salt = decoder.decode(parts[0])
+            val expected = decoder.decode(parts[1])
             val actual = pbkdf2(password, salt)
             MessageDigest.isEqual(expected, actual)
         } catch (e: Exception) {
