@@ -87,7 +87,7 @@ fun MoreScreen(
         MenuGroup(
             stringResource(R.string.more_group_records),
             listOf(
-                MenuItem(stringResource(R.string.more_menu_subscriptions), stringResource(R.string.more_menu_subscriptions_sub), Icons.Rounded.MonetizationOn, "subscriptions", colors.primaryIndigo, colors.primaryIndigoTint),
+                MenuItem(stringResource(R.string.more_menu_subscriptions), stringResource(R.string.more_menu_subscriptions_sub), Icons.Rounded.MonetizationOn, "subscriptions", colors.primaryIndigo, colors.indigoTint),
                 MenuItem(stringResource(R.string.more_menu_donations), stringResource(R.string.more_menu_donations_sub), Icons.Rounded.VolunteerActivism, "donations", colors.successDark, colors.successTint),
                 MenuItem(stringResource(R.string.more_menu_marriages), stringResource(R.string.more_menu_marriages_sub), Icons.Rounded.Favorite, "marriages", colors.rose, colors.roseTint),
                 MenuItem(stringResource(R.string.more_menu_deaths), stringResource(R.string.more_menu_deaths_sub), Icons.Rounded.HistoryEdu, "deaths", colors.textSecondary, colors.surfaceVariant),
@@ -97,7 +97,7 @@ fun MoreScreen(
         MenuGroup(
             stringResource(R.string.more_group_data_tools),
             listOf(
-                MenuItem(stringResource(R.string.more_menu_certificates), stringResource(R.string.more_menu_certificates_sub), Icons.Rounded.Description, "certificates", colors.primaryIndigo, colors.primaryIndigoTint),
+                MenuItem(stringResource(R.string.more_menu_certificates), stringResource(R.string.more_menu_certificates_sub), Icons.Rounded.Description, "certificates", colors.primaryIndigo, colors.indigoTint),
                 MenuItem(stringResource(R.string.more_menu_reports), stringResource(R.string.more_menu_reports_sub), Icons.Rounded.Assessment, "reports", colors.purple, colors.purpleTint),
                 MenuItem(stringResource(R.string.more_menu_backup), stringResource(R.string.more_menu_backup_sub), Icons.Rounded.Backup, "backup", colors.warning, colors.warningTint),
                 MenuItem(stringResource(R.string.more_menu_settings), stringResource(R.string.more_menu_settings_sub), Icons.Rounded.Settings, "settings", colors.textSecondary, colors.surfaceVariant)

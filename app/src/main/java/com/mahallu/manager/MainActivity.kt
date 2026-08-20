@@ -68,7 +68,8 @@ class MainActivity : ComponentActivity() {
 
     private fun applyLanguage(lang: String) {
         val targetLanguage = if (lang == "ml") "ml" else "en"
-        if (resources.configuration.locales.firstOrNull()?.language == targetLanguage) return
+        val currentLanguage = resources.configuration.locales[0]?.language ?: ""
+        if (currentLanguage == targetLanguage) return
         recreate()
     }
 }
