@@ -38,40 +38,19 @@ import androidx.navigation.navArgument
 import com.mahallu.manager.core.ui.components.AppBottomNavBar
 import com.mahallu.manager.core.ui.theme.LocalMahalluColors
 import com.mahallu.manager.feature.auth.ChangePasswordScreen
-import com.mahallu.manager.feature.certificates.CertificateListScreen
-import com.mahallu.manager.feature.certificates.CertificatePrefillData
-import com.mahallu.manager.feature.certificates.CertificatePrefillHolder
-import com.mahallu.manager.feature.certificates.DeathCertificateScreen
-import com.mahallu.manager.feature.certificates.MarriageCertificateScreen
-import com.mahallu.manager.feature.certificates.MembershipCertificateScreen
-import com.mahallu.manager.feature.certificates.ResidenceCertificateScreen
-import com.mahallu.manager.feature.dashboard.AnnouncementScreen
-import com.mahallu.manager.feature.dashboard.DashboardScreen
-import com.mahallu.manager.feature.death.DeathEditScreen
-import com.mahallu.manager.feature.death.DeathListScreen
-import com.mahallu.manager.feature.donations.DonationDetailScreen
-import com.mahallu.manager.feature.donations.DonationEntryScreen
-import com.mahallu.manager.feature.donations.DonationsScreen
-import com.mahallu.manager.feature.families.FamilyDetailScreen
-import com.mahallu.manager.feature.families.FamilyEditScreen
-import com.mahallu.manager.feature.families.FamiliesScreen
-import com.mahallu.manager.feature.finance.FinanceScreen
-import com.mahallu.manager.feature.finance.IncomeExpenseEntryScreen
-import com.mahallu.manager.feature.marriage.MarriageEditScreen
-import com.mahallu.manager.feature.marriage.MarriageListScreen
-import com.mahallu.manager.feature.members.MemberDetailScreen
-import com.mahallu.manager.feature.members.MemberEditScreen
-import com.mahallu.manager.feature.members.MembersScreen
+import com.mahallu.manager.feature.certificates.*
+import com.mahallu.manager.feature.dashboard.*
+import com.mahallu.manager.feature.death.*
+import com.mahallu.manager.feature.donations.*
+import com.mahallu.manager.feature.families.*
+import com.mahallu.manager.feature.finance.*
+import com.mahallu.manager.feature.marriage.*
+import com.mahallu.manager.feature.members.*
 import com.mahallu.manager.feature.reports.ReportsScreen
 import com.mahallu.manager.feature.search.GlobalSearchScreen
-import com.mahallu.manager.feature.settings.BackupScreen
-import com.mahallu.manager.feature.settings.MoreScreen
-import com.mahallu.manager.feature.settings.SettingsScreen
-import com.mahallu.manager.feature.subscriptions.CollectionDetailScreen
-import com.mahallu.manager.feature.subscriptions.CollectionEntryScreen
-import com.mahallu.manager.feature.subscriptions.SubscriptionsScreen
-import com.mahallu.manager.feature.welfare.WelfareEditScreen
-import com.mahallu.manager.feature.welfare.WelfareScreen
+import com.mahallu.manager.feature.settings.*
+import com.mahallu.manager.feature.subscriptions.*
+import com.mahallu.manager.feature.welfare.*
 
 private val TAB_ROUTES = setOf("dashboard", "families", "members", "finance", "more")
 private fun isTabRoute(route: String?): Boolean = route in TAB_ROUTES
@@ -97,10 +76,10 @@ fun MainShell(onLogout: () -> Unit) {
     }
 
     var activeTab by remember { mutableStateOf("dashboard") }
-    val showBottomBar = tabs.any { it.route == currentRoute }
+    val showBottomBar = isTabRoute(currentRoute)
 
     LaunchedEffect(currentRoute) {
-        if (currentRoute in TAB_ROUTES) activeTab = currentRoute
+        if (isTabRoute(currentRoute)) activeTab = currentRoute!!
     }
 
     val navigateToTab: (String) -> Unit = { route ->
@@ -111,9 +90,7 @@ fun MainShell(onLogout: () -> Unit) {
                 launchSingleTop = true
                 restoreState = true
             }
-        } else {
-            navController.navigate(route)
-        }
+        } else navController.navigate(route)
     }
 
     Scaffold(
@@ -123,34 +100,18 @@ fun MainShell(onLogout: () -> Unit) {
                 enter = expandVertically(expandFrom = Alignment.Bottom, animationSpec = tween(180)) + fadeIn(tween(180)),
                 exit = shrinkVertically(shrinkTowards = Alignment.Bottom, animationSpec = tween(150)) + fadeOut(tween(150))
             ) {
-                AppBottomNavBar(
-                    currentRoute = activeTab,
-                    onItemClick = { navigateToTab(it.route) }
-                )
+                AppBottomNavBar(currentRoute = activeTab, onItemClick = { navigateToTab(it.route) })
             }
         },
         containerColor = LocalMahalluColors.current.background
     ) { padding ->
         Box(Modifier.fillMaxSize().padding(padding)) {
-            // Keep primary tabs composed once inside a stable parent. The selected
-            // tab is swapped via state instead of recreating the destination graph.
-            when (activeTab) {
-                "dashboard" -> DashboardScreen(onNavigate = navigateToTab)
-                "families" -> FamiliesScreen(
-                    onAddFamily = { navController.navigate("family_edit?id=") },
-                    onFamilyClick = { id -> navController.navigate("family_detail/$id") }
-                )
-                "members" -> MembersScreen(
-                    onAddMember = { navController.navigate("member_edit?id=") },
-                    onMemberClick = { id -> navController.navigate("member_detail/$id") }
-                )
-                "finance" -> FinanceScreen(onAddEntry = { navController.navigate("finance_entry") })
-                "more" -> MoreScreen(
-                    onNavigate = { navController.navigate(it) },
-                    onLogout = onLogout
-                )
-            }
-
+            /*
+             * IMPORTANT: primary tab screens are hosted by the navigation
+             * destinations themselves. This avoids keeping one screen in the
+             * composition while NavHost independently changes its back stack,
+             * which previously caused a detach/recompose gap on every tap.
+             */
             NavHost(
                 navController = navController,
                 startDestination = "dashboard",
@@ -159,60 +120,51 @@ fun MainShell(onLogout: () -> Unit) {
                 popEnterTransition = { if (isTabRoute(targetState.destination.route)) tabEnter() else pushEnter() },
                 popExitTransition = { if (isTabRoute(initialState.destination.route)) tabExit() else pushExit() }
             ) {
-                composable("dashboard") {}
-                composable("families") {}
-                composable("members") {}
-                composable("finance") {}
-                composable("more") {}
+                composable("dashboard") { DashboardScreen(onNavigate = navigateToTab) }
+                composable("families") {
+                    FamiliesScreen(
+                        onAddFamily = { navController.navigate("family_edit?id=") },
+                        onFamilyClick = { id -> navController.navigate("family_detail/$id") }
+                    )
+                }
+                composable("members") {
+                    MembersScreen(
+                        onAddMember = { navController.navigate("member_edit?id=") },
+                        onMemberClick = { id -> navController.navigate("member_detail/$id") }
+                    )
+                }
+                composable("finance") { FinanceScreen(onAddEntry = { navController.navigate("finance_entry") }) }
+                composable("more") { MoreScreen(onNavigate = { navController.navigate(it) }, onLogout = onLogout) }
+
                 composable("family_detail/{familyId}", arguments = listOf(navArgument("familyId") { type = NavType.StringType })) {
                     FamilyDetailScreen(onBack = { navController.popBackStack() }, onEdit = { id -> navController.navigate("family_edit?id=$id") }, onMemberClick = { id -> navController.navigate("member_detail/$id") }, onStatement = { navigateToTab("finance") })
                 }
-                composable("family_edit?id={familyId}", arguments = listOf(navArgument("familyId") { type = NavType.StringType; defaultValue = ""; nullable = true })) {
-                    FamilyEditScreen(onDone = { navController.popBackStack() })
-                }
+                composable("family_edit?id={familyId}", arguments = listOf(navArgument("familyId") { type = NavType.StringType; defaultValue = ""; nullable = true })) { FamilyEditScreen(onDone = { navController.popBackStack() }) }
                 composable("member_detail/{memberId}", arguments = listOf(navArgument("memberId") { type = NavType.StringType })) {
                     MemberDetailScreen(onBack = { navController.popBackStack() }, onEdit = { id -> navController.navigate("member_edit?id=$id") }, onAddCollection = { id -> navController.navigate("collection_entry?memberId=$id") }, onGenerateCertificate = { m ->
                         CertificatePrefillHolder.set(CertificatePrefillData(memberName = m.name, fatherName = "", address = m.address.orEmpty(), memberNumber = m.memberNumber))
                         navController.navigate("certificate/MEMBERSHIP")
                     })
                 }
-                composable("member_edit?id={memberId}", arguments = listOf(navArgument("memberId") { type = NavType.StringType; defaultValue = ""; nullable = true })) {
-                    MemberEditScreen(onDone = { navController.popBackStack() })
-                }
-                composable("collection_entry?memberId={memberId}", arguments = listOf(navArgument("memberId") { type = NavType.StringType; nullable = true; defaultValue = "" })) {
-                    CollectionEntryScreen(onDone = { navController.popBackStack() })
-                }
-                composable("collection_detail/{collectionId}", arguments = listOf(navArgument("collectionId") { type = NavType.StringType })) {
-                    CollectionDetailScreen(onBack = { navController.popBackStack() })
-                }
-                composable("subscriptions") {
-                    SubscriptionsScreen(onBack = { navController.popBackStack() }, onAddCollection = { navController.navigate("collection_entry?memberId=") }, onOpenItem = { id -> navController.navigate("collection_detail/$id") })
-                }
-                composable("donations") {
-                    DonationsScreen(onBack = { navController.popBackStack() }, onAdd = { navController.navigate("donation_entry") }, onOpenItem = { id -> navController.navigate("donation_detail/$id") })
-                }
+                composable("member_edit?id={memberId}", arguments = listOf(navArgument("memberId") { type = NavType.StringType; defaultValue = ""; nullable = true })) { MemberEditScreen(onDone = { navController.popBackStack() }) }
+                composable("collection_entry?memberId={memberId}", arguments = listOf(navArgument("memberId") { type = NavType.StringType; nullable = true; defaultValue = "" })) { CollectionEntryScreen(onDone = { navController.popBackStack() }) }
+                composable("collection_detail/{collectionId}", arguments = listOf(navArgument("collectionId") { type = NavType.StringType })) { CollectionDetailScreen(onBack = { navController.popBackStack() }) }
+                composable("subscriptions") { SubscriptionsScreen(onBack = { navController.popBackStack() }, onAddCollection = { navController.navigate("collection_entry?memberId=") }, onOpenItem = { id -> navController.navigate("collection_detail/$id") }) }
+                composable("donations") { DonationsScreen(onBack = { navController.popBackStack() }, onAdd = { navController.navigate("donation_entry") }, onOpenItem = { id -> navController.navigate("donation_detail/$id") }) }
                 composable("donation_entry") { DonationEntryScreen(onDone = { navController.popBackStack() }) }
                 composable("donation_detail/{donationId}", arguments = listOf(navArgument("donationId") { type = NavType.StringType })) { DonationDetailScreen(onBack = { navController.popBackStack() }) }
                 composable("finance_entry") { IncomeExpenseEntryScreen(onDone = { navController.popBackStack() }) }
                 composable("marriages") { MarriageListScreen(onBack = { navController.popBackStack() }, onAdd = { navController.navigate("marriage_edit?id=") }, onItemClick = { id -> navController.navigate("marriage_edit?id=$id") }) }
-                composable("marriage_edit?id={id}", arguments = listOf(navArgument("id") { type = NavType.StringType; nullable = true; defaultValue = "" })) {
-                    MarriageEditScreen(onDone = { navController.popBackStack() }, onGenerateCertificate = { m ->
-                        CertificatePrefillHolder.set(CertificatePrefillData(brideName = m.brideName, groomName = m.groomName, fatherName = m.brideFatherName, address = m.nikahLocation, witnesses = listOf(m.witnessOneName, m.witnessTwoName).filter { it.isNotBlank() }.joinToString(", "), registrationNumber = m.registrationNumber, date = java.text.SimpleDateFormat("dd MMM yyyy", java.util.Locale.getDefault()).format(m.nikahDate), groomFatherName = m.groomFatherName, groomAge = m.groomAge, brideFatherName = m.brideFatherName, brideAge = m.brideAge, mahar = m.maharAmount.toDoubleOrNull()?.takeIf { it > 0 }?.let { "Rs. ${"%,.2f".format(it)}" }, groomAddress = m.members.firstOrNull { it.id == m.groomId }?.address, brideAddress = m.members.firstOrNull { it.id == m.brideId }?.address))
-                        navController.navigate("certificate/MARRIAGE")
-                    })
-                }
-                composable("deaths") {
-                    DeathListScreen(onBack = { navController.popBackStack() }, onAdd = { navController.navigate("death_edit?id=") }, onItemClick = { id -> navController.navigate("death_edit?id=$id") })
-                }
-                composable("death_edit?id={id}", arguments = listOf(navArgument("id") { type = NavType.StringType; nullable = true; defaultValue = "" })) {
-                    DeathEditScreen(onDone = { navController.popBackStack() }, onGenerateCertificate = { d ->
-                        CertificatePrefillHolder.set(CertificatePrefillData(deceasedName = d.name, fatherName = d.fatherName, address = d.burialLocation, registrationNumber = d.registrationNumber, date = java.text.SimpleDateFormat("dd MMM yyyy", java.util.Locale.getDefault()).format(d.dateOfDeath)))
-                        navController.navigate("certificate/DEATH")
-                    })
-                }
-                composable("welfare") {
-                    WelfareScreen(onBack = { navController.popBackStack() }, onAdd = { navController.navigate("welfare_edit?id=") }, onItemClick = { id -> navController.navigate("welfare_edit?id=$id") })
-                }
+                composable("marriage_edit?id={id}", arguments = listOf(navArgument("id") { type = NavType.StringType; nullable = true; defaultValue = "" })) { MarriageEditScreen(onDone = { navController.popBackStack() }, onGenerateCertificate = { m ->
+                    CertificatePrefillHolder.set(CertificatePrefillData(brideName = m.brideName, groomName = m.groomName, fatherName = m.brideFatherName, address = m.nikahLocation, witnesses = listOf(m.witnessOneName, m.witnessTwoName).filter { it.isNotBlank() }.joinToString(", "), registrationNumber = m.registrationNumber, date = java.text.SimpleDateFormat("dd MMM yyyy", java.util.Locale.getDefault()).format(m.nikahDate), groomFatherName = m.groomFatherName, groomAge = m.groomAge, brideFatherName = m.brideFatherName, brideAge = m.brideAge, mahar = m.maharAmount.toDoubleOrNull()?.takeIf { it > 0 }?.let { "Rs. ${"%,.2f".format(it)}" }, groomAddress = m.members.firstOrNull { it.id == m.groomId }?.address, brideAddress = m.members.firstOrNull { it.id == m.brideId }?.address))
+                    navController.navigate("certificate/MARRIAGE")
+                }) }
+                composable("deaths") { DeathListScreen(onBack = { navController.popBackStack() }, onAdd = { navController.navigate("death_edit?id=") }, onItemClick = { id -> navController.navigate("death_edit?id=$id") }) }
+                composable("death_edit?id={id}", arguments = listOf(navArgument("id") { type = NavType.StringType; nullable = true; defaultValue = "" })) { DeathEditScreen(onDone = { navController.popBackStack() }, onGenerateCertificate = { d ->
+                    CertificatePrefillHolder.set(CertificatePrefillData(deceasedName = d.name, fatherName = d.fatherName, address = d.burialLocation, registrationNumber = d.registrationNumber, date = java.text.SimpleDateFormat("dd MMM yyyy", java.util.Locale.getDefault()).format(d.dateOfDeath)))
+                    navController.navigate("certificate/DEATH")
+                }) }
+                composable("welfare") { WelfareScreen(onBack = { navController.popBackStack() }, onAdd = { navController.navigate("welfare_edit?id=") }, onItemClick = { id -> navController.navigate("welfare_edit?id=$id") }) }
                 composable("welfare_edit?id={id}", arguments = listOf(navArgument("id") { type = NavType.StringType; nullable = true; defaultValue = "" })) { WelfareEditScreen(onDone = { navController.popBackStack() }) }
                 composable("certificates") { CertificateListScreen(onBack = { navController.popBackStack() }, onSelect = { type -> navController.navigate("certificate/$type") }) }
                 composable("certificate/{type}", arguments = listOf(navArgument("type") { type = NavType.StringType })) {
