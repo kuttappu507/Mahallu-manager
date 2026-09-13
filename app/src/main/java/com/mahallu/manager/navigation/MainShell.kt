@@ -35,7 +35,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.mahallu.manager.core.ui.components.AppBottomNavBar
+import com.mahallu.manager.core.ui.components.FloatingBottomNav
 import com.mahallu.manager.core.ui.theme.LocalMahalluColors
 import com.mahallu.manager.feature.auth.ChangePasswordScreen
 import com.mahallu.manager.feature.certificates.*
@@ -100,7 +100,7 @@ fun MainShell(onLogout: () -> Unit) {
                 enter = expandVertically(expandFrom = Alignment.Bottom, animationSpec = tween(180)) + fadeIn(tween(180)),
                 exit = shrinkVertically(shrinkTowards = Alignment.Bottom, animationSpec = tween(150)) + fadeOut(tween(150))
             ) {
-                AppBottomNavBar(currentRoute = activeTab, onItemClick = { navigateToTab(it.route) })
+                FloatingBottomNav(currentRoute = activeTab, onItemClick = { navigateToTab(it.route) })
             }
         },
         containerColor = LocalMahalluColors.current.background
