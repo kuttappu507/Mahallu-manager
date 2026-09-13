@@ -1,5 +1,6 @@
 package com.mahallu.manager.core.ui.components
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -8,14 +9,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -28,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
@@ -43,11 +41,6 @@ import com.mahallu.manager.core.ui.R
 import com.mahallu.manager.core.ui.theme.LocalMahalluColors
 import com.mahallu.manager.core.ui.theme.PrimaryIndigo
 
-/**
- * Reads the true status-bar height in dp. Unlike [WindowInsets.statusBars],
- * this is not affected by insets already consumed by a parent Scaffold, so it
- * works inside screens that draw edge-to-edge behind the status bar.
- */
 @Composable
 fun statusBarInsetDp(): Dp {
     val view = LocalView.current
@@ -58,11 +51,6 @@ fun statusBarInsetDp(): Dp {
     return with(density) { top.toDp() }
 }
 
-/**
- * Full-bleed gradient hero header for the dashboard — spans edge to edge with
- * only the bottom corners rounded (matches Masjidi `.home-head`). Greeting +
- * name + frosted hijri chip, with white round search/profile buttons.
- */
 @Composable
 fun DashboardHeader(
     greeting: String,
@@ -74,36 +62,59 @@ fun DashboardHeader(
 ) {
     val colors = LocalMahalluColors.current
     val statusBarInset = statusBarInsetDp()
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(bottomStart = 28.dp, bottomEnd = 28.dp))
             .background(
-                Brush.linearGradient(
+                Brush.verticalGradient(
                     colors = listOf(
                         PrimaryIndigo,
                         colors.primaryDark,
-                        Color(0xFF7C3AED)
+                        PrimaryIndigo.copy(alpha = 0.95f)
                     )
                 )
             )
-            .padding(horizontal = 18.dp)
-            .padding(top = statusBarInset + 20.dp, bottom = 72.dp)
     ) {
-        Column {
+        // Decorative circles
+        Canvas(modifier = Modifier.fillMaxWidth().height(220.dp)) {
+            drawCircle(
+                color = Color.White.copy(alpha = 0.06f),
+                radius = 120f,
+                center = Offset(size.width - 40f, 40f)
+            )
+            drawCircle(
+                color = Color.White.copy(alpha = 0.04f),
+                radius = 80f,
+                center = Offset(size.width - 100f, 90f)
+            )
+            drawCircle(
+                color = Color.White.copy(alpha = 0.05f),
+                radius = 60f,
+                center = Offset(40f, 160f)
+            )
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp)
+                .padding(top = statusBarInset + 20.dp)
+                .padding(bottom = 28.dp)
+        ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(modifier = Modifier.weight(1f)) {
+                Column {
                     Text(
                         text = greeting,
                         style = MaterialTheme.typography.labelMedium,
-                        color = Color.White.copy(alpha = 0.75f),
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 0.6.sp
+                        color = Color.White.copy(alpha = 0.7f),
+                        fontWeight = FontWeight.Medium
                     )
-                    Spacer(Modifier.height(2.dp))
+                    Spacer(Modifier.height(4.dp))
                     Text(
                         text = userName,
                         style = MaterialTheme.typography.headlineMedium,
@@ -111,42 +122,42 @@ fun DashboardHeader(
                         fontWeight = FontWeight.Bold
                     )
                 }
-                Row(horizontalArrangement = Arrangement.spacedBy(9.dp)) {
+                Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                     Box(
                         modifier = Modifier
-                            .size(40.dp)
+                            .size(42.dp)
                             .clip(CircleShape)
-                            .background(Color.White)
+                            .background(Color.White.copy(alpha = 0.15f))
                             .clickable { onSearchClick() },
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Search,
                             contentDescription = stringResource(R.string.cd_search),
-                            tint = colors.primaryIndigo,
+                            tint = Color.White,
                             modifier = Modifier.size(20.dp)
                         )
                     }
                     Box(
                         modifier = Modifier
-                            .size(40.dp)
+                            .size(42.dp)
                             .clip(CircleShape)
-                            .background(Color.White)
+                            .background(Color.White.copy(alpha = 0.15f))
                             .clickable { onNotificationClick() },
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Notifications,
                             contentDescription = stringResource(R.string.cd_notifications),
-                            tint = colors.primaryIndigo,
+                            tint = Color.White,
                             modifier = Modifier.size(20.dp)
                         )
                         if (notificationCount > 0) {
                             Box(
                                 modifier = Modifier
                                     .align(Alignment.TopEnd)
-                                    .padding(top = 7.dp, end = 7.dp)
-                                    .size(9.dp)
+                                    .padding(top = 6.dp, end = 6.dp)
+                                    .size(10.dp)
                                     .clip(CircleShape)
                                     .background(colors.accentCoral)
                             )
@@ -154,27 +165,22 @@ fun DashboardHeader(
                     }
                 }
             }
+
             Spacer(Modifier.height(14.dp))
+
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(12.dp))
-                    .background(Color.White.copy(alpha = 0.14f))
-                    .border(1.dp, Color.White.copy(alpha = 0.22f), RoundedCornerShape(12.dp))
-                    .padding(horizontal = 12.dp, vertical = 7.dp)
+                    .background(Color.White.copy(alpha = 0.12f))
+                    .border(1.dp, Color.White.copy(alpha = 0.2f), RoundedCornerShape(12.dp))
+                    .padding(horizontal = 14.dp, vertical = 8.dp)
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = Icons.Rounded.Notifications,
-                        contentDescription = null,
-                        tint = Color.White,
-                        modifier = Modifier.size(12.dp)
-                    )
-                    Spacer(Modifier.width(6.dp))
                     Text(
                         text = subtitle,
                         style = MaterialTheme.typography.labelSmall,
                         color = Color.White,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Medium
                     )
                 }
             }
